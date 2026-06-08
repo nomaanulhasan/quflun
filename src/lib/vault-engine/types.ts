@@ -27,8 +27,7 @@ export interface BruteForceState {
 
 /**
  * Interface for the Vault Engine operations.
- * Lifecycle (Task 4.1) + Entry CRUD (Task 4.2) + Notes (Task 4.3).
- * Categories, tags are implemented in Task 4.4.
+ * Lifecycle (Task 4.1) + Entry CRUD (Task 4.2) + Notes (Task 4.3) + Organization (Task 4.4).
  */
 export interface VaultEngine {
   // Lifecycle (Task 4.1)
@@ -48,6 +47,23 @@ export interface VaultEngine {
   // Secure Notes (Task 4.3)
   addNote(data: NoteInput): Promise<EntryMeta>;
   editNote(uuid: string, data: Partial<NoteInput>): Promise<EntryMeta>;
+
+  // Organization — Categories (Task 4.4)
+  // Categories are KDBX groups under the root group
+  setCategory(entryUuid: string, category: string | null): Promise<void>;
+  createCategory(name: string): Promise<void>;
+  renameCategory(oldName: string, newName: string): Promise<void>;
+  deleteCategory(name: string): Promise<void>;
+  getCategories(): string[];
+
+  // Organization — Tags (Task 4.4)
+  setTags(entryUuid: string, tags: string[]): Promise<void>;
+  createTag(name: string): Promise<void>;
+  deleteTag(name: string): Promise<void>;
+  getTags(): string[];
+
+  // Organization — Favorites (Task 4.4)
+  setFavorite(entryUuid: string, favorite: boolean): Promise<void>;
 
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;

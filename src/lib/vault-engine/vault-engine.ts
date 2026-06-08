@@ -16,6 +16,9 @@ import {
   NOTE_BODY_MAX_LENGTH,
   MAX_TAGS_PER_ENTRY,
   TAG_MAX_LENGTH,
+  MAX_CATEGORIES,
+  MAX_TAGS,
+  CATEGORY_NAME_MAX_LENGTH,
 } from '@/lib/constants';
 
 /** Maximum consecutive failed open attempts before requiring file re-selection */
@@ -29,6 +32,9 @@ const CUSTOM_KEY_FAVORITE = '_qufly_favorite';
 
 /** Custom data key for entry type marker */
 const CUSTOM_KEY_TYPE = '_qufly_type';
+
+/** Custom data key for tag registry (stored on the root group's customData) */
+const CUSTOM_KEY_TAG_REGISTRY = '_qufly_tags';
 
 /**
  * Races a promise against a timeout. Rejects with a timeout error if the
@@ -567,6 +573,232 @@ class VaultEngineImpl implements VaultEngine {
     };
   }
 
+  // ─── Organization — Categories, Tags, Favorites (Task 4.4) ──────────────────
+
+  async setCategory(entryUuid: string, category: string | null): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${entryUuid}`);
+    }
+
+    const defaultGroup = db.getDefaultGroup();
+
+    if (category === null) {
+      // Move to root (uncategorized)
+      db.move(entry, defaultGroup);
+    } else {
+      // Find or error if group doesn't exist
+      const targetGroup = this.findGroupByName(db, category);
+      if (!targetGroup) {
+        throw new Error(`Category not found: ${category}`);
+      }
+      db.move(entry, targetGroup);
+    }
+
+    await this.save();
+  }
+
+  async createCategory(name: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+
+    if (!name || name.length === 0) {
+      throw new Error('Category name is required.');
+    }
+    if (name.length > CATEGORY_NAME_MAX_LENGTH) {
+      throw new Error(`Category name must be at most ${CATEGORY_NAME_MAX_LENGTH} characters.`);
+    }
+
+    // Check uniqueness
+    if (this.findGroupByName(db, name)) {
+      throw new Error(`Category "${name}" already exists.`);
+    }
+
+    // Check max count
+    const existing = this.getCategories();
+    if (existing.length >= MAX_CATEGORIES) {
+      throw new Error(`Maximum ${MAX_CATEGORIES} categories allowed.`);
+    }
+
+    // Create KDBX group under root
+    const defaultGroup = db.getDefaultGroup();
+    db.createGroup(defaultGroup, name);
+
+    await this.save();
+  }
+
+  async renameCategory(oldName: string, newName: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+
+    if (!newName || newName.length === 0) {
+      throw new Error('Category name is required.');
+    }
+    if (newName.length > CATEGORY_NAME_MAX_LENGTH) {
+      throw new Error(`Category name must be at most ${CATEGORY_NAME_MAX_LENGTH} characters.`);
+    }
+
+    const group = this.findGroupByName(db, oldName);
+    if (!group) {
+      throw new Error(`Category not found: ${oldName}`);
+    }
+
+    // Check uniqueness of new name
+    if (oldName !== newName && this.findGroupByName(db, newName)) {
+      throw new Error(`Category "${newName}" already exists.`);
+    }
+
+    group.name = newName;
+
+    await this.save();
+  }
+
+  async deleteCategory(name: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const defaultGroup = db.getDefaultGroup();
+
+    const group = this.findGroupByName(db, name);
+    if (!group) {
+      throw new Error(`Category not found: ${name}`);
+    }
+
+    // Move all entries in this group back to root (uncategorized)
+    const entries = [...group.entries];
+    for (const entry of entries) {
+      db.move(entry, defaultGroup);
+    }
+
+    // Move any sub-groups' entries to root too
+    for (const subGroup of [...group.groups]) {
+      for (const entry of [...subGroup.entries]) {
+        db.move(entry, defaultGroup);
+      }
+    }
+
+    // Remove the group itself
+    db.remove(group);
+
+    await this.save();
+  }
+
+  getCategories(): string[] {
+    const db = this.requireUnlockedDb();
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+
+    const categories: string[] = [];
+    for (const group of defaultGroup.groups) {
+      // Skip recycle bin
+      if (recycleBinUuid && group.uuid.equals(recycleBinUuid)) {
+        continue;
+      }
+      if (group.name) {
+        categories.push(group.name);
+      }
+    }
+    return categories;
+  }
+
+  async setTags(entryUuid: string, tags: string[]): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${entryUuid}`);
+    }
+
+    if (tags.length > MAX_TAGS_PER_ENTRY) {
+      throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags per entry.`);
+    }
+    for (const tag of tags) {
+      if (tag.length > TAG_MAX_LENGTH) {
+        throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
+      }
+    }
+
+    entry.pushHistory();
+    entry.tags = [...tags];
+    entry.times.update();
+
+    await this.save();
+  }
+
+  async createTag(name: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+
+    if (!name || name.length === 0) {
+      throw new Error('Tag name is required.');
+    }
+    if (name.length > TAG_MAX_LENGTH) {
+      throw new Error(`Tag name must be at most ${TAG_MAX_LENGTH} characters.`);
+    }
+
+    const existing = this.getTags();
+    if (existing.includes(name)) {
+      throw new Error(`Tag "${name}" already exists.`);
+    }
+    if (existing.length >= MAX_TAGS) {
+      throw new Error(`Maximum ${MAX_TAGS} tags allowed.`);
+    }
+
+    // Store tag registry on root group's customData
+    const registry = [...existing, name];
+    this.setTagRegistry(db, registry);
+
+    await this.save();
+  }
+
+  async deleteTag(name: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+
+    const existing = this.getTags();
+    if (!existing.includes(name)) {
+      throw new Error(`Tag not found: ${name}`);
+    }
+
+    // Remove from registry
+    const registry = existing.filter((t) => t !== name);
+    this.setTagRegistry(db, registry);
+
+    // Cascade: remove from all entries that have this tag
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+    for (const entry of defaultGroup.allEntries()) {
+      if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) {
+        continue;
+      }
+      const idx = entry.tags.indexOf(name);
+      if (idx !== -1) {
+        entry.pushHistory();
+        entry.tags.splice(idx, 1);
+        entry.times.update();
+      }
+    }
+
+    await this.save();
+  }
+
+  getTags(): string[] {
+    const db = this.requireUnlockedDb();
+    return this.getTagRegistry(db);
+  }
+
+  async setFavorite(entryUuid: string, favorite: boolean): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${entryUuid}`);
+    }
+
+    entry.pushHistory();
+    if (favorite) {
+      this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
+    } else {
+      this.deleteCustomData(entry, CUSTOM_KEY_FAVORITE);
+    }
+    entry.times.update();
+
+    await this.save();
+  }
+
   // ─── Helper Methods ────────────────────────────────────────────────────────
 
   private requireUnlockedDb(): kdbxweb.Kdbx {
@@ -724,6 +956,44 @@ class VaultEngineImpl implements VaultEngine {
 
   getVaultId(): string | null {
     return this.vaultId;
+  }
+
+  private findGroupByName(db: kdbxweb.Kdbx, name: string): kdbxweb.KdbxGroup | undefined {
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+
+    for (const group of defaultGroup.groups) {
+      if (recycleBinUuid && group.uuid.equals(recycleBinUuid)) {
+        continue;
+      }
+      if (group.name === name) {
+        return group;
+      }
+    }
+    return undefined;
+  }
+
+  private getTagRegistry(db: kdbxweb.Kdbx): string[] {
+    const defaultGroup = db.getDefaultGroup();
+    if (!defaultGroup.customData) return [];
+    const item = defaultGroup.customData.get(CUSTOM_KEY_TAG_REGISTRY);
+    if (!item?.value) return [];
+    try {
+      const parsed = JSON.parse(item.value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private setTagRegistry(db: kdbxweb.Kdbx, tags: string[]): void {
+    const defaultGroup = db.getDefaultGroup();
+    if (!defaultGroup.customData) {
+      defaultGroup.customData = new Map();
+    }
+    defaultGroup.customData.set(CUSTOM_KEY_TAG_REGISTRY, {
+      value: JSON.stringify(tags),
+    });
   }
 
   private validatePassword(password: string): void {
