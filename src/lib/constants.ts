@@ -81,6 +81,17 @@ export const PASSWORD_GEN_DEFAULT_LENGTH = 20;
 /** Maximum search query length (characters) */
 export const SEARCH_MAX_QUERY_LENGTH = 128;
 
+// ─── Master Password ───────────────────────────────────────────────────────────
+
+/** Minimum master password length (characters) */
+export const MASTER_PASSWORD_MIN_LENGTH = 1;
+
+/** Maximum master password length (characters) */
+export const MASTER_PASSWORD_MAX_LENGTH = 128;
+
+/** Password length below which a weak-password warning is shown */
+export const MASTER_PASSWORD_WEAK_THRESHOLD = 8;
+
 // ─── Brute-Force Protection ────────────────────────────────────────────────────
 
 /** Maximum consecutive unlock attempts before cooldown */
