@@ -1,4 +1,4 @@
-import type { VaultMeta } from '@/types';
+import type { VaultMeta, EntryInput, EntryListItem, VaultEntry } from '@/types';
 
 /** The possible states of the Vault Engine */
 export type VaultStatus = 'locked' | 'unlocked' | 'creating' | 'opening' | 'unlocking' | 'saving';
@@ -6,6 +6,13 @@ export type VaultStatus = 'locked' | 'unlocked' | 'creating' | 'opening' | 'unlo
 /** Result of a vault open/create/unlock operation */
 export interface VaultOperationResult {
   meta: VaultMeta;
+}
+
+/** Metadata returned after entry creation or modification */
+export interface EntryMeta {
+  uuid: string;
+  title: string;
+  modifiedAt: string;
 }
 
 /** Brute-force protection state */
@@ -19,15 +26,24 @@ export interface BruteForceState {
 }
 
 /**
- * Interface for the Vault Engine lifecycle operations (Task 4.1 only).
- * Entry CRUD, notes, categories, tags are implemented in Tasks 4.2-4.4.
+ * Interface for the Vault Engine operations.
+ * Lifecycle (Task 4.1) + Entry CRUD (Task 4.2).
+ * Notes, categories, tags are implemented in Tasks 4.3-4.4.
  */
 export interface VaultEngine {
+  // Lifecycle (Task 4.1)
   create(password: string, name: string): Promise<VaultMeta>;
   open(file: ArrayBuffer, password: string): Promise<VaultMeta>;
   unlock(password: string): Promise<VaultMeta>;
   lock(): void;
   save(): Promise<void>;
+
+  // Entry CRUD (Task 4.2)
+  addEntry(data: EntryInput): Promise<EntryMeta>;
+  editEntry(uuid: string, data: Partial<EntryInput>): Promise<EntryMeta>;
+  deleteEntry(uuid: string): Promise<void>;
+  getEntry(uuid: string): VaultEntry;
+  listEntries(): EntryListItem[];
 
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;

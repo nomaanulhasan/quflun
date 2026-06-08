@@ -1,13 +1,20 @@
 import type * as kdbxweb from 'kdbxweb';
-import type { VaultMeta } from '@/types';
+import type { VaultMeta, EntryInput, EntryListItem, VaultEntry } from '@/types';
 import type { CryptoAdapter } from '@/lib/crypto';
 import type { StorageAdapter } from '@/lib/storage';
-import type { VaultEngine, BruteForceState } from './types';
+import type { VaultEngine, BruteForceState, EntryMeta } from './types';
 import {
   MAX_UNLOCK_ATTEMPTS,
   UNLOCK_COOLDOWN_SECONDS,
   MASTER_PASSWORD_MIN_LENGTH,
   MASTER_PASSWORD_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  USERNAME_MAX_LENGTH,
+  URL_MAX_LENGTH,
+  NOTES_MAX_LENGTH,
+  MAX_TAGS_PER_ENTRY,
+  TAG_MAX_LENGTH,
 } from '@/lib/constants';
 
 /** Maximum consecutive failed open attempts before requiring file re-selection */
@@ -251,6 +258,294 @@ class VaultEngineImpl implements VaultEngine {
       this.vaultName || 'Unnamed Vault',
       buffer
     );
+  }
+
+  // ─── Entry CRUD (Task 4.2) ─────────────────────────────────────────────────
+
+  async addEntry(data: EntryInput): Promise<EntryMeta> {
+    const db = this.requireUnlockedDb();
+    const kdbxweb = await import('kdbxweb');
+
+    // Validate required fields
+    this.validateEntryInput(data);
+
+    // Create entry in the default group (category assignment is Task 4.4)
+    const group = db.getDefaultGroup();
+    const entry = db.createEntry(group);
+
+    // Set fields per KDBX mapping (design document)
+    entry.fields.set('Title', data.title);
+    entry.fields.set('UserName', data.username || '');
+    entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(data.password));
+    entry.fields.set('URL', data.url || '');
+    entry.fields.set('Notes', data.notes || '');
+
+    // Tags: stored as string[] on KdbxEntry.tags (native KDBX 4.x)
+    if (data.tags && data.tags.length > 0) {
+      entry.tags = data.tags.slice(0, MAX_TAGS_PER_ENTRY);
+    }
+
+    // Favorite: custom attribute (design document)
+    if (data.favorite) {
+      entry.fields.set('_qufly_favorite', 'true');
+    }
+
+    // Type marker for password entries (notes use _qufly_type="note" in Task 4.3)
+    // Password entries do NOT set _qufly_type — absence means "password"
+
+    // Times: kdbxweb sets creationTime automatically via createEntry
+    entry.times.update();
+
+    // Auto-save
+    await this.save();
+
+    return {
+      uuid: entry.uuid.toString(),
+      title: data.title,
+      modifiedAt: entry.times.lastModTime?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  async editEntry(uuid: string, data: Partial<EntryInput>): Promise<EntryMeta> {
+    const db = this.requireUnlockedDb();
+    const kdbxweb = await import('kdbxweb');
+
+    const entry = this.findEntryByUuid(db, uuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${uuid}`);
+    }
+
+    // Validate: title cannot be removed (Requirement 5.3)
+    if (data.title !== undefined) {
+      if (!data.title || data.title.length === 0) {
+        throw new Error('Title is required.');
+      }
+      if (data.title.length > TITLE_MAX_LENGTH) {
+        throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
+      }
+      entry.fields.set('Title', data.title);
+    }
+
+    if (data.username !== undefined) {
+      if (data.username.length > USERNAME_MAX_LENGTH) {
+        throw new Error(`Username must be at most ${USERNAME_MAX_LENGTH} characters.`);
+      }
+      entry.fields.set('UserName', data.username);
+    }
+
+    if (data.password !== undefined) {
+      if (data.password.length > PASSWORD_MAX_LENGTH) {
+        throw new Error(`Password must be at most ${PASSWORD_MAX_LENGTH} characters.`);
+      }
+      entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(data.password));
+    }
+
+    if (data.url !== undefined) {
+      if (data.url.length > URL_MAX_LENGTH) {
+        throw new Error(`URL must be at most ${URL_MAX_LENGTH} characters.`);
+      }
+      entry.fields.set('URL', data.url);
+    }
+
+    if (data.notes !== undefined) {
+      if (data.notes.length > NOTES_MAX_LENGTH) {
+        throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
+      }
+      entry.fields.set('Notes', data.notes);
+    }
+
+    if (data.tags !== undefined) {
+      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
+        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
+      }
+      for (const tag of data.tags) {
+        if (tag.length > TAG_MAX_LENGTH) {
+          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
+        }
+      }
+      entry.tags = [...data.tags];
+    }
+
+    if (data.favorite !== undefined) {
+      if (data.favorite) {
+        entry.fields.set('_qufly_favorite', 'true');
+      } else {
+        entry.fields.delete('_qufly_favorite');
+      }
+    }
+
+    // Push history state before modification (for merge support)
+    entry.pushHistory();
+    // Update modification timestamp (Requirement 5.2)
+    entry.times.update();
+
+    // Auto-save
+    await this.save();
+
+    return {
+      uuid: entry.uuid.toString(),
+      title: (entry.fields.get('Title') as string) || '',
+      modifiedAt: entry.times.lastModTime?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  async deleteEntry(uuid: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+
+    const entry = this.findEntryByUuid(db, uuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${uuid}`);
+    }
+
+    // Use db.remove which handles recycle bin logic
+    db.remove(entry);
+
+    // Auto-save
+    await this.save();
+  }
+
+  getEntry(uuid: string): VaultEntry {
+    const db = this.requireUnlockedDb();
+
+    const entry = this.findEntryByUuid(db, uuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${uuid}`);
+    }
+
+    return this.mapKdbxEntryToVaultEntry(entry);
+  }
+
+  listEntries(): EntryListItem[] {
+    const db = this.requireUnlockedDb();
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+    const items: EntryListItem[] = [];
+
+    for (const entry of defaultGroup.allEntries()) {
+      // Skip entries in the recycle bin
+      if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) {
+        continue;
+      }
+
+      const type = entry.fields.get('_qufly_type') === 'note' ? 'note' : 'password';
+      const title = this.getStringField(entry, 'Title');
+      const username = this.getStringField(entry, 'UserName');
+      const url = this.getStringField(entry, 'URL');
+      const favorite = entry.fields.get('_qufly_favorite') === 'true';
+      const category = entry.parentGroup?.name !== defaultGroup.name
+        ? (entry.parentGroup?.name || null)
+        : null;
+
+      items.push({
+        uuid: entry.uuid.toString(),
+        type,
+        title,
+        username,
+        url,
+        category,
+        tags: [...entry.tags],
+        favorite,
+        modifiedAt: entry.times.lastModTime?.toISOString() || '',
+      });
+    }
+
+    return items;
+  }
+
+  // ─── Helper Methods ────────────────────────────────────────────────────────
+
+  private requireUnlockedDb(): kdbxweb.Kdbx {
+    if (!this.db) {
+      throw new Error('Vault is locked. Cannot access entries.');
+    }
+    return this.db;
+  }
+
+  private findEntryByUuid(db: kdbxweb.Kdbx, uuid: string): kdbxweb.KdbxEntry | undefined {
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+
+    for (const entry of defaultGroup.allEntries()) {
+      // Skip entries in the recycle bin
+      if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) {
+        continue;
+      }
+      if (entry.uuid.toString() === uuid) {
+        return entry;
+      }
+    }
+    return undefined;
+  }
+
+  private getStringField(entry: kdbxweb.KdbxEntry, key: string): string {
+    const val = entry.fields.get(key);
+    if (!val) return '';
+    if (typeof val === 'string') return val;
+    // ProtectedValue — do NOT call getText() for list views (security)
+    return '';
+  }
+
+  private mapKdbxEntryToVaultEntry(entry: kdbxweb.KdbxEntry): VaultEntry {
+    const type = entry.fields.get('_qufly_type') === 'note' ? 'note' as const : 'password' as const;
+    const passwordField = entry.fields.get('Password');
+    // Only expose password via getText() in getEntry (on-demand, per design)
+    const password = passwordField && typeof passwordField !== 'string'
+      ? passwordField.getText()
+      : (typeof passwordField === 'string' ? passwordField : '');
+
+    const defaultGroup = this.db?.getDefaultGroup();
+    const category = entry.parentGroup?.name !== defaultGroup?.name
+      ? (entry.parentGroup?.name || null)
+      : null;
+
+    return {
+      uuid: entry.uuid.toString(),
+      type,
+      title: this.getStringField(entry, 'Title'),
+      username: this.getStringField(entry, 'UserName'),
+      password,
+      url: this.getStringField(entry, 'URL'),
+      notes: this.getStringField(entry, 'Notes'),
+      category,
+      tags: [...entry.tags],
+      favorite: entry.fields.get('_qufly_favorite') === 'true',
+      createdAt: entry.times.creationTime?.toISOString() || '',
+      modifiedAt: entry.times.lastModTime?.toISOString() || '',
+    };
+  }
+
+  private validateEntryInput(data: EntryInput): void {
+    if (!data.title || data.title.length === 0) {
+      throw new Error('Title is required.');
+    }
+    if (data.title.length > TITLE_MAX_LENGTH) {
+      throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
+    }
+    if (!data.password || data.password.length === 0) {
+      throw new Error('Password is required.');
+    }
+    if (data.password.length > PASSWORD_MAX_LENGTH) {
+      throw new Error(`Password must be at most ${PASSWORD_MAX_LENGTH} characters.`);
+    }
+    if (data.username && data.username.length > USERNAME_MAX_LENGTH) {
+      throw new Error(`Username must be at most ${USERNAME_MAX_LENGTH} characters.`);
+    }
+    if (data.url && data.url.length > URL_MAX_LENGTH) {
+      throw new Error(`URL must be at most ${URL_MAX_LENGTH} characters.`);
+    }
+    if (data.notes && data.notes.length > NOTES_MAX_LENGTH) {
+      throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
+    }
+    if (data.tags) {
+      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
+        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
+      }
+      for (const tag of data.tags) {
+        if (tag.length > TAG_MAX_LENGTH) {
+          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
+        }
+      }
+    }
   }
 
   getBruteForceState(): BruteForceState {
