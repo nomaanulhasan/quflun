@@ -6,8 +6,8 @@ Qufly is a privacy-first, offline-first password manager. We take security repor
 
 | Version | Supported |
 |---------|-----------|
-| 0.5.x   | ✅ Active development |
-| < 0.5   | ❌ Not supported |
+| 1.0.x   | ✅ Active development |
+| < 1.0   | ❌ Not supported |
 
 ## Reporting a Vulnerability
 

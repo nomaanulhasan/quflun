@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CSP hardening and post-build hash extraction
 - Security headers configuration
 
-## [0.5.0] - Foundation Complete
+## [1.0.0] - Foundation Complete
 
 ### Added
 
