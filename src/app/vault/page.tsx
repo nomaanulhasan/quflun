@@ -2,34 +2,29 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Star, X, FolderOpen, StickyNote } from 'lucide-react';
+import { Search, Star, X, FolderOpen } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useVaultStore } from '@/components/providers';
 import { Shell } from '@/components/layout/shell';
 import { EntryCard } from '@/components/entries/entry-card';
+import { EmptyState } from '@/components/common/empty-state';
+import { PageHeader } from '@/components/common/page-header';
+import { TagFilter } from '@/components/filters/tag-filter';
+import { CategoryFilter } from '@/components/filters/category-filter';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem } from '@/types';
 
-/**
- * Vault entry list — search, filter, and browse entries.
- */
 export default function VaultPage() {
   const status = useVaultStore((s) => s.status);
   const entries = useVaultStore((s) => s.entries);
   const router = useRouter();
 
-  // Redirect to home if locked
   useEffect(() => {
-    if (status === 'locked') {
-      router.replace('/');
-    }
+    if (status === 'locked') router.replace('/');
   }, [status, router]);
 
-  if (status !== 'unlocked') {
-    return null;
-  }
+  if (status !== 'unlocked') return null;
 
   return (
     <Shell>
@@ -46,43 +41,23 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  // Derive categories and tags from entries
   const categories = useMemo(() => {
     const set = new Set<string>();
-    for (const e of entries) {
-      if (e.category) set.add(e.category);
-    }
+    for (const e of entries) { if (e.category) set.add(e.category); }
     return [...set].sort();
   }, [entries]);
 
   const tags = useMemo(() => {
     const set = new Set<string>();
-    for (const e of entries) {
-      for (const t of e.tags) set.add(t);
-    }
+    for (const e of entries) { for (const t of e.tags) set.add(t); }
     return [...set].sort();
   }, [entries]);
 
-  // Filter entries
   const filtered = useMemo(() => {
     let result = entries;
-
-    // Favorites filter
-    if (showFavorites) {
-      result = result.filter((e) => e.favorite);
-    }
-
-    // Category filter
-    if (selectedCategory) {
-      result = result.filter((e) => e.category === selectedCategory);
-    }
-
-    // Tag filter
-    if (selectedTag) {
-      result = result.filter((e) => e.tags.includes(selectedTag));
-    }
-
-    // Search filter (case-insensitive substring)
+    if (showFavorites) result = result.filter((e) => e.favorite);
+    if (selectedCategory) result = result.filter((e) => e.category === selectedCategory);
+    if (selectedTag) result = result.filter((e) => e.tags.includes(selectedTag));
     if (query.trim()) {
       const q = query.trim().toLowerCase().slice(0, SEARCH_MAX_QUERY_LENGTH);
       result = result.filter((e) =>
@@ -92,7 +67,6 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
         e.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
-
     return result;
   }, [entries, query, showFavorites, selectedCategory, selectedTag]);
 
@@ -107,15 +81,12 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Vault</h1>
-        <span className="text-sm text-muted-foreground">
-          {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
-        </span>
-      </div>
+      <PageHeader
+        title="Vault"
+        subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
+      />
 
-      {/* Search bar */}
+      {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input
@@ -138,7 +109,7 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
         )}
       </div>
 
-      {/* Filter chips */}
+      {/* Filters */}
       <div className="flex flex-wrap gap-2">
         <Button
           variant={showFavorites ? 'default' : 'outline'}
@@ -150,40 +121,8 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
           Favorites
         </Button>
 
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {categories.map((cat) => (
-              <Button
-                key={cat}
-                variant={selectedCategory === cat ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-                className="gap-1.5"
-              >
-                <FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
-                {cat}
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {tags.slice(0, 10).map((tag) => (
-              <Badge
-                key={tag}
-                variant={selectedTag === tag ? 'default' : 'secondary'}
-                className="cursor-pointer"
-                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-              >
-                {tag}
-              </Badge>
-            ))}
-            {tags.length > 10 && (
-              <Badge variant="secondary">+{tags.length - 10}</Badge>
-            )}
-          </div>
-        )}
+        <CategoryFilter categories={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
+        <TagFilter tags={tags} selected={selectedTag} onSelect={setSelectedTag} />
 
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs">
@@ -192,11 +131,13 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
         )}
       </div>
 
-      {/* Entry list or empty state */}
+      {/* Content */}
       {entries.length === 0 ? (
-        <EmptyVault />
+        <EmptyState icon={FolderOpen} title="Your vault is empty" description="Add your first credential to get started." />
       ) : filtered.length === 0 ? (
-        showFavorites ? <EmptyFavorites /> : <EmptySearch />
+        showFavorites
+          ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
+          : <EmptyState icon={Search} title="No entries match your search" description="Try a different query or clear your filters." />
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((entry) => (
@@ -204,44 +145,6 @@ function EntryListView({ entries }: { entries: EntryListItem[] }) {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-// ─── Empty States ──────────────────────────────────────────────────────────────
-
-function EmptyVault() {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <FolderOpen className="h-12 w-12 text-muted-foreground/40" aria-hidden="true" />
-      <h2 className="mt-4 text-lg font-medium">Your vault is empty</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Add your first credential to get started.
-      </p>
-    </div>
-  );
-}
-
-function EmptySearch() {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <Search className="h-12 w-12 text-muted-foreground/40" aria-hidden="true" />
-      <h2 className="mt-4 text-lg font-medium">No entries match your search</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Try a different query or clear your filters.
-      </p>
-    </div>
-  );
-}
-
-function EmptyFavorites() {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <Star className="h-12 w-12 text-muted-foreground/40" aria-hidden="true" />
-      <h2 className="mt-4 text-lg font-medium">No favorites yet</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Star entries for quick access.
-      </p>
     </div>
   );
 }
