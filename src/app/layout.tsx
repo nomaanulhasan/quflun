@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased overflow-x-clip`}
       suppressHydrationWarning
     >
       <head>
@@ -44,9 +45,10 @@ export default function RootLayout({
           />
         */}
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        {/* Providers placeholder — wrap children with context providers here (e.g., ThemeProvider, Toaster) */}
-        {children}
+      <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-clip">
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
