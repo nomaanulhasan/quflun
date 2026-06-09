@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createVaultStore, type VaultState } from '@/stores/vault-store';
 import { createUIStore, type UIState } from '@/stores/ui-store';
+import { ThemeProvider } from '@/components/theme-provider';
 import type { StoreApi } from 'zustand';
 import { useStore } from 'zustand';
 
@@ -97,7 +98,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <VaultStoreContext.Provider value={vaultStore}>
       <UIStoreContext.Provider value={uiStore}>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </UIStoreContext.Provider>
     </VaultStoreContext.Provider>
   );
