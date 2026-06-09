@@ -2,13 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
 import { TagsInput } from '@/components/forms/tags-input';
+import { DeleteDialog } from '@/components/vault/delete-dialog';
 import { useVaultStore } from '@/components/providers';
 import type { VaultEntry } from '@/types';
 
@@ -42,11 +41,8 @@ export function EditNoteForm({ entry }: EditNoteFormProps) {
   }
 
   async function handleDelete() {
-    if (!confirm(`Delete "${entry.title}"? This cannot be undone.`)) return;
-    setLoading(true);
-    try { await deleteEntry(entry.uuid); router.replace('/vault'); }
-    catch (err) { setError((err as Error).message); }
-    finally { setLoading(false); }
+    await deleteEntry(entry.uuid);
+    router.replace('/vault');
   }
 
   return (
@@ -67,9 +63,7 @@ export function EditNoteForm({ entry }: EditNoteFormProps) {
       <FormError message={error} />
       <FormActions submitLabel="Save Changes" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !body.trim()} onBack={() => router.back()} />
       <div className="border-t border-border pt-4">
-        <Button type="button" variant="destructive" size="sm" onClick={handleDelete} disabled={loading} className="gap-1.5">
-          <Trash2 className="h-3.5 w-3.5" /> Delete Note
-        </Button>
+        <DeleteDialog title={entry.title} onConfirm={handleDelete} disabled={loading} />
       </div>
     </form>
   );
