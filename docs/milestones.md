@@ -3,15 +3,26 @@
 ## v1-foundation-complete
 
 Date: 2026-06-09
+Status: Completed
+Git tag: v1-foundation-complete
 
 Highlights:
+- Project scaffolding completed
+- Adapter layer completed (CryptoAdapter, StorageAdapter)
+- Vault engine completed (lifecycle, CRUD, notes, categories, tags, favorites)
+- Service layer completed (search, password generator, clipboard, idle monitor)
+- Import/export completed (KDBX with UUID dedup, CSV via PapaParse)
+- Health check completed (group hierarchy, UUID uniqueness, serialization)
+- Zustand stores and hooks completed
+- Core UI completed (lock screen, vault list, entry editor, new entry/note)
+- Search and filters implemented (category, tag, favorites)
+- Password generator implemented (inline dialog from password fields)
+- Secure notes implemented (KDBX entries with type marker)
+- Shared component architecture established (PasswordField, TagsInput, FavoriteToggle, etc.)
+- Static export architecture finalized (webpack + argon2 WASM asset)
+- Memory-only decrypted vault model
+- Navigation and reload trust issues fixed
 - 295 tests passing
-- Core UI complete
-- Memory-only decrypted vault
-- Offline-first architecture
-- Static export support
-- Shared component architecture
-- Low technical debt
 
 Next phase: v1-utility-pages
 
@@ -19,43 +30,14 @@ Next phase: v1-utility-pages
 
 Status: Planned
 
-- Settings page (idle timeout, clipboard timeout, theme, backup reminder)
-- Standalone password generator page
-- Import/export page with file picker UI
-- Health check page with results display
-- Security documentation page
-- Privacy policy page
-- Security limitations page
-
 ## v1-pwa-complete
 
 Status: Planned
-
-- Serwist service worker configuration
-- Web App Manifest with icons
-- Offline caching of all assets
-- Update notification UI
-- SW registration failure handling
 
 ## v1-beta
 
 Status: Planned
 
-- CSP meta tag with post-build SHA-256 hash extraction
-- Security headers (_headers file for hosting platforms)
-- Backup reminder system
-- Compliance tests (no telemetry, no external requests)
-- CSP validation tests
-- Integration tests (full vault lifecycle)
-- README with build instructions
-
 ## v1.0.0
 
 Status: Planned
-
-- All requirements verified
-- All property tests passing
-- Accessibility audit
-- Performance profiling (10K entries)
-- Public repository publication
-- Open source release
