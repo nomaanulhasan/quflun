@@ -2,149 +2,119 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Star, X, FolderOpen } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { FolderOpen, Star, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useVaultStore } from '@/components/providers';
 import { Shell } from '@/components/layout/shell';
-import { EntryCard } from '@/components/entries/entry-card';
-import { EmptyState } from '@/components/common/empty-state';
 import { PageHeader } from '@/components/common/page-header';
-import { TagFilter } from '@/components/filters/tag-filter';
-import { CategoryFilter } from '@/components/filters/category-filter';
+import { EmptyState } from '@/components/common/empty-state';
+import { EntryCard } from '@/components/entries/entry-card';
+import { VaultSearchBar } from '@/components/vault/vault-search-bar';
+import { VaultFilters } from '@/components/vault/vault-filters';
+import { EditEntryForm } from '@/components/vault/edit-entry-form';
+import { EditNoteForm } from '@/components/vault/edit-note-form';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
-import type { EntryListItem } from '@/types';
+import type { EntryListItem, VaultEntry } from '@/types';
 
 export default function VaultPage() {
   const status = useVaultStore((s) => s.status);
   const entries = useVaultStore((s) => s.entries);
   const router = useRouter();
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'locked') router.replace('/');
-  }, [status, router]);
-
+  useEffect(() => { if (status === 'locked') router.replace('/'); }, [status, router]);
   if (status !== 'unlocked') return null;
+
+  if (editingId) {
+    return (
+      <Shell>
+        <EntryEditorWrapper entryId={editingId} onBack={() => setEditingId(null)} />
+      </Shell>
+    );
+  }
 
   return (
     <Shell>
-      <EntryListView entries={entries} />
+      <VaultListView entries={entries} onEdit={setEditingId} onNew={() => router.push('/vault/new')} />
     </Shell>
   );
 }
 
-// ─── Entry List View ───────────────────────────────────────────────────────────
+// ─── List View ─────────────────────────────────────────────────────────────────
 
-function EntryListView({ entries }: { entries: EntryListItem[] }) {
+function VaultListView({ entries, onEdit, onNew }: { entries: EntryListItem[]; onEdit: (id: string) => void; onNew: () => void }) {
   const [query, setQuery] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    for (const e of entries) { if (e.category) set.add(e.category); }
-    return [...set].sort();
-  }, [entries]);
-
-  const tags = useMemo(() => {
-    const set = new Set<string>();
-    for (const e of entries) { for (const t of e.tags) set.add(t); }
-    return [...set].sort();
-  }, [entries]);
+  const categories = useMemo(() => [...new Set(entries.map((e) => e.category).filter(Boolean) as string[])].sort(), [entries]);
+  const tags = useMemo(() => [...new Set(entries.flatMap((e) => e.tags))].sort(), [entries]);
 
   const filtered = useMemo(() => {
-    let result = entries;
-    if (showFavorites) result = result.filter((e) => e.favorite);
-    if (selectedCategory) result = result.filter((e) => e.category === selectedCategory);
-    if (selectedTag) result = result.filter((e) => e.tags.includes(selectedTag));
+    let r = entries;
+    if (showFavorites) r = r.filter((e) => e.favorite);
+    if (selectedCategory) r = r.filter((e) => e.category === selectedCategory);
+    if (selectedTag) r = r.filter((e) => e.tags.includes(selectedTag));
     if (query.trim()) {
       const q = query.trim().toLowerCase().slice(0, SEARCH_MAX_QUERY_LENGTH);
-      result = result.filter((e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.username.toLowerCase().includes(q) ||
-        e.url.toLowerCase().includes(q) ||
-        e.tags.some((t) => t.toLowerCase().includes(q))
-      );
+      r = r.filter((e) => e.title.toLowerCase().includes(q) || e.username.toLowerCase().includes(q) || e.url.toLowerCase().includes(q) || e.tags.some((t) => t.toLowerCase().includes(q)));
     }
-    return result;
+    return r;
   }, [entries, query, showFavorites, selectedCategory, selectedTag]);
 
-  const hasActiveFilters = showFavorites || selectedCategory || selectedTag;
-
-  function clearFilters() {
-    setShowFavorites(false);
-    setSelectedCategory(null);
-    setSelectedTag(null);
-    setQuery('');
-  }
+  const hasFilters = showFavorites || !!selectedCategory || !!selectedTag;
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        title="Vault"
-        subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
+      <div className="flex items-center justify-between">
+        <PageHeader title="Vault" subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`} />
+        <Button size="sm" onClick={onNew} className="gap-1.5"><Plus className="h-3.5 w-3.5" />Add</Button>
+      </div>
+      <VaultSearchBar query={query} onChange={setQuery} />
+      <VaultFilters
+        showFavorites={showFavorites} onToggleFavorites={() => setShowFavorites(!showFavorites)}
+        categories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory}
+        tags={tags} selectedTag={selectedTag} onSelectTag={setSelectedTag}
+        hasActiveFilters={hasFilters} onClearFilters={() => { setShowFavorites(false); setSelectedCategory(null); setSelectedTag(null); setQuery(''); }}
       />
-
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-        <Input
-          type="search"
-          placeholder="Search entries..."
-          value={query}
-          onChange={(e) => setQuery((e.target as HTMLInputElement).value)}
-          className="pl-9 pr-9"
-          aria-label="Search entries"
-          maxLength={SEARCH_MAX_QUERY_LENGTH}
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label="Clear search"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={showFavorites ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setShowFavorites(!showFavorites)}
-          className="gap-1.5"
-        >
-          <Star className={`h-3.5 w-3.5 ${showFavorites ? 'fill-current' : ''}`} aria-hidden="true" />
-          Favorites
-        </Button>
-
-        <CategoryFilter categories={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
-        <TagFilter tags={tags} selected={selectedTag} onSelect={setSelectedTag} />
-
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs">
-            Clear filters
-          </Button>
-        )}
-      </div>
-
-      {/* Content */}
       {entries.length === 0 ? (
         <EmptyState icon={FolderOpen} title="Your vault is empty" description="Add your first credential to get started." />
       ) : filtered.length === 0 ? (
-        showFavorites
-          ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
-          : <EmptyState icon={Search} title="No entries match your search" description="Try a different query or clear your filters." />
+        showFavorites ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
+          : <EmptyState icon={Search} title="No results" description="Try a different query or clear filters." />
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((entry) => (
-            <EntryCard key={entry.uuid} entry={entry} />
-          ))}
+          {filtered.map((e) => <EntryCard key={e.uuid} entry={e} onClick={() => onEdit(e.uuid)} />)}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Editor Wrapper ────────────────────────────────────────────────────────────
+
+function EntryEditorWrapper({ entryId, onBack }: { entryId: string; onBack: () => void }) {
+  const [entry, setEntry] = useState<VaultEntry | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getServices } = await import('@/lib/runtime');
+        const { engine } = await getServices();
+        setEntry(engine.getEntry(entryId));
+      } catch (err) { setError((err as Error).message); }
+    })();
+  }, [entryId]);
+
+  if (error) return <p className="py-8 text-center text-sm text-destructive">{error}</p>;
+  if (!entry) return <p className="text-sm text-muted-foreground">Loading...</p>;
+
+  return (
+    <div className="mx-auto w-full max-w-lg space-y-6">
+      <PageHeader title={entry.type === 'note' ? 'Edit Note' : 'Edit Entry'} />
+      {entry.type === 'note' ? <EditNoteForm entry={entry} /> : <EditEntryForm entry={entry} />}
     </div>
   );
 }

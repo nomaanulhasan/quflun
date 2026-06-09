@@ -2,13 +2,27 @@ import * as kdbxweb from 'kdbxweb';
 
 /**
  * Registers the Argon2 implementation with kdbxweb's CryptoEngine.
- * Must be called before any KDBX operations that require key derivation.
+ *
+ * argon2-browser's WASM loading checks these paths in order:
+ * 1. global.loadArgon2WasmBinary() ← we use this
+ * 2. require('../dist/argon2.wasm') → atob() ← broken in webpack bundles
+ * 3. fetch(global.argon2WasmPath) ← never reached if require exists
+ *
+ * We set loadArgon2WasmBinary to a function that fetches the WASM file
+ * from the asset path where webpack placed it.
  */
 export async function initArgon2(): Promise<void> {
+  // Provide custom WASM loader — checked first by argon2-browser,
+  // bypasses the broken require() → atob() path in webpack bundles.
+  (globalThis as Record<string, unknown>).loadArgon2WasmBinary = async () => {
+    const response = await fetch('/_next/static/wasm/argon2.wasm');
+    const buffer = await response.arrayBuffer();
+    return new Uint8Array(buffer);
+  };
+
   const argon2 = await import('argon2-browser');
   const argon2Module = argon2.default || argon2;
 
-  // C-2 fix: Verify the module loaded correctly before registration
   if (typeof argon2Module.hash !== 'function') {
     throw new Error(
       'argon2-browser failed to load correctly: hash function not found'
@@ -19,12 +33,12 @@ export async function initArgon2(): Promise<void> {
     async (
       password: ArrayBuffer,
       salt: ArrayBuffer,
-      memory: number, // mem: KiB (matches KDBX format, matches argon2-browser API)
+      memory: number,
       iterations: number,
       length: number,
       parallelism: number,
-      type: 0 | 2, // H-1 fix: Use literal union matching kdbxweb's Argon2Type
-      version: 0x10 | 0x13 // H-1 fix: Use literal union matching kdbxweb's Argon2Version
+      type: 0 | 2,
+      version: 0x10 | 0x13
     ): Promise<ArrayBuffer> => {
       const result = await argon2Module.hash({
         pass: new Uint8Array(password),
@@ -36,7 +50,6 @@ export async function initArgon2(): Promise<void> {
         type,
         version,
       });
-      // M-1 fix: Create a clean copy to avoid returning a view into a larger backing buffer
       return new Uint8Array(result.hash).buffer as ArrayBuffer;
     }
   );

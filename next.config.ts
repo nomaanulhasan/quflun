@@ -12,8 +12,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
   serverExternalPackages: ["argon2-browser"],
-  // Empty turbopack config silences the warning about webpack config.
-  // Production builds use --webpack flag; Turbopack still works for dev.
   turbopack: {},
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -23,13 +21,23 @@ const nextConfig: NextConfig = {
         fs: false,
         path: false,
       };
-      // Exclude argon2-browser from client bundle — it uses Emscripten WASM
-      // loading that is incompatible with webpack's native WASM handling.
-      // argon2-browser is loaded dynamically at runtime in the browser.
-      config.externals = [
-        ...(Array.isArray(config.externals) ? config.externals : config.externals ? [config.externals] : []),
-        'argon2-browser',
-      ];
+
+      // argon2-browser loads WASM via one of these paths:
+      // 1. global.loadArgon2WasmBinary (custom function)
+      // 2. require('../dist/argon2.wasm') → base64 string → atob()
+      // 3. fetch(global.argon2WasmPath) → ArrayBuffer
+      //
+      // We use path 3: copy the WASM to public/ and set the path at runtime.
+      // Tell webpack to ignore the .wasm require (we'll handle it via fetch).
+      config.module = config.module || {};
+      config.module.rules = config.module.rules || [];
+      config.module.rules.push({
+        test: /argon2\.wasm$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/wasm/[name][ext]',
+        },
+      });
     }
     return config;
   },
