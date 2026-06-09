@@ -16,26 +16,44 @@ import { EditNoteForm } from '@/components/vault/edit-note-form';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem, VaultEntry } from '@/types';
 
+import { LockScreen } from '@/components/layout/lock-screen';
+
 export default function VaultPage() {
   const status = useVaultStore((s) => s.status);
+  const vaultId = useVaultStore((s) => s.vaultId);
   const entries = useVaultStore((s) => s.entries);
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editCounter, setEditCounter] = useState(0);
 
-  useEffect(() => { if (status === 'locked') router.replace('/'); }, [status, router]);
+  function openEditor(id: string) {
+    setEditingId(id);
+    setEditCounter((c) => c + 1);
+  }
+
+  // All hooks called above — early returns below are safe
+  useEffect(() => {
+    if (status === 'locked' && !vaultId) router.replace('/');
+  }, [status, vaultId, router]);
+
+  // If locked with a vault loaded, show lock screen
+  if (status === 'locked' && vaultId) {
+    return <LockScreen />;
+  }
+
   if (status !== 'unlocked') return null;
 
   if (editingId) {
     return (
       <Shell>
-        <EntryEditorWrapper entryId={editingId} onBack={() => setEditingId(null)} />
+        <EntryEditorWrapper key={`${editingId}-${editCounter}`} entryId={editingId} onBack={() => setEditingId(null)} />
       </Shell>
     );
   }
 
   return (
     <Shell>
-      <VaultListView entries={entries} onEdit={setEditingId} onNew={() => router.push('/vault/new')} />
+      <VaultListView entries={entries} onEdit={openEditor} onNew={() => router.push('/vault/new')} />
     </Shell>
   );
 }
@@ -114,7 +132,7 @@ function EntryEditorWrapper({ entryId, onBack }: { entryId: string; onBack: () =
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
       <PageHeader title={entry.type === 'note' ? 'Edit Note' : 'Edit Entry'} />
-      {entry.type === 'note' ? <EditNoteForm entry={entry} /> : <EditEntryForm entry={entry} />}
+      {entry.type === 'note' ? <EditNoteForm entry={entry} onBack={onBack} /> : <EditEntryForm entry={entry} onBack={onBack} />}
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
@@ -13,9 +12,10 @@ import type { VaultEntry } from '@/types';
 
 interface EditNoteFormProps {
   entry: VaultEntry;
+  onBack: () => void;
 }
 
-export function EditNoteForm({ entry }: EditNoteFormProps) {
+export function EditNoteForm({ entry, onBack }: EditNoteFormProps) {
   const [title, setTitle] = useState(entry.title);
   const [body, setBody] = useState(entry.notes);
   const [tags, setTags] = useState<string[]>(entry.tags);
@@ -24,7 +24,6 @@ export function EditNoteForm({ entry }: EditNoteFormProps) {
   const [error, setError] = useState<string | null>(null);
   const editNote = useVaultStore((s) => s.editNote);
   const deleteEntry = useVaultStore((s) => s.deleteEntry);
-  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -35,14 +34,14 @@ export function EditNoteForm({ entry }: EditNoteFormProps) {
     setLoading(true);
     try {
       await editNote(entry.uuid, { title: title.trim(), body: body.trim(), tags, favorite });
-      router.replace('/vault');
+      onBack();
     } catch (err) { setError((err as Error).message); }
     finally { setLoading(false); }
   }
 
   async function handleDelete() {
     await deleteEntry(entry.uuid);
-    router.replace('/vault');
+    onBack();
   }
 
   return (
@@ -61,7 +60,7 @@ export function EditNoteForm({ entry }: EditNoteFormProps) {
       </div>
       <FavoriteToggle checked={favorite} onChange={setFavorite} disabled={loading} />
       <FormError message={error} />
-      <FormActions submitLabel="Save Changes" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !body.trim()} onBack={() => router.back()} />
+      <FormActions submitLabel="Save Changes" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !body.trim()} onBack={onBack} />
       <div className="border-t border-border pt-4">
         <DeleteDialog title={entry.title} onConfirm={handleDelete} disabled={loading} />
       </div>

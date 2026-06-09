@@ -73,4 +73,8 @@ export interface VaultEngine {
 
   /** Get the current vault ID (null if no vault loaded) */
   getVaultId(): string | null;
+
+  /** Set vault context (id + name) without unlocking — used after page reload
+   * to tell the engine which vault to unlock. Does NOT decrypt anything. */
+  setVaultContext(id: string, name: string): void;
 }

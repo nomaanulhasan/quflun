@@ -16,7 +16,7 @@ export function TagFilter({ tags, selected, onSelect, maxVisible = 10 }: TagFilt
   if (tags.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1 items-center">
       {tags.slice(0, maxVisible).map((tag) => (
         <Badge
           key={tag}

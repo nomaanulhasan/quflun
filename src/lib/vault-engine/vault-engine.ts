@@ -958,6 +958,13 @@ class VaultEngineImpl implements VaultEngine {
     return this.vaultId;
   }
 
+  setVaultContext(id: string, name: string): void {
+    // Sets which vault to unlock — does NOT decrypt anything.
+    // Used after page reload when we know the vault ID from IndexedDB metadata.
+    this.vaultId = id;
+    this.vaultName = name;
+  }
+
   private findGroupByName(db: kdbxweb.Kdbx, name: string): kdbxweb.KdbxGroup | undefined {
     const defaultGroup = db.getDefaultGroup();
     const recycleBinUuid = db.meta.recycleBinUuid;

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useRef, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { createVaultStore, type VaultState } from '@/stores/vault-store';
 import { createUIStore, type UIState } from '@/stores/ui-store';
 import type { StoreApi } from 'zustand';
@@ -34,37 +34,59 @@ export function useUIStore<T>(selector?: (state: UIState) => T) {
   return useStore(store, selector ?? ((s) => s as unknown as T));
 }
 
+// ─── Module-Level Singletons ───────────────────────────────────────────────────
+// Stores survive component remounts — prevents vault state loss on navigation.
+
+let vaultStore: VaultStoreApi | null = null;
+let uiStore: UIStoreApi | null = null;
+let initialized = false;
+
 // ─── Provider Component ────────────────────────────────────────────────────────
 
-/**
- * Lazily initializes services (crypto adapter, storage adapter, vault engine)
- * to avoid Turbopack trying to bundle argon2-browser WASM at build time.
- */
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [ready, setReady] = useState(false);
-  const vaultStoreRef = useRef<VaultStoreApi | null>(null);
-  const uiStoreRef = useRef<UIStoreApi | null>(null);
+  const [ready, setReady] = useState(initialized);
 
   useEffect(() => {
+    if (initialized) {
+      setReady(true);
+      return;
+    }
+
     async function init() {
       const { getServices } = await import('@/lib/runtime');
       const { engine, storage } = await getServices();
 
-      if (!vaultStoreRef.current) {
-        vaultStoreRef.current = createVaultStore(engine);
+      if (!vaultStore) {
+        vaultStore = createVaultStore(engine);
       }
-      if (!uiStoreRef.current) {
-        uiStoreRef.current = createUIStore(storage);
+      if (!uiStore) {
+        uiStore = createUIStore(storage);
       }
 
+      // Hydrate vault metadata from IndexedDB — if a vault was previously
+      // created/opened, set the engine's vault context so unlock() works.
+      // Only metadata (id, name) is restored — NOT keys, passwords, or entries.
+      const vaults = await storage.listVaults();
+      if (vaults.length > 0 && !vaultStore.getState().vaultId) {
+        const latest = vaults.sort((a, b) => b.lastOpened.localeCompare(a.lastOpened))[0];
+        // Tell the engine which vault to unlock
+        engine.setVaultContext(latest.id, latest.name);
+        // Update store to show lock screen
+        vaultStore.setState({
+          vaultId: latest.id,
+          vaultName: latest.name,
+          status: 'locked',
+        });
+      }
+
+      initialized = true;
       setReady(true);
     }
 
     init();
   }, []);
 
-  if (!ready || !vaultStoreRef.current || !uiStoreRef.current) {
-    // Loading state while services initialize
+  if (!ready || !vaultStore || !uiStore) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <p className="text-sm text-muted-foreground">Loading...</p>
@@ -73,8 +95,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <VaultStoreContext.Provider value={vaultStoreRef.current}>
-      <UIStoreContext.Provider value={uiStoreRef.current}>
+    <VaultStoreContext.Provider value={vaultStore}>
+      <UIStoreContext.Provider value={uiStore}>
         {children}
       </UIStoreContext.Provider>
     </VaultStoreContext.Provider>
