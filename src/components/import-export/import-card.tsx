@@ -1,16 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SettingsCard } from '@/components/settings/settings-card';
+import { PasswordInput } from '@/components/ui/password-input';
 import { FilePicker } from '@/components/forms/file-picker';
-import { PasswordField } from '@/components/forms/password-field';
 import { FormError } from '@/components/ui/form-error';
+import { SettingsCard } from '@/components/settings/settings-card';
 import { ImportSummary } from './import-summary';
 import type { ImportResult } from '@/lib/import-export';
 
-export function ImportCard() {
-  const [mode, setMode] = useState<'kdbx' | 'csv'>('kdbx');
+interface ImportCardProps {
+  onImportKdbx: (file: ArrayBuffer, password: string) => Promise<ImportResult>;
+  onImportCsv: (content: string) => Promise<ImportResult>;
+}
+
+export function ImportCard({ onImportKdbx, onImportCsv }: ImportCardProps) {
   const [file, setFile] = useState<ArrayBuffer | null>(null);
   const [fileName, setFileName] = useState('');
   const [password, setPassword] = useState('');
@@ -18,35 +23,26 @@ export function ImportCard() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ImportResult | null>(null);
 
-  async function handleImport() {
-    if (!file) { setError('Select a file first.'); return; }
-    if (mode === 'kdbx' && !password) { setError('Password is required for KDBX.'); return; }
+  const isKdbx = fileName.endsWith('.kdbx');
+  const isCsv = fileName.endsWith('.csv');
 
+  async function handleImport() {
+    if (!file) return;
     setError(null);
     setResult(null);
     setLoading(true);
+
     try {
-      const { getServices } = await import('@/lib/runtime');
-      const { engine } = await getServices();
-
-      if (mode === 'kdbx') {
-        setError('KDBX import requires additional engine integration. Use CSV import for now, or export/re-create your vault.');
-      } else {
-        const { importCsv } = await import('@/lib/import-export/csv-handler');
+      if (isKdbx) {
+        if (!password) { setError('Password required for KDBX files.'); setLoading(false); return; }
+        const r = await onImportKdbx(file, password);
+        setResult(r);
+      } else if (isCsv) {
         const text = new TextDecoder().decode(new Uint8Array(file));
-        const { rows, result: csvResult } = importCsv(text);
-
-        // Add each row as a new entry
-        for (const row of rows) {
-          await engine.addEntry({
-            title: row.title,
-            username: row.username,
-            password: row.password,
-            url: row.url,
-            notes: row.notes || '',
-          });
-        }
-        setResult(csvResult);
+        const r = await onImportCsv(text);
+        setResult(r);
+      } else {
+        setError('Unsupported file type. Use .kdbx or .csv');
       }
     } catch (err) {
       setError((err as Error).message);
@@ -56,30 +52,29 @@ export function ImportCard() {
   }
 
   return (
-    <SettingsCard title="Import" description="Import entries from KDBX or CSV files.">
-      <div className="space-y-4">
-        <div className="flex gap-2">
-          <Button size="sm" variant={mode === 'kdbx' ? 'default' : 'outline'} onClick={() => setMode('kdbx')}>KDBX</Button>
-          <Button size="sm" variant={mode === 'csv' ? 'default' : 'outline'} onClick={() => setMode('csv')}>CSV</Button>
-        </div>
-
+    <SettingsCard title="Import" description="Import entries from a KDBX or CSV file.">
+      <div className="space-y-3">
         <FilePicker
           id="import-file"
-          accept={mode === 'kdbx' ? '.kdbx' : '.csv'}
+          accept=".kdbx,.csv"
           fileName={fileName}
           disabled={loading}
           onFileSelected={(buf, name) => { setFile(buf); setFileName(name); setError(null); setResult(null); }}
           onError={setError}
         />
-
-        {mode === 'kdbx' && (
-          <PasswordField id="import-password" label="File Password" value={password} onChange={setPassword} placeholder="Password for the KDBX file" disabled={loading} />
+        {isKdbx && (
+          <PasswordInput
+            id="import-password"
+            value={password}
+            onChange={setPassword}
+            placeholder="Import file password"
+            disabled={loading}
+          />
         )}
-
-        <Button onClick={handleImport} disabled={loading || !file} size="sm">
+        <Button size="sm" onClick={handleImport} disabled={loading || !file} className="gap-1.5">
+          <Upload className="h-3.5 w-3.5" />
           {loading ? 'Importing...' : 'Import'}
         </Button>
-
         <FormError message={error} />
         {result && <ImportSummary result={result} />}
       </div>

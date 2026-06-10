@@ -6,28 +6,20 @@ interface ImportSummaryProps {
 
 export function ImportSummary({ result }: ImportSummaryProps) {
   return (
-    <div className="rounded-md border border-border bg-muted/50 p-4 space-y-2 text-sm">
-      <div className="flex justify-between">
-        <span>Imported</span>
-        <span className="font-medium">{result.imported}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Skipped</span>
-        <span className="font-medium">{result.skipped.length}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Total processed</span>
-        <span className="font-medium">{result.total}</span>
-      </div>
+    <div className="rounded-md border border-border bg-muted/50 p-3 text-sm space-y-1">
+      <p><strong>{result.imported}</strong> entries imported</p>
       {result.skipped.length > 0 && (
-        <details className="pt-2">
-          <summary className="cursor-pointer text-xs text-muted-foreground">Show skip reasons</summary>
-          <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
-            {result.skipped.map((s, i) => (
+        <>
+          <p className="text-muted-foreground">{result.skipped.length} skipped:</p>
+          <ul className="ml-4 list-disc text-xs text-muted-foreground space-y-0.5">
+            {result.skipped.slice(0, 5).map((s, i) => (
               <li key={i}>{s.identifier}: {s.reason}</li>
             ))}
+            {result.skipped.length > 5 && (
+              <li>...and {result.skipped.length - 5} more</li>
+            )}
           </ul>
-        </details>
+        </>
       )}
     </div>
   );

@@ -799,6 +799,61 @@ class VaultEngineImpl implements VaultEngine {
     await this.save();
   }
 
+  // ─── Import/Export (Task 14.2) ─────────────────────────────────────────────
+
+  async importKdbx(file: ArrayBuffer, password: string): Promise<import('@/lib/import-export').ImportResult> {
+    const db = this.requireUnlockedDb();
+    const { importKdbx } = await import('@/lib/import-export/kdbx-handler');
+    const result = await importKdbx(db, file, password, this.cryptoAdapter);
+    await this.save();
+    return result;
+  }
+
+  async exportKdbx(): Promise<ArrayBuffer> {
+    const db = this.requireUnlockedDb();
+    const { exportKdbx } = await import('@/lib/import-export/kdbx-handler');
+    return exportKdbx(db);
+  }
+
+  async importCsvEntries(csvContent: string): Promise<import('@/lib/import-export').ImportResult> {
+    this.requireUnlockedDb();
+    const { importCsv } = await import('@/lib/import-export/csv-handler');
+    const { rows, result } = importCsv(csvContent);
+
+    for (const row of rows) {
+      await this.addEntry({
+        title: row.title,
+        username: row.username,
+        password: row.password,
+        url: row.url,
+        notes: row.notes ?? '',
+      });
+    }
+
+    return result;
+  }
+
+  async exportCsvEntries(): Promise<string> {
+    const db = this.requireUnlockedDb();
+    const { exportCsv } = await import('@/lib/import-export/csv-handler');
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+    const entries: import('@/lib/import-export/csv-handler').CsvExportEntry[] = [];
+
+    for (const entry of defaultGroup.allEntries()) {
+      if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) continue;
+      entries.push({
+        title: this.getStringField(entry, 'Title'),
+        username: this.getStringField(entry, 'UserName'),
+        password: this.getFieldText(entry, 'Password'),
+        url: this.getStringField(entry, 'URL'),
+        notes: this.getFieldText(entry, 'Notes'),
+      });
+    }
+
+    return exportCsv(entries);
+  }
+
   // ─── Helper Methods ────────────────────────────────────────────────────────
 
   private requireUnlockedDb(): kdbxweb.Kdbx {

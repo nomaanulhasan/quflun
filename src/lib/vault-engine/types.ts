@@ -65,6 +65,12 @@ export interface VaultEngine {
   // Organization — Favorites (Task 4.4)
   setFavorite(entryUuid: string, favorite: boolean): Promise<void>;
 
+  // Import/Export (Task 14.2)
+  importKdbx(file: ArrayBuffer, password: string): Promise<import('@/lib/import-export').ImportResult>;
+  exportKdbx(): Promise<ArrayBuffer>;
+  importCsvEntries(csvContent: string): Promise<import('@/lib/import-export').ImportResult>;
+  exportCsvEntries(): Promise<string>;
+
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;
 
