@@ -854,6 +854,13 @@ class VaultEngineImpl implements VaultEngine {
     return exportCsv(entries);
   }
 
+  async runHealthCheck(): Promise<import('@/lib/vault-engine/health-check').HealthCheckResult> {
+    const db = this.requireUnlockedDb();
+    const { createVaultHealthCheck } = await import('@/lib/vault-engine/health-check');
+    const check = createVaultHealthCheck();
+    return check.run(db);
+  }
+
   // ─── Helper Methods ────────────────────────────────────────────────────────
 
   private requireUnlockedDb(): kdbxweb.Kdbx {

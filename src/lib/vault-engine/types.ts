@@ -71,6 +71,9 @@ export interface VaultEngine {
   importCsvEntries(csvContent: string): Promise<import('@/lib/import-export').ImportResult>;
   exportCsvEntries(): Promise<string>;
 
+  // Health Check
+  runHealthCheck(): Promise<import('./health-check').HealthCheckResult>;
+
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;
 
