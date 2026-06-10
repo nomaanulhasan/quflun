@@ -43,6 +43,9 @@ export function DeleteDialog({ title, onConfirm, disabled = false }: DeleteDialo
         <DialogDescription className="text-sm text-muted-foreground">
           This action cannot be undone. The entry will be permanently removed.
         </DialogDescription>
+        <p className="text-xs text-amber-600 dark:text-amber-500">
+          Consider backing up your vault before deleting entries.
+        </p>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" size="sm" onClick={() => setOpen(false)} disabled={loading}>
             Cancel

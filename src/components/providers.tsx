@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { createVaultStore, type VaultState } from '@/stores/vault-store';
 import { createUIStore, type UIState } from '@/stores/ui-store';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import type { StoreApi } from 'zustand';
 import { useStore } from 'zustand';
 
@@ -100,6 +101,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <UIStoreContext.Provider value={uiStore}>
         <ThemeProvider>
           {children}
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </UIStoreContext.Provider>
     </VaultStoreContext.Provider>

@@ -1,7 +1,14 @@
+'use client';
+
 import { AlertTriangle } from 'lucide-react';
 import { SettingsCard } from '@/components/settings/settings-card';
+import { useUIStore } from '@/components/providers';
+import { timeSinceLastBackup } from '@/lib/backup-reminder';
 
 export function BackupStatusCard() {
+  const lastBackupDate = useUIStore((s) => s.settings.lastBackupDate);
+  const lastBackup = timeSinceLastBackup(lastBackupDate);
+
   return (
     <SettingsCard title="Backup Status">
       <div className="space-y-2">
@@ -15,7 +22,7 @@ export function BackupStatusCard() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          Private by design • Offline-first • Local-only
+          Last backup: {lastBackup} • Private by design • Offline-first • Local-only
         </p>
       </div>
     </SettingsCard>

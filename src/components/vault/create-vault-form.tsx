@@ -9,6 +9,7 @@ import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
 import { useVaultStore } from '@/components/providers';
 import { MASTER_PASSWORD_WEAK_THRESHOLD } from '@/lib/constants';
+import { toast } from 'sonner';
 
 interface CreateVaultFormProps {
   onBack: () => void;
@@ -37,6 +38,10 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
     setLoading(true);
     try {
       await create(password, name.trim());
+      toast.success('Vault created!', {
+        description: 'Consider exporting a backup to keep your data safe.',
+        duration: 6000,
+      });
       router.replace('/vault');
     } catch (err) {
       setError((err as Error).message);

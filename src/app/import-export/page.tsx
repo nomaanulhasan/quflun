@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useVaultStore } from '@/components/providers';
+import { useVaultStore, useUIStore } from '@/components/providers';
 import { Shell } from '@/components/layout/shell';
 import { PageHeader } from '@/components/common/page-header';
 import { ImportCard } from '@/components/import-export/import-card';
@@ -58,6 +58,7 @@ function ImportSection() {
 
 function ExportSection({ vaultName }: { vaultName: string }) {
   const [engine, setEngine] = useState<import('@/lib/vault-engine').VaultEngine | null>(null);
+  const updateSettings = useUIStore((s) => s.updateSettings);
 
   useEffect(() => {
     (async () => {
@@ -74,6 +75,7 @@ function ExportSection({ vaultName }: { vaultName: string }) {
       onExportKdbx={() => engine.exportKdbx()}
       onExportCsv={() => engine.exportCsvEntries()}
       vaultName={vaultName}
+      onBackupComplete={() => updateSettings({ lastBackupDate: new Date().toISOString() })}
     />
   );
 }

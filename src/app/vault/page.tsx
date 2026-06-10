@@ -13,6 +13,7 @@ import { VaultSearchBar } from '@/components/vault/vault-search-bar';
 import { VaultFilters } from '@/components/vault/vault-filters';
 import { EditEntryForm } from '@/components/vault/edit-entry-form';
 import { EditNoteForm } from '@/components/vault/edit-note-form';
+import { useBackupReminder } from '@/hooks/use-backup-reminder';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem, VaultEntry } from '@/types';
 
@@ -25,6 +26,9 @@ export default function VaultPage() {
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editCounter, setEditCounter] = useState(0);
+
+  // Show backup reminder toast when vault is unlocked and interval exceeded
+  useBackupReminder();
 
   function openEditor(id: string) {
     setEditingId(id);

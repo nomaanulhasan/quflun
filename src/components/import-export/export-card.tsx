@@ -10,9 +10,10 @@ interface ExportCardProps {
   onExportKdbx: () => Promise<ArrayBuffer>;
   onExportCsv: () => Promise<string>;
   vaultName: string;
+  onBackupComplete?: () => void;
 }
 
-export function ExportCard({ onExportKdbx, onExportCsv, vaultName }: ExportCardProps) {
+export function ExportCard({ onExportKdbx, onExportCsv, vaultName, onBackupComplete }: ExportCardProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +23,7 @@ export function ExportCard({ onExportKdbx, onExportCsv, vaultName }: ExportCardP
     try {
       const buffer = await onExportKdbx();
       downloadFile(buffer, `${vaultName}.kdbx`, 'application/octet-stream');
+      onBackupComplete?.();
     } catch (err) { setError((err as Error).message); }
     finally { setLoading(false); }
   }
@@ -32,6 +34,7 @@ export function ExportCard({ onExportKdbx, onExportCsv, vaultName }: ExportCardP
     try {
       const csv = await onExportCsv();
       downloadFile(new TextEncoder().encode(csv), `${vaultName}.csv`, 'text/csv');
+      onBackupComplete?.();
     } catch (err) { setError((err as Error).message); }
     finally { setLoading(false); }
   }

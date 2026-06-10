@@ -54,6 +54,9 @@ export function ImportCard({ onImportKdbx, onImportCsv }: ImportCardProps) {
   return (
     <SettingsCard title="Import" description="Import entries from a KDBX or CSV file.">
       <div className="space-y-3">
+        <p className="text-xs text-amber-600 dark:text-amber-500">
+          Importing may overwrite existing entries. Consider exporting a backup first.
+        </p>
         <FilePicker
           id="import-file"
           accept=".kdbx,.csv"
