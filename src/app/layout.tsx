@@ -51,16 +51,16 @@ export default function RootLayout({
           - src/app/favicon.ico
           - src/app/icon0.svg, src/app/icon1.png
           - src/app/apple-icon.png
-
-          Content-Security-Policy meta tag placeholder.
-          The post-build script (scripts/extract-csp-hashes.mjs) will compute
-          SHA-256 hashes for inline scripts and inject them here.
-
-          <meta
-            httpEquiv="Content-Security-Policy"
-            content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval' 'sha256-HASH1' 'sha256-HASH2'; style-src 'self' 'unsafe-hashes' 'sha256-STYLE_HASH'; img-src 'self'; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
-          />
         */}
+        {/*
+          Content-Security-Policy meta tag.
+          The post-build script (scripts/extract-csp-hashes.mjs) computes
+          SHA-256 hashes for inline scripts/styles and injects them below.
+        */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-hashes'; img-src 'self'; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+        />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-clip">
         <Providers>

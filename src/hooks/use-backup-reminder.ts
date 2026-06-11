@@ -3,13 +3,18 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { useVaultStore, useUIStore } from '@/components/providers';
-import { shouldShowBackupReminder, timeSinceLastBackup } from '@/lib/backup-reminder';
+import { shouldShowBackupReminder, getBackupReminderMessage } from '@/lib/backup-reminder';
 
 /**
  * Shows a non-blocking backup reminder toast when the vault becomes unlocked
- * and the configured backup interval has been exceeded.
+ * and the configured backup interval has been exceeded (or on first-time vault creation).
  *
- * Only fires once per session to avoid nagging.
+ * Behavior:
+ * - On vault creation (first-time): shows a recommendation to export a backup
+ * - On periodic interval exceeded: shows a reminder with elapsed time info
+ * - Only fires once per session to avoid nagging
+ *
+ * Validates: Requirements 22.1, 22.4
  */
 export function useBackupReminder() {
   const status = useVaultStore((s) => s.status);
@@ -31,11 +36,12 @@ export function useBackupReminder() {
     if (shownRef.current) return;
 
     if (shouldShowBackupReminder(settings)) {
-      const lastBackup = timeSinceLastBackup(settings.lastBackupDate);
+      const message = getBackupReminderMessage(settings);
+      const isFirstTime = !settings.lastBackupDate;
       shownRef.current = true;
 
-      toast.warning('Backup reminder', {
-        description: `Last backup: ${lastBackup}. Consider exporting a backup of your vault.`,
+      toast.warning(isFirstTime ? 'Create a backup' : 'Backup reminder', {
+        description: message,
         duration: 8000,
         action: {
           label: 'Dismiss',
