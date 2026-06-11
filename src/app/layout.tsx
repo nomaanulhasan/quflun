@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   title: "Quflun — Password Manager",
   description:
     "A privacy-first, offline-first password manager. No accounts, no telemetry, no network requests.",
+  applicationName: "Quflun",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Quflun Password Manager",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
@@ -34,7 +43,15 @@ export default function RootLayout({
     >
       <head>
         <meta name="referrer" content="no-referrer" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="apple-mobile-web-app-title" content="Quflun" />
         {/*
+          Next.js auto-generates favicon/icon/apple-icon links from:
+          - src/app/favicon.ico
+          - src/app/icon0.svg, src/app/icon1.png
+          - src/app/apple-icon.png
+
           Content-Security-Policy meta tag placeholder.
           The post-build script (scripts/extract-csp-hashes.mjs) will compute
           SHA-256 hashes for inline scripts and inject them here.

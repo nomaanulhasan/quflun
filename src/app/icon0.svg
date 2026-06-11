@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><style>
+    #light-icon {
+      display: inline;
+    }
+    #dark-icon {
+      display: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #light-icon {
+        display: none;
+      }
+      #dark-icon {
+        display: inline;
+      }
+    }
+  </style><g id="light-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1194)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.953125,0,0,1.953125,0,0)"><svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#ffffff"></rect><g transform="translate(102.4, 87.03999999999999) scale(3.072)">
+    <!-- Shield body -->
+    <path d="M50 5 L90 25 L90 55 C90 80 70 100 50 105 C30 100 10 80 10 55 L10 25 Z" fill="#0f172a" stroke="none"></path>
+    <!-- Lock body -->
+    <rect x="35" y="50" width="30" height="25" rx="3" fill="#ffffff"></rect>
+    <!-- Lock shackle -->
+    <path d="M38 50 L38 40 C38 30 62 30 62 40 L62 50" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"></path>
+    <!-- Keyhole -->
+    <circle cx="50" cy="60" r="4" fill="#0f172a"></circle>
+    <rect x="48" y="60" width="4" height="8" fill="#0f172a"></rect>
+  </g></svg></g></g><defs><clipPath id="SvgjsClipPath1194"><rect width="1000" height="1000" x="0" y="0" rx="500" ry="500"></rect></clipPath></defs></svg></g><g id="dark-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1195)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.953125,0,0,1.953125,0,0)"><svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#ffffff"></rect><g transform="translate(102.4, 87.03999999999999) scale(3.072)">
+    <!-- Shield body -->
+    <path d="M50 5 L90 25 L90 55 C90 80 70 100 50 105 C30 100 10 80 10 55 L10 25 Z" fill="#0f172a" stroke="none"></path>
+    <!-- Lock body -->
+    <rect x="35" y="50" width="30" height="25" rx="3" fill="#ffffff"></rect>
+    <!-- Lock shackle -->
+    <path d="M38 50 L38 40 C38 30 62 30 62 40 L62 50" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"></path>
+    <!-- Keyhole -->
+    <circle cx="50" cy="60" r="4" fill="#0f172a"></circle>
+    <rect x="48" y="60" width="4" height="8" fill="#0f172a"></rect>
+  </g></svg></g></g><defs><clipPath id="SvgjsClipPath1195"><rect width="1000" height="1000" x="0" y="0" rx="500" ry="500"></rect></clipPath></defs></svg></g></svg>

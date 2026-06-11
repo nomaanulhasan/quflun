@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
-    "build:turbo": "next build",
+    "build": "next build --webpack && serwist build",
+    "build:turbo": "next build && serwist build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest --run",
@@ -35,12 +35,15 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@serwist/cli": "^9.5.11",
     "@tailwindcss/postcss": "^4",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^10.0.3",
+    "esbuild": "^0.28.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
     "fake-indexeddb": "^6.2.5",
