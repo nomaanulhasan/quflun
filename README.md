@@ -70,12 +70,14 @@ Opens at `http://localhost:3000`.
 pnpm build
 ```
 
+This runs the full pipeline: `next build` → `serwist build` (generates service worker) → `node scripts/extract-csp-hashes.mjs` (injects CSP SHA-256 hashes into HTML).
+
 Produces a static export in `out/` — deployable to any static hosting.
 
 ### Test
 
 ```bash
-pnpm test          # Run all 295 tests
+pnpm test          # Run all tests
 pnpm test:watch    # Watch mode
 ```
 
@@ -96,8 +98,8 @@ Browser
 │   ├── Crypto Adapter (kdbxweb + Argon2 WASM)
 │   └── Storage Adapter (IndexedDB)
 └── Platform Layer
-    ├── Service Worker (planned)
-    └── Web App Manifest (planned)
+    ├── Service Worker (Serwist 9.x, precaches all assets)
+    └── Web App Manifest (installable PWA)
 ```
 
 ### Security Model
@@ -156,6 +158,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v0.5.0 — Foundation Complete**
+**v0.7.0 — PWA & Security Hardening Complete**
 
-Core architecture, vault engine, UI, and 295 tests are in place. Next phases: utility pages, PWA setup, CSP hardening, and beta release.
+Core architecture, vault engine, UI, PWA (Serwist service worker), CSP hardening (post-build hash extraction), security headers, and backup reminders are implemented. 365 tests passing across 24 test files.
