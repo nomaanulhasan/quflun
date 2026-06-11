@@ -23,5 +23,5 @@ export interface QuflDB extends DBSchema {
   };
 }
 
-export const DB_NAME = 'qufly-db';
+export const DB_NAME = 'quflun-db';
 export const DB_VERSION = 1;

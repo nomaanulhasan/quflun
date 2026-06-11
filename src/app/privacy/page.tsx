@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         <PageHeader title="Privacy" subtitle="Your data stays on your device." />
 
         <Section title="No Data Collection">
-          Qufly does not collect, transmit, or share any user data with third parties.
+          Quflun does not collect, transmit, or share any user data with third parties.
           There are no analytics, telemetry, tracking scripts, or advertising frameworks in the application.
         </Section>
 
@@ -18,13 +18,13 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="No Accounts">
-          Qufly does not require or offer user account creation.
+          Quflun does not require or offer user account creation.
           There is no registration, no email collection, and no authentication server.
         </Section>
 
         <Section title="No External Resources">
           All application resources (scripts, stylesheets, fonts, icons) are bundled locally.
-          Qufly does not load assets from CDNs, Google Fonts, or any third-party domain at runtime.
+          Quflun does not load assets from CDNs, Google Fonts, or any third-party domain at runtime.
         </Section>
 
         <Section title="Open Source">

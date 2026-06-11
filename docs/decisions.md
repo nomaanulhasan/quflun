@@ -2,7 +2,7 @@
 
 ## ADR-001: Static export instead of server backend
 
-**Context:** Qufly is an offline-first password manager. A server would introduce attack surface, require hosting, and contradict the "no network requests" requirement.
+**Context:** Quflun is an offline-first password manager. A server would introduce attack surface, require hosting, and contradict the "no network requests" requirement.
 
 **Decision:** Use Next.js `output: 'export'` producing fully static HTML/CSS/JS. No server runtime.
 

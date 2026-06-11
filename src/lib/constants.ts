@@ -1,4 +1,4 @@
-// Validation constants for Qufly Password Manager
+// Validation constants for Quflun Password Manager
 
 // ─── Field Length Limits ───────────────────────────────────────────────────────
 

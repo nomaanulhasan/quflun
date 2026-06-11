@@ -1,6 +1,6 @@
-# Contributing to Qufly
+# Contributing to Quflun
 
-Thank you for your interest in Qufly.
+Thank you for your interest in Quflun.
 
 ## Current Status
 

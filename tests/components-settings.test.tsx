@@ -172,7 +172,7 @@ describe('AboutSettings', () => {
     const { AboutSettings } = await import('@/components/settings/about-settings');
     render(<AboutSettings />);
 
-    expect(screen.getByText('Qufly')).toBeDefined();
+    expect(screen.getByText('Quflun')).toBeDefined();
     expect(screen.getByText('v1-foundation-complete')).toBeDefined();
   });
 

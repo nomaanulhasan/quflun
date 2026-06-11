@@ -1,4 +1,4 @@
-# Qufly Release Plan
+# Quflun Release Plan
 
 ## Tags
 

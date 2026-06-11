@@ -1,10 +1,10 @@
-# Qufly
+# Quflun
 
 Privacy-first, offline-first password manager. No accounts. No telemetry. No network requests. Your data stays on your device.
 
-## What is Qufly?
+## What is Quflun?
 
-Qufly is a Progressive Web App (PWA) that stores your passwords, secure notes, and credentials in an encrypted vault using the open KeePass KDBX 4.x format. It runs entirely in your browser — there is no backend server, no cloud sync, and no data collection.
+Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, and credentials in an encrypted vault using the open KeePass KDBX 4.x format. It runs entirely in your browser — there is no backend server, no cloud sync, and no data collection.
 
 ## Features
 
@@ -51,8 +51,8 @@ Qufly is a Progressive Web App (PWA) that stores your passwords, secure notes, a
 ### Install
 
 ```bash
-git clone https://github.com/your-org/qufly.git
-cd qufly
+git clone https://github.com/your-org/quflun.git
+cd quflun
 pnpm install
 ```
 
@@ -111,7 +111,7 @@ Browser
 - Passwords stored as kdbxweb ProtectedValue (XOR-encoded in memory)
 - Clipboard cleared after configurable timeout (30s default)
 
-### What Qufly Does NOT Do
+### What Quflun Does NOT Do
 
 - Does not sync to any cloud
 - Does not require an account

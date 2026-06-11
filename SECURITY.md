@@ -1,6 +1,6 @@
 # Security Policy
 
-Qufly is a privacy-first, offline-first password manager. We take security reports seriously and prioritize them above feature work.
+Quflun is a privacy-first, offline-first password manager. We take security reports seriously and prioritize them above feature work.
 
 ## Supported Versions
 
@@ -53,7 +53,7 @@ The following are in scope:
 
 ## Security Architecture
 
-Qufly uses:
+Quflun uses:
 
 - KDBX 4.x format via kdbxweb (MIT, audited in KeeWeb)
 - Argon2id via argon2-browser WASM

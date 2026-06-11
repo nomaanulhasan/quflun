@@ -345,7 +345,7 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       expect(entries.length).toBe(1);
     });
 
-    it('should track _qufly_source_uuid on imported entries', async () => {
+    it('should track _quflun_source_uuid on imported entries', async () => {
       const crypto = await getCryptoAdapter();
 
       const sourceDb = await createTestDb('Source', 'pw');
@@ -366,14 +366,14 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const targetEntries = [...targetDb.getDefaultGroup().allEntries()];
       expect(targetEntries.length).toBe(1);
 
-      // The imported entry should have _qufly_source_uuid tracking the original
-      const trackedUuid = targetEntries[0].customData?.get('_qufly_source_uuid')?.value;
+      // The imported entry should have _quflun_source_uuid tracking the original
+      const trackedUuid = targetEntries[0].customData?.get('_quflun_source_uuid')?.value;
       expect(trackedUuid).toBe(sourceUuid);
     });
   });
 
-  describe('Qufly metadata preservation', () => {
-    it('should preserve _qufly_type=note on imported entries', async () => {
+  describe('Quflun metadata preservation', () => {
+    it('should preserve _quflun_type=note on imported entries', async () => {
       const crypto = await getCryptoAdapter();
 
       const sourceDb = await createTestDb('Source', 'pw');
@@ -383,7 +383,7 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(''));
       entry.fields.set('Notes', 'Note body content');
       entry.customData = new Map();
-      entry.customData.set('_qufly_type', { value: 'note' });
+      entry.customData.set('_quflun_type', { value: 'note' });
 
       const sourceBuffer = await sourceDb.save();
       const targetDb = await createTestDb('Target');
@@ -393,11 +393,11 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const targetEntries = [...targetDb.getDefaultGroup().allEntries()];
       expect(targetEntries.length).toBe(1);
 
-      const importedType = targetEntries[0].customData?.get('_qufly_type')?.value;
+      const importedType = targetEntries[0].customData?.get('_quflun_type')?.value;
       expect(importedType).toBe('note');
     });
 
-    it('should preserve _qufly_favorite on imported entries', async () => {
+    it('should preserve _quflun_favorite on imported entries', async () => {
       const crypto = await getCryptoAdapter();
 
       const sourceDb = await createTestDb('Source', 'pw');
@@ -406,7 +406,7 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       entry.fields.set('Title', 'Fav Entry');
       entry.fields.set('Password', kdbxweb.ProtectedValue.fromString('pw'));
       entry.customData = new Map();
-      entry.customData.set('_qufly_favorite', { value: 'true' });
+      entry.customData.set('_quflun_favorite', { value: 'true' });
 
       const sourceBuffer = await sourceDb.save();
       const targetDb = await createTestDb('Target');
@@ -416,11 +416,11 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const targetEntries = [...targetDb.getDefaultGroup().allEntries()];
       expect(targetEntries.length).toBe(1);
 
-      const fav = targetEntries[0].customData?.get('_qufly_favorite')?.value;
+      const fav = targetEntries[0].customData?.get('_quflun_favorite')?.value;
       expect(fav).toBe('true');
     });
 
-    it('should preserve multiple _qufly_* keys together', async () => {
+    it('should preserve multiple _quflun_* keys together', async () => {
       const crypto = await getCryptoAdapter();
 
       const sourceDb = await createTestDb('Source', 'pw');
@@ -430,8 +430,8 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(''));
       entry.fields.set('Notes', 'A note');
       entry.customData = new Map();
-      entry.customData.set('_qufly_type', { value: 'note' });
-      entry.customData.set('_qufly_favorite', { value: 'true' });
+      entry.customData.set('_quflun_type', { value: 'note' });
+      entry.customData.set('_quflun_favorite', { value: 'true' });
 
       const sourceBuffer = await sourceDb.save();
       const targetDb = await createTestDb('Target');
@@ -441,9 +441,9 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const targetEntries = [...targetDb.getDefaultGroup().allEntries()];
       const cd = targetEntries[0].customData;
 
-      expect(cd?.get('_qufly_type')?.value).toBe('note');
-      expect(cd?.get('_qufly_favorite')?.value).toBe('true');
-      expect(cd?.get('_qufly_source_uuid')?.value).toBeTruthy();
+      expect(cd?.get('_quflun_type')?.value).toBe('note');
+      expect(cd?.get('_quflun_favorite')?.value).toBe('true');
+      expect(cd?.get('_quflun_source_uuid')?.value).toBeTruthy();
     });
   });
 });

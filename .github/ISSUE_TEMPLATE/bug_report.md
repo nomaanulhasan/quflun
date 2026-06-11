@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in Qufly
+about: Report a bug in Quflun
 title: "[Bug] "
 labels: bug
 ---
@@ -9,7 +9,7 @@ labels: bug
 
 - Browser:
 - OS:
-- Qufly version:
+- Quflun version:
 
 ## Steps to Reproduce
 

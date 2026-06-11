@@ -16,7 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Qufly — Password Manager",
+  title: "Quflun — Password Manager",
   description:
     "A privacy-first, offline-first password manager. No accounts, no telemetry, no network requests.",
 };

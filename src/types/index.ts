@@ -1,4 +1,4 @@
-// Core TypeScript interfaces for Qufly Password Manager
+// Core TypeScript interfaces for Quflun Password Manager
 
 // ─── Entry Types ───────────────────────────────────────────────────────────────
 

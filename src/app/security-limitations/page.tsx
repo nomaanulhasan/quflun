@@ -9,11 +9,11 @@ export default function SecurityLimitationsPage() {
 
         <Section title="Browser Extensions">
           Browser extensions with DOM access can potentially read page content, including form fields and displayed passwords.
-          Qufly cannot prevent a malicious extension from inspecting the page. Use trusted extensions only.
+          Quflun cannot prevent a malicious extension from inspecting the page. Use trusted extensions only.
         </Section>
 
         <Section title="Malware">
-          If your device is compromised by malware with keylogging or memory inspection capabilities, Qufly cannot protect your data.
+          If your device is compromised by malware with keylogging or memory inspection capabilities, Quflun cannot protect your data.
           Keep your operating system and browser updated.
         </Section>
 
@@ -23,13 +23,13 @@ export default function SecurityLimitationsPage() {
         </Section>
 
         <Section title="Clipboard Clearing">
-          Clipboard auto-clear is best-effort. On Chromium browsers, Qufly verifies ownership before clearing.
-          On Firefox and Safari, clipboard read access is restricted — Qufly clears unconditionally on timeout, which may overwrite external clipboard content.
+          Clipboard auto-clear is best-effort. On Chromium browsers, Quflun verifies ownership before clearing.
+          On Firefox and Safari, clipboard read access is restricted — Quflun clears unconditionally on timeout, which may overwrite external clipboard content.
         </Section>
 
         <Section title="DevTools Inspection">
           A user with DevTools open can inspect JavaScript variables, including decrypted vault contents while unlocked.
-          This is inherent to all browser-based applications and is not unique to Qufly.
+          This is inherent to all browser-based applications and is not unique to Quflun.
         </Section>
 
         <Section title="Recommended Mitigations">

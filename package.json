@@ -1,5 +1,5 @@
 {
-  "name": "qufly",
+  "name": "quflun",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -50,10 +50,5 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.8"
-  },
-  "pnpm": {
-    "overrides": {
-      "@xmldom/xmldom": "0.8.13"
-    }
   }
 }

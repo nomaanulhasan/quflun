@@ -17,7 +17,7 @@ export function BackupStatusCard() {
           <div className="space-y-1">
             <p className="font-medium text-amber-800 dark:text-amber-400">Regular backups are strongly recommended.</p>
             <p className="text-xs text-amber-700 dark:text-amber-500">
-              If you forget your master password, your data cannot be recovered. Qufly does not provide cloud backups.
+              If you forget your master password, your data cannot be recovered. Quflun does not provide cloud backups.
             </p>
           </div>
         </div>

@@ -29,7 +29,7 @@ export default function ImportExportPage() {
         <PageHeader title="Import & Export" subtitle="Back up your vault or migrate data." />
         <BackupStatusCard />
         <ImportSection />
-        <ExportSection vaultName={vaultName ?? 'qufly-vault'} />
+        <ExportSection vaultName={vaultName ?? 'quflun-vault'} />
       </div>
     </Shell>
   );

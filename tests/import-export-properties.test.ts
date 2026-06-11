@@ -119,7 +119,7 @@ describe('Property Tests — Import/Export & Health Check (Tasks 8.4–8.8)', { 
             const r1 = await importKdbx(targetDb, buffer, 'pw', crypto);
             expect(r1.imported).toBe(1);
 
-            // Second import — should skip (dedup via _qufly_source_uuid)
+            // Second import — should skip (dedup via _quflun_source_uuid)
             const r2 = await importKdbx(targetDb, buffer, 'pw', crypto);
             expect(r2.imported).toBe(0);
             expect(r2.skipped.length).toBe(1);

@@ -28,13 +28,13 @@ const MAX_OPEN_ATTEMPTS = 5;
 const DECRYPTION_TIMEOUT_MS = 30_000;
 
 /** Custom data key for favorite flag (stored in entry.customData per KDBX 4.x best practices) */
-const CUSTOM_KEY_FAVORITE = '_qufly_favorite';
+const CUSTOM_KEY_FAVORITE = '_quflun_favorite';
 
 /** Custom data key for entry type marker */
-const CUSTOM_KEY_TYPE = '_qufly_type';
+const CUSTOM_KEY_TYPE = '_quflun_type';
 
 /** Custom data key for tag registry (stored on the root group's customData) */
-const CUSTOM_KEY_TAG_REGISTRY = '_qufly_tags';
+const CUSTOM_KEY_TAG_REGISTRY = '_quflun_tags';
 
 /**
  * Races a promise against a timeout. Rejects with a timeout error if the
@@ -270,7 +270,7 @@ class VaultEngineImpl implements VaultEngine {
       entry.tags = data.tags.slice(0, MAX_TAGS_PER_ENTRY);
     }
 
-    // H-2 fix: Use customData for Qufly-specific metadata (KDBX 4.x best practice)
+    // H-2 fix: Use customData for Quflun-specific metadata (KDBX 4.x best practice)
     // This keeps custom attributes invisible to other KeePass clients
     if (data.favorite) {
       this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
@@ -459,7 +459,7 @@ class VaultEngineImpl implements VaultEngine {
     // Validate note input
     this.validateNoteInput(data);
 
-    // Notes are standard KDBX entries with _qufly_type="note" in customData
+    // Notes are standard KDBX entries with _quflun_type="note" in customData
     const group = db.getDefaultGroup();
     const entry = db.createEntry(group);
 

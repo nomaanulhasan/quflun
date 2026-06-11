@@ -9,7 +9,7 @@ export function AboutSettings() {
       <div className="space-y-3 text-sm">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Application</span>
-          <span className="font-medium">Qufly</span>
+          <span className="font-medium">Quflun</span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Version</span>

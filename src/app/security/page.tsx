@@ -5,10 +5,10 @@ export default function SecurityPage() {
   return (
     <Shell>
       <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Security" subtitle="How Qufly protects your data." />
+        <PageHeader title="Security" subtitle="How Quflun protects your data." />
 
         <Section title="Encryption">
-          Qufly encrypts your vault using AES-256 or ChaCha20 as specified by the KDBX 4.x format.
+          Quflun encrypts your vault using AES-256 or ChaCha20 as specified by the KDBX 4.x format.
           The encryption key is derived from your master password — the encrypted vault file is unreadable without it.
         </Section>
 
@@ -18,7 +18,7 @@ export default function SecurityPage() {
         </Section>
 
         <Section title="Vault Format">
-          Qufly uses the KeePass KDBX 4.x format, an open and audited standard used by KeePass, KeePassXC, and KeeWeb.
+          Quflun uses the KeePass KDBX 4.x format, an open and audited standard used by KeePass, KeePassXC, and KeeWeb.
           No custom cryptographic algorithms are implemented — all operations delegate to established, peer-reviewed libraries.
         </Section>
 
@@ -28,7 +28,7 @@ export default function SecurityPage() {
         </Section>
 
         <Section title="No Network Requests">
-          Qufly makes zero network requests for data collection, analytics, or telemetry.
+          Quflun makes zero network requests for data collection, analytics, or telemetry.
           All cryptographic operations run locally in your browser using WebCrypto and WebAssembly.
         </Section>
       </div>

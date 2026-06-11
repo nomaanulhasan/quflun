@@ -75,7 +75,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex md:w-64 md:flex-col md:border-r md:border-border">
         <header className="flex h-14 items-center border-b border-border px-4">
           <Link href="/" className="text-lg font-semibold tracking-tight">
-            Qufly
+            Quflun
           </Link>
         </header>
         <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Main navigation">
@@ -136,7 +136,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </SheetTrigger>
           <SheetContent side="left" className="w-64">
             <SheetHeader>
-              <SheetTitle className="text-lg font-semibold">Qufly</SheetTitle>
+              <SheetTitle className="text-lg font-semibold">Quflun</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 pt-4" aria-label="Main navigation">
               {navGroups.map((group) => (
@@ -184,7 +184,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </SheetContent>
         </Sheet>
         <Link href="/" className="ml-3 text-lg font-semibold tracking-tight">
-          Qufly
+          Quflun
         </Link>
         {/* Lock button in mobile header */}
         {status === 'unlocked' && (

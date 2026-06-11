@@ -1,4 +1,4 @@
-# Qufly Architecture
+# Quflun Architecture
 
 ## Fundamental Rule
 
@@ -73,11 +73,11 @@ Entry-level tags use kdbxweb's native `entry.tags` array. The tag registry (avai
 
 ### Favorites = customData
 
-The `_qufly_favorite` key in entry customData marks favorites. Invisible to other KeePass clients.
+The `_quflun_favorite` key in entry customData marks favorites. Invisible to other KeePass clients.
 
 ### Notes = KDBX Entries
 
-Secure notes are standard KDBX entries with `_qufly_type: "note"` in customData, body in the Notes field, and empty Password.
+Secure notes are standard KDBX entries with `_quflun_type: "note"` in customData, body in the Notes field, and empty Password.
 
 ### Static Export
 

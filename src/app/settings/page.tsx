@@ -26,7 +26,7 @@ export default function SettingsPage() {
   return (
     <Shell>
       <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Settings" subtitle="Customize Qufly behavior and preferences." />
+        <PageHeader title="Settings" subtitle="Customize Quflun behavior and preferences." />
 
         <ThemeSettings />
         <SecuritySettings />

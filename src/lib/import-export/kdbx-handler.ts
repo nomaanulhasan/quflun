@@ -20,10 +20,10 @@ export interface SkippedEntry {
 const MAX_FILE_SIZE_BYTES = IMPORT_MAX_FILE_SIZE_MB * 1024 * 1024;
 
 /** CustomData key tracking the original source UUID of an imported entry */
-const CUSTOM_KEY_SOURCE_UUID = '_qufly_source_uuid';
+const CUSTOM_KEY_SOURCE_UUID = '_quflun_source_uuid';
 
-/** Prefix for all Qufly-specific customData keys */
-const QUFLY_CUSTOM_PREFIX = '_qufly_';
+/** Prefix for all Quflun-specific customData keys */
+const QUFLY_CUSTOM_PREFIX = '_quflun_';
 
 // ─── Implementation ────────────────────────────────────────────────────────────
 
@@ -32,9 +32,9 @@ const QUFLY_CUSTOM_PREFIX = '_qufly_';
  *
  * Strategy:
  * - Uses db.importEntry() for cross-database entry transfer (preserves history, binaries, timestamps)
- * - Deduplication: builds a lookup set from target entry UUIDs AND _qufly_source_uuid values
+ * - Deduplication: builds a lookup set from target entry UUIDs AND _quflun_source_uuid values
  *   to prevent repeated imports of the same file from creating duplicates
- * - After import: sets _qufly_source_uuid on the new entry + copies all _qufly_* customData from source
+ * - After import: sets _quflun_source_uuid on the new entry + copies all _quflun_* customData from source
  * - Entries from the source recycle bin are excluded
  * - Groups are matched by name; created if missing
  * - Continues processing after individual entry failures
@@ -84,7 +84,7 @@ export async function importKdbx(
   // ─── Build deduplication set ─────────────────────────────────────────
   // Includes:
   // 1. UUIDs of existing target entries (their native kdbxweb UUID)
-  // 2. _qufly_source_uuid values from previously imported entries
+  // 2. _quflun_source_uuid values from previously imported entries
   // This prevents repeated imports of the same source file from creating duplicates.
 
   const targetDefaultGroup = targetDb.getDefaultGroup();
@@ -148,7 +148,7 @@ export async function importKdbx(
       }
       importedEntry.customData.set(CUSTOM_KEY_SOURCE_UUID, { value: sourceEntryUuid });
 
-      // Fix 2: Copy all _qufly_* customData keys from source (type, favorite, etc.)
+      // Fix 2: Copy all _quflun_* customData keys from source (type, favorite, etc.)
       // importEntry's copyFrom() does NOT copy customData
       if (entry.customData) {
         for (const [key, item] of entry.customData) {
