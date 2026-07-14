@@ -23,6 +23,18 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Don't register the service worker in development — the precache manifest
+    // references production build chunks that don't exist in dev mode.
+    if (process.env.NODE_ENV !== 'production') {
+      // Unregister any stale SW from a previous production build
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const reg of registrations) {
+          reg.unregister();
+        }
+      });
+      return;
+    }
+
     let registration: ServiceWorkerRegistration | null = null;
 
     async function registerSW() {
