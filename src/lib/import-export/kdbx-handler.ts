@@ -23,7 +23,7 @@ const MAX_FILE_SIZE_BYTES = IMPORT_MAX_FILE_SIZE_MB * 1024 * 1024;
 const CUSTOM_KEY_SOURCE_UUID = '_quflun_source_uuid';
 
 /** Prefix for all Quflun-specific customData keys */
-const QUFLY_CUSTOM_PREFIX = '_quflun_';
+const QUFLUN_CUSTOM_PREFIX = '_quflun_';
 
 // ─── Implementation ────────────────────────────────────────────────────────────
 
@@ -152,7 +152,7 @@ export async function importKdbx(
       // importEntry's copyFrom() does NOT copy customData
       if (entry.customData) {
         for (const [key, item] of entry.customData) {
-          if (key.startsWith(QUFLY_CUSTOM_PREFIX) && key !== CUSTOM_KEY_SOURCE_UUID) {
+          if (key.startsWith(QUFLUN_CUSTOM_PREFIX) && key !== CUSTOM_KEY_SOURCE_UUID) {
             importedEntry.customData.set(key, { value: item.value });
           }
         }
