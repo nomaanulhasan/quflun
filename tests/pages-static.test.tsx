@@ -116,7 +116,7 @@ describe('Security Limitations Page', () => {
 
     // All section headings should be h2
     const h2s = screen.getAllByRole('heading', { level: 2 });
-    expect(h2s.length).toBe(6);
+    expect(h2s.length).toBe(7);
 
     // Page title is h1
     const h1s = screen.getAllByRole('heading', { level: 1 });

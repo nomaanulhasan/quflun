@@ -7,20 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - CSP Moved to HTTP Headers
+
+### Changed
+
+- CSP is now delivered exclusively via HTTP headers (`vercel.json` + `public/_headers`) instead of a `<meta>` tag
+- Removed `extract-csp-hashes.mjs` from build pipeline (no longer needed — CSP uses `'unsafe-inline'`)
+- Build pipeline simplified to: `next build --webpack && serwist build`
+- Added `'unsafe-inline'` to `script-src` — required because Next.js static export generates inline scripts with build-specific content that can't be pre-hashed in CI
+- Added `vercel.json` for Vercel deployment with full security headers
+
+### Fixed
+
+- Inline scripts no longer blocked on Vercel deployment
+- Removed dead code path in `extract-csp-hashes.mjs` (script still exists for reference but removed from build)
+
 ## [1.0.1] - CSP and PWA Dev-Mode Fixes
 
 ### Fixed
 
-- CSP meta tag now only renders in production — no longer blocks Next.js HMR/React Refresh in development
+- CSP meta tag removed from layout — caused CSP violations in both dev and production
 - Service worker registration skipped in development to prevent stale precache manifest 404 errors
 - Stale service workers from previous builds are automatically unregistered in dev mode
-- Removed `frame-ancestors` from CSP meta tag (only valid in HTTP headers, already in `_headers` file)
 - Changed `style-src` from `'unsafe-hashes'` to `'unsafe-inline'` — Shadcn/Radix components apply inline styles dynamically at runtime which cannot be pre-hashed
-- Moved CSP hash extraction from `postbuild` script into the `build` command for Vercel compatibility
 
 ### Changed
 
-- Build pipeline is now a single `build` script: `next build --webpack && serwist build && node scripts/extract-csp-hashes.mjs`
+- CSP enforcement moved from meta tag to HTTP headers (`vercel.json`, `_headers`)
 
 ## [1.0.0] - Foundation Complete
 

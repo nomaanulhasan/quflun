@@ -95,8 +95,8 @@ describe("CSP Validation", () => {
       expect(vercelDirectives.get("script-src")).toContain("'wasm-unsafe-eval'");
     });
 
-    it("script-src does NOT contain 'unsafe-eval'", () => {
-      expect(vercelDirectives.get("script-src")).not.toContain("'unsafe-eval'");
+    it("script-src contains 'unsafe-eval' (required by argon2-browser Emscripten glue)", () => {
+      expect(vercelDirectives.get("script-src")).toContain("'unsafe-eval'");
     });
 
     it("connect-src is restricted to 'self'", () => {
@@ -131,8 +131,8 @@ describe("CSP Validation", () => {
       expect(headersDirectives.get("script-src")).toContain("'wasm-unsafe-eval'");
     });
 
-    it("script-src does NOT contain 'unsafe-eval'", () => {
-      expect(headersDirectives.get("script-src")).not.toContain("'unsafe-eval'");
+    it("script-src contains 'unsafe-eval' (required by argon2-browser Emscripten glue)", () => {
+      expect(headersDirectives.get("script-src")).toContain("'unsafe-eval'");
     });
   });
 

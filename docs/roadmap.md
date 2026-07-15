@@ -21,8 +21,8 @@
 
 ## v1-beta
 
-- CSP meta tag with post-build SHA-256 hash extraction script
-- Security headers file (`_headers` for Netlify/Cloudflare Pages)
+- CSP via HTTP headers (`vercel.json` + `_headers`) with `'unsafe-inline'` for Next.js inline scripts
+- Security headers (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`)
 - Backup reminder system (first-time + periodic)
 - Accessibility audit (screen reader testing, focus management)
 - Performance profiling (10K entries load time, search latency)

@@ -6,7 +6,7 @@
 
 **Decision:** Use Next.js `output: 'export'` producing fully static HTML/CSS/JS. No server runtime.
 
-**Consequences:** No SSR, no API routes, no middleware. Dynamic routes not supported — entry editing uses internal state instead of URL params. CSP headers require hosting platform config or meta tags.
+**Consequences:** No SSR, no API routes, no middleware. Dynamic routes not supported — entry editing uses internal state instead of URL params. CSP headers configured via hosting platform config (`vercel.json`, `_headers`).
 
 ## ADR-002: KDBX 4.x format
 
@@ -71,3 +71,11 @@
 **Decision:** Extract a shared component when a pattern appears three or more times. Document extraction opportunities for two-occurrence patterns.
 
 **Consequences:** Components like FavoriteToggle, TagsInput, PasswordField were extracted at the right time. Single-use patterns remain inline until reused.
+
+## ADR-010: CSP via HTTP headers, not meta tag
+
+**Context:** Next.js static export generates inline `<script>` tags for hydration data (`self.__next_f.push(...)`) whose content includes build-specific chunk filenames. A post-build script was initially used to extract SHA-256 hashes and inject them into a CSP `<meta>` tag. This approach failed in CI (Vercel) because: (1) the build pipeline order wasn't guaranteed, (2) the meta tag was inside the HTML that needed to be modified, creating a circular dependency, and (3) `frame-ancestors` is ignored in meta tags per the CSP specification.
+
+**Decision:** Deliver CSP exclusively via HTTP headers configured at the hosting level (`vercel.json` for Vercel, `public/_headers` for Netlify/Cloudflare). Use `'unsafe-inline'` in `script-src` to accommodate Next.js inline scripts. Use `'unsafe-inline'` in `style-src` for Shadcn/Radix runtime styles.
+
+**Consequences:** Slightly weaker XSS protection compared to hash-based CSP (inline scripts are permitted). However, since the app has no user-generated HTML rendering, no `dangerouslySetInnerHTML` with user input, and no backend endpoints, the practical XSS attack surface is minimal. The `extract-csp-hashes.mjs` script is retained in the codebase for reference but removed from the build pipeline. This approach matches standard practice for static Next.js deployments on Vercel.

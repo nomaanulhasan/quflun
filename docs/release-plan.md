@@ -56,10 +56,10 @@
 
 ### v1-beta ✅
 
-- [x] CSP meta tag with correct SHA-256 hashes (via post-build extraction)
+- [x] CSP via HTTP headers (`vercel.json` + `_headers`) with `'unsafe-inline'` for Next.js inline scripts
 - [x] No `unsafe-eval` (only `wasm-unsafe-eval` for Argon2 WASM)
 - [x] `style-src 'unsafe-inline'` required for Shadcn/Radix runtime styles
-- [x] Security headers configured (`_headers` file)
+- [x] Security headers configured (`vercel.json` + `_headers` file)
 - [x] Backup reminder system functional
 - [x] Integration tests pass
 - [x] Compliance tests pass

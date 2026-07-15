@@ -110,10 +110,13 @@ Lock clears all in-memory state. Only the encrypted blob remains.
 
 ## CSP Strategy
 
-The Content-Security-Policy is applied conditionally:
+Content-Security-Policy is enforced via HTTP headers, not a `<meta>` tag:
 
-- **Development:** CSP meta tag is NOT rendered. Next.js requires inline scripts and dynamic code execution for HMR/React Refresh.
-- **Production:** CSP meta tag rendered with strict policy. The post-build script (`scripts/extract-csp-hashes.mjs`) computes SHA-256 hashes for all inline scripts and injects them.
-- **`style-src 'unsafe-inline'`:** Required because Shadcn/Radix components apply inline styles dynamically at runtime via JavaScript — these cannot be pre-hashed.
-- **`frame-ancestors`:** Only in `_headers` file (ignored in `<meta>` tags per CSP spec).
+- **Delivery:** `vercel.json` (Vercel) and `public/_headers` (Netlify/Cloudflare Pages) set the CSP header on all responses
+- **`script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'`:** `'unsafe-inline'` is required because Next.js static export generates inline `<script>` tags for hydration data whose content changes every build (hashes can't be pre-computed reliably in CI). `'wasm-unsafe-eval'` allows Argon2 WASM compilation.
+- **`style-src 'self' 'unsafe-inline'`:** Required because Shadcn/Radix components apply inline styles dynamically at runtime via JavaScript — these cannot be pre-hashed.
+- **`frame-ancestors 'none'`:** Enforced via HTTP headers (ignored in meta tags per CSP spec).
+- **Development:** No CSP is applied. Next.js requires inline scripts and dynamic code execution for HMR/React Refresh.
 - **Service worker:** Only registered in production to avoid stale precache manifest errors during development.
+
+**Why not a meta tag with hashes?** Next.js static export generates inline scripts for hydration (`self.__next_f.push(...)`) whose content includes chunk filenames that change every build. A post-build hash extraction approach was attempted but proved unreliable in CI (Vercel doesn't guarantee the script runs, and the circular dependency between HTML generation and hash injection makes it fragile). The `'unsafe-inline'` approach is the standard pragmatic solution for static Next.js deployments — same as used by Vercel's own documentation sites.

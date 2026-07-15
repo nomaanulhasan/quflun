@@ -32,6 +32,13 @@ export default function SecurityLimitationsPage() {
           This is inherent to all browser-based applications and is not unique to Quflun.
         </Section>
 
+        <Section title="Content Security Policy">
+          The Content-Security-Policy allows &apos;unsafe-inline&apos; and &apos;unsafe-eval&apos; for scripts because Next.js static export
+          generates inline hydration scripts, and argon2-browser&apos;s Emscripten-compiled code requires eval for initialization.
+          XSS risk is mitigated by connect-src restricting all network requests to the same origin, preventing data exfiltration
+          even if script injection were somehow achieved.
+        </Section>
+
         <Section title="Recommended Mitigations">
           Lock your vault when stepping away. Use a strong master password (12+ characters recommended).
           Keep your browser and OS updated. Avoid installing untrusted browser extensions.

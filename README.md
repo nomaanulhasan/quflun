@@ -71,11 +71,11 @@ Opens at `http://localhost:3000`.
 pnpm build
 ```
 
-This runs the full pipeline: `next build --webpack` → `serwist build` (generates service worker with precache manifest) → `node scripts/extract-csp-hashes.mjs` (injects CSP SHA-256 hashes into built HTML files).
+This runs: `next build --webpack` → `serwist build` (generates service worker with precache manifest).
 
 Produces a static export in `out/` — deployable to any static hosting.
 
-**Note:** The CSP meta tag is only rendered in production builds. In development, Next.js requires inline scripts and dynamic code execution for HMR which would be blocked by CSP.
+**CSP:** Content-Security-Policy is enforced via HTTP headers (`vercel.json` for Vercel, `public/_headers` for Netlify/Cloudflare). No CSP meta tag is used — Next.js inline scripts require `'unsafe-inline'` which is configured at the hosting level.
 
 ### Test
 
