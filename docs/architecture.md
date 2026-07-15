@@ -104,4 +104,16 @@ Lock clears all in-memory state. Only the encrypted blob remains.
 - **Unit tests**: adapter layer, service layer (vitest)
 - **Property tests**: universal correctness properties (fast-check)
 - **Integration**: vault lifecycle round-trips (create → add → lock → unlock → verify)
-- **No UI tests yet**: hooks and components tested via build verification; React Testing Library tests planned for v1-beta
+- **Component tests**: health check, import/export, settings pages (React Testing Library + happy-dom)
+- **Compliance tests**: no telemetry, no forbidden storage, no external URLs, CSP validation
+- **388 tests** across 27 test files
+
+## CSP Strategy
+
+The Content-Security-Policy is applied conditionally:
+
+- **Development:** CSP meta tag is NOT rendered. Next.js requires inline scripts and dynamic code execution for HMR/React Refresh.
+- **Production:** CSP meta tag rendered with strict policy. The post-build script (`scripts/extract-csp-hashes.mjs`) computes SHA-256 hashes for all inline scripts and injects them.
+- **`style-src 'unsafe-inline'`:** Required because Shadcn/Radix components apply inline styles dynamically at runtime via JavaScript — these cannot be pre-hashed.
+- **`frame-ancestors`:** Only in `_headers` file (ignored in `<meta>` tags per CSP spec).
+- **Service worker:** Only registered in production to avoid stale precache manifest errors during development.

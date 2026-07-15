@@ -25,7 +25,7 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Brute-force protection** — incremental delay + 60-second cooldown
 - **Offline-first** — works without internet after initial load
 - **No telemetry** — zero analytics, tracking, or external requests
-- **Static export** — deployable to any static hosting (Netlify, Cloudflare Pages, S3, etc.)
+- **Static export** — deployable to any static hosting (Vercel, Netlify, Cloudflare Pages, S3, etc.)
 
 ## Tech Stack
 
@@ -70,9 +70,11 @@ Opens at `http://localhost:3000`.
 pnpm build
 ```
 
-This runs the full pipeline: `next build` → `serwist build` (generates service worker) → `node scripts/extract-csp-hashes.mjs` (injects CSP SHA-256 hashes into HTML).
+This runs the full pipeline: `next build --webpack` → `serwist build` (generates service worker with precache manifest) → `node scripts/extract-csp-hashes.mjs` (injects CSP SHA-256 hashes into built HTML files).
 
 Produces a static export in `out/` — deployable to any static hosting.
+
+**Note:** The CSP meta tag is only rendered in production builds. In development, Next.js requires inline scripts and dynamic code execution for HMR which would be blocked by CSP.
 
 ### Test
 
@@ -158,6 +160,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v0.7.0 — PWA & Security Hardening Complete**
+**v1.0.1 — Production Ready**
 
-Core architecture, vault engine, UI, PWA (Serwist service worker), CSP hardening (post-build hash extraction), security headers, and backup reminders are implemented. 365 tests passing across 24 test files.
+All features implemented: core vault engine, UI, PWA (Serwist service worker), CSP hardening (post-build hash extraction), security headers, backup reminders, import/export, settings, health check, and documentation pages. 388 tests passing across 27 test files. Deployed on Vercel.

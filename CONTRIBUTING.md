@@ -69,6 +69,8 @@ pnpm lint         # ESLint
 
 - Never persist master passwords, derived keys, or decrypted vault contents
 - Never use `eval()`, `new Function()`, or `'unsafe-eval'` in production code
+- `style-src 'unsafe-inline'` is permitted because Shadcn/Radix applies inline styles at runtime
+- CSP meta tag only renders in production builds — dev mode is unrestricted for HMR
 - Clipboard clearing is best-effort (documented browser limitations)
 - Follow CSP restrictions: no inline scripts, no external resources
 

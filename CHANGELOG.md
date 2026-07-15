@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+## [1.0.1] - CSP and PWA Dev-Mode Fixes
 
-- Utility pages (settings, import/export UI, health check UI, security docs)
-- PWA setup with Serwist service worker
-- CSP hardening and post-build hash extraction
-- Security headers configuration
+### Fixed
+
+- CSP meta tag now only renders in production — no longer blocks Next.js HMR/React Refresh in development
+- Service worker registration skipped in development to prevent stale precache manifest 404 errors
+- Stale service workers from previous builds are automatically unregistered in dev mode
+- Removed `frame-ancestors` from CSP meta tag (only valid in HTTP headers, already in `_headers` file)
+- Changed `style-src` from `'unsafe-hashes'` to `'unsafe-inline'` — Shadcn/Radix components apply inline styles dynamically at runtime which cannot be pre-hashed
+- Moved CSP hash extraction from `postbuild` script into the `build` command for Vercel compatibility
+
+### Changed
+
+- Build pipeline is now a single `build` script: `next build --webpack && serwist build && node scripts/extract-csp-hashes.mjs`
 
 ## [1.0.0] - Foundation Complete
 
