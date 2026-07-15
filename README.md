@@ -6,6 +6,7 @@ Privacy-first, offline-first password manager. No accounts. No telemetry. No net
 
 Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, and credentials in an encrypted vault using the open KeePass KDBX 4.x format. It runs entirely in your browser — there is no backend server, no cloud sync, and no data collection.
 
+
 ## Features
 
 - **KDBX 4.x format** — compatible with KeePass, KeePassXC, KeeWeb
