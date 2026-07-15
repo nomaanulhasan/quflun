@@ -53,21 +53,15 @@ export default function RootLayout({
           - src/app/apple-icon.png
         */}
         {/*
-          Content-Security-Policy meta tag.
-          Only applied in production — in development, Next.js needs inline scripts
-          and dynamic code execution for HMR/React Refresh which would be blocked.
-          The post-build script (scripts/extract-csp-hashes.mjs) computes
-          SHA-256 hashes for inline scripts/styles and injects them into the
-          built HTML files.
-          Note: frame-ancestors is omitted here because it is ignored in <meta>
-          tags per the CSP spec — it is enforced via the _headers file instead.
+          Content-Security-Policy is enforced via HTTP headers (vercel.json / _headers file),
+          NOT via a meta tag. This avoids the chicken-and-egg problem where:
+          1. Next.js generates inline scripts during build
+          2. A post-build step must hash them and inject into the CSP
+          3. But the CSP is inside the HTML that Next.js generated (circular)
+          
+          The _headers file and vercel.json provide CSP at the hosting level,
+          which is the standard approach for static exports.
         */}
-        {process.env.NODE_ENV === 'production' && (
-          <meta
-            httpEquiv="Content-Security-Policy"
-            content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self';"
-          />
-        )}
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-clip">
         <Providers>
