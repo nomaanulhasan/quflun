@@ -91,8 +91,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   if (!ready || !vaultStore || !uiStore) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-muted-foreground">Loading...</p>
+      <div className="flex flex-1 items-center justify-center" aria-busy="true" aria-label="Loading application">
+        <div className="text-center space-y-3">
+          <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+          <p className="text-sm text-muted-foreground">Loading vault...</p>
+        </div>
       </div>
     );
   }

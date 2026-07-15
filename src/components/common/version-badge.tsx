@@ -3,7 +3,7 @@
  */
 export function VersionBadge() {
   return (
-    <p className="text-center text-xs text-muted-foreground/60">
+    <p className="text-center text-xs text-muted-foreground">
       Private by design • v{process.env.NEXT_PUBLIC_APP_VERSION}
     </p>
   );
