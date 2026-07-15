@@ -1,12 +1,11 @@
 {
   "name": "quflun",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack && serwist build",
-    "postbuild": "node scripts/extract-csp-hashes.mjs",
-    "build:turbo": "next build && serwist build",
+    "build": "next build --webpack && serwist build && node scripts/extract-csp-hashes.mjs",
+    "build:turbo": "next build && serwist build && node scripts/extract-csp-hashes.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest --run",

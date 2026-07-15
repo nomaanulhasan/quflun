@@ -92,17 +92,14 @@ function updateCspMetaTag(html, scriptHashes, styleHashes) {
   const scriptHashStr = scriptHashes
     .map((h) => `'sha256-${h}'`)
     .join(" ");
-  const styleHashStr = styleHashes
-    .map((h) => `'sha256-${h}'`)
-    .join(" ");
 
   // Build the updated CSP directives
   const scriptSrc = ["'self'", "'wasm-unsafe-eval'", scriptHashStr]
     .filter(Boolean)
     .join(" ");
-  const styleSrc = ["'self'", "'unsafe-hashes'", styleHashStr]
-    .filter(Boolean)
-    .join(" ");
+  // Use 'unsafe-inline' for styles because Shadcn/Radix components apply
+  // inline styles dynamically at runtime, which can't be pre-hashed.
+  const styleSrc = "'self' 'unsafe-inline'";
 
   const cspValue = [
     `default-src 'none'`,
