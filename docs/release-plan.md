@@ -63,7 +63,7 @@
 - [x] Backup reminder system functional
 - [x] Integration tests pass
 - [x] Compliance tests pass
-- [x] 388 tests passing across 27 test files
+- [x] 392 tests passing across 27 test files
 
 ### v1.0.0 ✅
 
@@ -71,3 +71,11 @@
 - [x] Public repository published
 - [x] README complete with build instructions
 - [x] Deployed on Vercel
+
+### v1.1.0 ✅
+
+- [x] Change vault password feature (Settings page)
+- [x] Safe 5-step password change process with rollback
+- [x] Integrity verification of re-encrypted vault before persisting
+- [x] Lighthouse redirect chain fix (trailingSlash)
+- [x] 392+ tests passing

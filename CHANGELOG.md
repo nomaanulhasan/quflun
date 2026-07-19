@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - Change Vault Password
+
+### Added
+
+- Change Password feature in Settings — users can update their vault master password
+- Safe password change with 5-step process: verify current → update credentials → re-encrypt → integrity check → persist
+- Rollback safety: old credentials and encrypted blob preserved on any failure
+- Weak password warning in change password form (below 8 characters)
+- `changePassword` method on VaultEngine interface
+- `changePassword` action on VaultStore
+- `ChangePassword` settings card component (only visible when vault is unlocked)
+- `trailingSlash: true` in Next.js config to eliminate redirect chains on Vercel
+
+### Changed
+
+- Version bumped to 1.1.0
+- Settings page now shows "Change Password" card between Security and Backup sections
+
+### Fixed
+
+- Vercel redirect chain (same-URL redirect) costing 600ms desktop / 2750ms mobile — resolved by explicit `trailingSlash: true`
+
 ## [1.0.2] - CSP Moved to HTTP Headers
 
 ### Changed

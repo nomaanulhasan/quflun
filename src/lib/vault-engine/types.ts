@@ -74,6 +74,9 @@ export interface VaultEngine {
   // Health Check
   runHealthCheck(): Promise<import('./health-check').HealthCheckResult>;
 
+  // Password management
+  changePassword(currentPassword: string, newPassword: string): Promise<void>;
+
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;
 

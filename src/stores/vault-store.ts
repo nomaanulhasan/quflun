@@ -52,6 +52,9 @@ export interface VaultState {
   createTag: (name: string) => Promise<void>;
   deleteTag: (name: string) => Promise<void>;
 
+  // Actions — password management
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+
   // Getters
   getBruteForceState: () => BruteForceState;
 }
@@ -212,6 +215,18 @@ export function createVaultStore(engine: VaultEngine) {
       async deleteTag(name: string) {
         await engine.deleteTag(name);
         refreshEntries();
+      },
+
+      // ─── Password Management ─────────────────────────────────────────────
+
+      async changePassword(currentPassword: string, newPassword: string) {
+        set({ error: null });
+        try {
+          await engine.changePassword(currentPassword, newPassword);
+        } catch (err) {
+          set({ error: (err as Error).message });
+          throw err;
+        }
       },
 
       // ─── Getters ───────────────────────────────────────────────────────

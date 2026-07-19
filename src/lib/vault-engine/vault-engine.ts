@@ -246,6 +246,94 @@ class VaultEngineImpl implements VaultEngine {
     );
   }
 
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    if (this.operationInProgress) {
+      throw new Error('Another vault operation is already in progress.');
+    }
+    this.operationInProgress = true;
+
+    try {
+      if (!this.db) {
+        throw new Error('Vault must be unlocked to change password.');
+      }
+      if (!this.vaultId) {
+        throw new Error('No vault ID. Cannot change password.');
+      }
+
+      // Validate new password
+      this.validatePassword(newPassword);
+
+      // ── Step 1: Load the existing encrypted blob (serves as our backup) ──
+      const existingBuffer = await this.storageAdapter.loadVault(this.vaultId);
+      if (!existingBuffer) {
+        throw new Error('Vault data not found in storage.');
+      }
+
+      // ── Step 2: Verify current password is correct ──
+      try {
+        await withTimeout(
+          this.cryptoAdapter.loadDatabase(existingBuffer, currentPassword),
+          DECRYPTION_TIMEOUT_MS,
+          'Password verification timed out.'
+        );
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        if (errorMessage.includes('timed out')) {
+          throw err;
+        }
+        throw new Error('Current password is incorrect.');
+      }
+
+      // ── Step 3: Update credentials and re-encrypt ──
+      // Save old credentials for rollback
+      const oldCredentials = this.db.credentials;
+
+      this.db.credentials = new kdbxweb.Credentials(
+        kdbxweb.ProtectedValue.fromString(newPassword)
+      );
+
+      let newBuffer: ArrayBuffer;
+      try {
+        newBuffer = await this.cryptoAdapter.saveDatabase(this.db);
+      } catch {
+        // Rollback credentials on encryption failure
+        this.db.credentials = oldCredentials;
+        throw new Error('Failed to re-encrypt vault with new password.');
+      }
+
+      // ── Step 4: Verify the new blob is valid by test-decrypting it ──
+      try {
+        await withTimeout(
+          this.cryptoAdapter.loadDatabase(newBuffer, newPassword),
+          DECRYPTION_TIMEOUT_MS,
+          'Verification of re-encrypted vault timed out.'
+        );
+      } catch {
+        // New blob is corrupt — rollback credentials, do NOT persist
+        this.db.credentials = oldCredentials;
+        throw new Error('Integrity check failed. Password was not changed.');
+      }
+
+      // ── Step 5: Persist the verified new blob ──
+      try {
+        await this.storageAdapter.saveVault(
+          this.vaultId,
+          this.vaultName || 'Unnamed Vault',
+          newBuffer
+        );
+      } catch {
+        // Storage write failed — rollback credentials
+        // The old blob in IndexedDB remains intact
+        this.db.credentials = oldCredentials;
+        throw new Error('Failed to save vault. Password was not changed.');
+      }
+
+      // Success — vault is now encrypted with the new password
+    } finally {
+      this.operationInProgress = false;
+    }
+  }
+
   // ─── Entry CRUD (Task 4.2) ─────────────────────────────────────────────────
 
   async addEntry(data: EntryInput): Promise<EntryMeta> {

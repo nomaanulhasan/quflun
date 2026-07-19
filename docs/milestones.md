@@ -41,3 +41,16 @@ Status: Planned
 ## v1.0.0
 
 Status: Planned
+
+## v1.1.0
+
+Date: 2026-07-19
+Status: Completed
+
+Highlights:
+- Change vault master password feature added to Settings
+- Safe 5-step password change: verify → update credentials → re-encrypt → integrity check → persist
+- Full rollback safety — old credentials and encrypted blob preserved on any failure
+- Weak password warning UX
+- Lighthouse performance fix: `trailingSlash: true` eliminates Vercel redirect chain
+- 392 tests passing across 27 test files

@@ -9,6 +9,7 @@ import { Shell } from '@/components/layout/shell';
 import { PageHeader } from '@/components/common/page-header';
 import { ThemeSettings } from '@/components/settings/theme-settings';
 import { SecuritySettings } from '@/components/settings/security-settings';
+import { ChangePassword } from '@/components/settings/change-password';
 import { BackupSettings } from '@/components/settings/backup-settings';
 import { AboutSettings } from '@/components/settings/about-settings';
 
@@ -30,6 +31,7 @@ export default function SettingsPage() {
 
         <ThemeSettings />
         <SecuritySettings />
+        <ChangePassword />
         <BackupSettings />
         <AboutSettings />
 

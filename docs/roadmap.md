@@ -1,5 +1,12 @@
 # Quflun Roadmap
 
+## v1.1.0 (current)
+
+- Change vault master password (Settings → Change Password)
+- Safe re-encryption with rollback on failure
+- Integrity verification before persisting new credentials
+- Lighthouse performance: trailing slash redirect fix
+
 ## v1-utility-pages
 
 - Settings page (idle timeout, clipboard timeout, theme selector, backup reminder)

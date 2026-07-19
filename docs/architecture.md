@@ -32,7 +32,7 @@ UI
 
 ### Service Layer (`src/lib/vault-engine/`, `src/lib/search/`, etc.)
 
-- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection
+- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection, password change
 - SearchEngine: in-memory substring search
 - PasswordGenerator: CSPRNG-based generation with rejection sampling
 - ClipboardManager: timed clipboard clearing with ownership detection
@@ -106,7 +106,7 @@ Lock clears all in-memory state. Only the encrypted blob remains.
 - **Integration**: vault lifecycle round-trips (create → add → lock → unlock → verify)
 - **Component tests**: health check, import/export, settings pages (React Testing Library + happy-dom)
 - **Compliance tests**: no telemetry, no forbidden storage, no external URLs, CSP validation
-- **388 tests** across 27 test files
+- **392 tests** across 27 test files
 
 ## CSP Strategy
 
