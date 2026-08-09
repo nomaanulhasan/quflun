@@ -62,7 +62,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
           <button
             type="button"
             onClick={onNew}
-            className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex flex-col cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Add new entry"
           >
             <Plus className="h-6 w-6" aria-hidden="true" />
