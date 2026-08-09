@@ -1,6 +1,6 @@
 # Quflun Roadmap
 
-## v1.5.0 (current)
+## v1.5.1 (current)
 
 - Command palette (`Ctrl+K`) with fuzzy search for entries and quick actions
 - `Alt+N` — new password entry

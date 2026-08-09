@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - Polish & Bug Fixes
+
+### Fixed
+
+- Flash of vault selection screen during unlock transition
+- Toast description text unreadable in light theme
+- `useHotkeys` crash on IME/dead-key events where `e.key` is undefined
+- Branded loading spinner shown during all transitional states (no blank screens)
+
+### Added
+
+- "Add First Entry" button when vault is empty
+- Shared `LoadingSpinner` component with shield icon and spinning ring
+
+### Changed
+
+- Shell refactored into focused subcomponents (sidebar, mobile-header, nav-config, use-shell-shortcuts)
+- Command palette split into types, use-palette-items hook, and memo'd PaletteItemRow
+- Vault list keyboard handler uses refs for stable callback (zero re-creation)
+- `useHotkeys` registers listener once via ref (no re-attach on shortcut changes)
+
 ## [1.5.0] - Keyboard Shortcuts & Command Palette
 
 ### Added
