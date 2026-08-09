@@ -25,6 +25,8 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Clipboard protection** — timed auto-clear with ownership verification
 - **Brute-force protection** — incremental delay + 60-second cooldown
 - **Change password** — safely update vault master password with integrity verification
+- **Quick copy actions** — copy username, password, URL from entry cards and edit forms
+- **Password strength indicator** — visual badge on cards (Weak / Fair / Strong)
 - **Offline-first** — works without internet after initial load
 - **No telemetry** — zero analytics, tracking, or external requests
 - **Static export** — deployable to any static hosting (Vercel, Netlify, Cloudflare Pages, S3, etc.)

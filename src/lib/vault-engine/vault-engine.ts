@@ -533,6 +533,7 @@ class VaultEngineImpl implements VaultEngine {
         tags: [...entry.tags],
         favorite,
         modifiedAt: entry.times.lastModTime?.toISOString() || '',
+        passwordStrength: type === 'password' ? this.computePasswordStrength(entry) : null,
       });
     }
 
@@ -988,6 +989,28 @@ class VaultEngineImpl implements VaultEngine {
     if (typeof val === 'string') return val;
     // ProtectedValue — call getText() for full entry retrieval (getEntry only)
     return val.getText();
+  }
+
+  /**
+   * Simple password strength classification for list-view indicators.
+   * Uses character diversity + length heuristic. Does NOT expose the password value.
+   */
+  private computePasswordStrength(entry: kdbxweb.KdbxEntry): 'weak' | 'fair' | 'strong' {
+    const val = entry.fields.get('Password');
+    if (!val) return 'weak';
+    const pw = typeof val === 'string' ? val : val.getText();
+    const len = pw.length;
+    if (len === 0) return 'weak';
+
+    let charSets = 0;
+    if (/[a-z]/.test(pw)) charSets++;
+    if (/[A-Z]/.test(pw)) charSets++;
+    if (/[0-9]/.test(pw)) charSets++;
+    if (/[^a-zA-Z0-9]/.test(pw)) charSets++;
+
+    if (len >= 12 && charSets >= 3) return 'strong';
+    if (len >= 8 && charSets >= 2) return 'fair';
+    return 'weak';
   }
 
   // H-2 fix: Custom data helpers using entry.customData (KDBX 4.x proper mechanism)

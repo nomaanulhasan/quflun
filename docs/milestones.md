@@ -54,3 +54,42 @@ Highlights:
 - Weak password warning UX
 - Lighthouse performance fix: `trailingSlash: true` eliminates Vercel redirect chain
 - 392 tests passing across 27 test files
+
+## v1.2.0
+
+Date: 2026-08-09
+Status: Completed
+
+Highlights:
+- Quick Copy Actions: copy username, password, URL directly from entry cards and edit forms
+- useCopyAction hook with ClipboardManager singleton, toast feedback, 2s visual state
+- CopyButton, CopyAction, OpenLinkAction reusable components
+- Kiro steering rule: Security Review mandatory for every feature
+- 392 tests passing across 27 test files
+
+## v1.2.1
+
+Date: 2026-08-09
+Status: Completed
+
+Highlights:
+- Favorite star toggleable on entry cards without opening editor
+- Touch targets standardized to 36px (WCAG 2.5.8 Level AA)
+- Icon sizes standardized to 16px (IBM Design Language)
+- Native title tooltips on all icon buttons for desktop
+- 392 tests passing across 27 test files
+
+## v1.2.2
+
+Date: 2026-08-09
+Status: Completed
+
+Highlights:
+- Entry card UI redesigned: colored initials avatar, structured layout, action bar
+- Password strength badge on cards (Weak / Fair / Strong) computed by VaultEngine
+- Secure note cards show relative update time ("Updated today", "Updated 3 days ago")
+- "New Entry" dashed card CTA at end of grid (top button removed)
+- 4-column grid on xl screens (1280px+)
+- Code optimization: VaultListView, EntryEditorWrapper, ImportSection, ExportSection extracted
+- Documentation fully synced through v1.2.2
+- 392 tests passing across 27 test files

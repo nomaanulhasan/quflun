@@ -1,6 +1,25 @@
 # Quflun Roadmap
 
-## v1.1.0 (current)
+## v1.2.2 (current)
+
+- UI/UX improvements: card redesign, colored avatars, strength badges, relative dates
+- Code optimization: component extraction into dedicated files
+- Documentation fully synced with all features through v1.2.2
+
+## v1.2.1
+
+- Favorite star toggleable on entry cards without opening editor
+- Touch targets 36px (WCAG AA), icons 16px (IBM Design Language)
+- Native tooltips on all icon buttons (desktop hover)
+
+## v1.2.0
+
+- Quick copy actions: copy username, password, URL from entry cards and edit forms
+- useCopyAction hook with toast feedback and visual state
+- CopyButton, CopyAction, OpenLinkAction reusable components
+- Kiro steering: mandatory Security Review for all features
+
+## v1.1.0
 
 - Change vault master password (Settings → Change Password)
 - Safe re-encryption with rollback on failure

@@ -21,7 +21,7 @@ export function TagFilter({ tags, selected, onSelect, maxVisible = 10 }: TagFilt
         <Badge
           key={tag}
           variant={selected === tag ? 'default' : 'secondary'}
-          className="cursor-pointer"
+          className="cursor-pointer border border-border p-3 rounded-md"
           onClick={() => onSelect(selected === tag ? null : tag)}
         >
           {tag}

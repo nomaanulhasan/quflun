@@ -71,6 +71,8 @@ export interface EntryListItem {
   tags: string[];
   favorite: boolean;
   modifiedAt: string;
+  /** Password strength indicator for card display */
+  passwordStrength: 'weak' | 'fair' | 'strong' | null;
 }
 
 // ─── Application Settings ──────────────────────────────────────────────────────
