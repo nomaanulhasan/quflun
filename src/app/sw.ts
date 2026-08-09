@@ -18,10 +18,17 @@ declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
-  skipWaiting: true,
+  skipWaiting: false,
   clientsClaim: true,
   navigationPreload: false, // Not needed for static export
   runtimeCaching: defaultCache,
+});
+
+// Listen for SKIP_WAITING message from the app (triggered by "Update now" button)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 serwist.addEventListeners();

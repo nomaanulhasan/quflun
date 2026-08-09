@@ -51,6 +51,7 @@ UI
 - useSearch: debounced query input
 - useIdle: connects IdleMonitor to vault lock
 - useClipboard: copy action wrapper
+- useCopyAction: clipboard copy with toast feedback and visual state
 
 ### UI Layer (`src/app/`, `src/components/`)
 

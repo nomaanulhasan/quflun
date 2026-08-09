@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Star } from 'lucide-react';
+import { Star } from "lucide-react";
 
 interface FavoriteToggleProps {
   checked: boolean;
@@ -11,7 +11,11 @@ interface FavoriteToggleProps {
 /**
  * Favorite checkbox toggle with star icon.
  */
-export function FavoriteToggle({ checked, onChange, disabled = false }: FavoriteToggleProps) {
+export function FavoriteToggle({
+  checked,
+  onChange,
+  disabled = false,
+}: FavoriteToggleProps) {
   return (
     <label className="flex items-center gap-2 text-sm">
       <input
@@ -19,10 +23,10 @@ export function FavoriteToggle({ checked, onChange, disabled = false }: Favorite
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="h-4 w-4 rounded border-border"
+        className="h-4 w-4 rounded border-border hidden"
       />
       <Star
-        className={`h-4 w-4 ${checked ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground'}`}
+        className={`h-4 w-4 ${checked ? "fill-amber-400 text-amber-400" : "text-muted-foreground"}`}
         aria-hidden="true"
       />
       Mark as favorite

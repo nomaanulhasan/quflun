@@ -79,3 +79,30 @@
 - [x] Integrity verification of re-encrypted vault before persisting
 - [x] Lighthouse redirect chain fix (trailingSlash)
 - [x] 392+ tests passing
+
+### v1.2.0 ✅
+
+- [x] Quick copy actions on entry cards (username, password, URL, open website)
+- [x] Quick copy actions on edit entry form fields
+- [x] useCopyAction hook, CopyButton, CopyAction, OpenLinkAction components
+- [x] Kiro steering: Security Review requirement
+- [x] 392+ tests passing
+
+### v1.2.1 ✅
+
+- [x] Favorite star toggleable directly from entry cards
+- [x] Touch targets 36px (WCAG AA compliant)
+- [x] Icon size 16px (IBM Design Language)
+- [x] Native tooltips on icon buttons
+- [x] 392+ tests passing
+
+### v1.2.2 ✅
+
+- [x] Entry card UI redesign: colored avatar, strength badge, relative dates
+- [x] Password strength indicator (Weak / Fair / Strong)
+- [x] "New Entry" card CTA in grid
+- [x] Secure note cards show relative update time
+- [x] 4-column grid on xl screens (1280px+)
+- [x] Component extraction (VaultListView, EntryEditorWrapper, ImportSection, ExportSection)
+- [x] Documentation synced through v1.2.2
+- [x] 392+ tests passing

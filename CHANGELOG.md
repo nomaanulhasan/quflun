@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - UI/UX Improvements + Code Optimization
+
+### Changed
+
+- Entry card redesigned: colored initials avatar, title/username top section, actions + strength badge bottom
+- Secure note cards show "Updated X ago" relative date in subtitle
+- "New Entry" dashed card added at end of grid (replaces top "+ Add" button)
+- 4-column grid layout on xl screens (1280px+)
+- Extracted inline components into own files: `VaultListView`, `EntryEditorWrapper`, `ImportSection`, `ExportSection`
+- Password strength badge on cards (Weak / Fair / Strong) computed by VaultEngine
+- Documentation fully synced with codebase through v1.2.2
+
+## [1.2.1] - Accessibility & Interaction Improvements
+
+### Changed
+
+- Favorite star on entry cards now toggleable without opening the entry
+- Touch targets standardized to 36×36px (exceeds WCAG 2.5.8 Level AA 24px minimum)
+- Icon size standardized to 16px (IBM Design Language recommendation for toolbar icons)
+- Native `title` tooltips added on all icon buttons (desktop hover)
+
+## [1.2.0] - Quick Copy Actions
+
+### Added
+
+- Quick copy buttons on entry cards: copy username, copy password, copy URL, open website
+- Quick copy buttons on edit entry form: username, password, URL fields
+- `useCopyAction` hook: shared clipboard copy with toast feedback and 2s visual state
+- `CopyButton` reusable component (clipboard → check icon transition)
+- `CopyAction` and `OpenLinkAction` field action components
+- Kiro steering rule: Security Review required for every new feature
+
+### Security
+
+- Passwords fetched on-demand from engine only at copy-click time (not stored in card state)
+- All clipboard operations go through ClipboardManager (ownership tracking, auto-clear)
+- No favicon fetching — preserves offline-first model and prevents privacy leakage
+- No new external requests, no CSP changes, no new dependencies
+
 ## [1.1.0] - Change Vault Password
 
 ### Added

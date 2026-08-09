@@ -9,6 +9,8 @@ import { GeneratorDialog } from '@/components/forms/generator-dialog';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
 import { TagsInput } from '@/components/forms/tags-input';
 import { DeleteDialog } from '@/components/vault/delete-dialog';
+import { CopyAction, OpenLinkAction } from '@/components/common/field-actions';
+import { useCopyAction } from '@/hooks/use-copy-action';
 import { useVaultStore } from '@/components/providers';
 import type { VaultEntry } from '@/types';
 
@@ -29,6 +31,7 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
   const [error, setError] = useState<string | null>(null);
   const editEntry = useVaultStore((s) => s.editEntry);
   const deleteEntry = useVaultStore((s) => s.deleteEntry);
+  const { copy, isCopied } = useCopyAction();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -57,12 +60,47 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
       </div>
       <div className="space-y-2">
         <label htmlFor="edit-username" className="text-sm font-medium">Username</label>
-        <Input id="edit-username" value={username} onChange={(e) => setUsername((e.target as HTMLInputElement).value)} disabled={loading} />
+        <div className="flex gap-1">
+          <Input id="edit-username" value={username} onChange={(e) => setUsername((e.target as HTMLInputElement).value)} disabled={loading} className="flex-1" />
+          <CopyAction
+            copied={isCopied('username')}
+            label="Copy username"
+            onCopy={(e) => { e.preventDefault(); if (username) copy(username, 'Username', 'username'); }}
+            disabled={!username || loading}
+          />
+        </div>
       </div>
-      <PasswordField id="edit-password" label="Password" value={password} onChange={setPassword} disabled={loading} required trailing={<GeneratorDialog onInsert={setPassword} />} />
+      <PasswordField
+        id="edit-password"
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        disabled={loading}
+        required
+        trailing={
+          <div className="flex gap-0.5">
+            <CopyAction
+              copied={isCopied('password')}
+              label="Copy password"
+              onCopy={(e) => { e.preventDefault(); if (password) copy(password, 'Password', 'password'); }}
+              disabled={!password || loading}
+            />
+            <GeneratorDialog onInsert={setPassword} />
+          </div>
+        }
+      />
       <div className="space-y-2">
         <label htmlFor="edit-url" className="text-sm font-medium">URL</label>
-        <Input id="edit-url" value={url} onChange={(e) => setUrl((e.target as HTMLInputElement).value)} disabled={loading} />
+        <div className="flex gap-1">
+          <Input id="edit-url" value={url} onChange={(e) => setUrl((e.target as HTMLInputElement).value)} disabled={loading} className="flex-1" />
+          <CopyAction
+            copied={isCopied('url')}
+            label="Copy URL"
+            onCopy={(e) => { e.preventDefault(); if (url) copy(url, 'URL', 'url'); }}
+            disabled={!url || loading}
+          />
+          <OpenLinkAction url={url} disabled={loading} />
+        </div>
       </div>
       <div className="space-y-2">
         <label htmlFor="edit-notes" className="text-sm font-medium">Notes</label>
