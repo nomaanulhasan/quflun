@@ -106,7 +106,7 @@ function VaultListView({ entries, onEdit, onNew }: { entries: EntryListItem[]; o
         showFavorites ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
           : <EmptyState icon={Search} title="No results" description="Try a different query or clear filters." />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((e) => <EntryCard key={e.uuid} entry={e} onClick={() => onEdit(e.uuid)} />)}
         </div>
       )}

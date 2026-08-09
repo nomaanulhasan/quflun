@@ -4,6 +4,7 @@ import { Star, StickyNote, ExternalLink, Clipboard, Check, User, KeyRound } from
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCopyAction } from '@/hooks/use-copy-action';
+import { useVaultStore } from '@/components/providers';
 import type { EntryListItem } from '@/types';
 
 interface EntryCardProps {
@@ -13,16 +14,24 @@ interface EntryCardProps {
 
 /**
  * Entry card for the vault list view.
- * Displays title, username, URL, tags, favorite status, and quick action buttons.
+ * Displays title, username, URL, tags, and quick action buttons.
  * Does NOT display passwords.
+ *
+ * Touch targets: 36×36px (exceeds WCAG 2.5.8 Level AA 24px minimum).
+ * Icon size: 16px (matches IBM Design Language for toolbar icons).
  */
 export function EntryCard({ entry, onClick }: EntryCardProps) {
   const titleId = `entry-title-${entry.uuid}`;
   const { copy, isCopied } = useCopyAction();
+  const setFavorite = useVaultStore((s) => s.setFavorite);
+
+  async function handleToggleFavorite(e: React.MouseEvent) {
+    e.stopPropagation();
+    await setFavorite(entry.uuid, !entry.favorite);
+  }
 
   async function handleCopyPassword(e: React.MouseEvent) {
     e.stopPropagation();
-    // Fetch full entry from engine to get password (not in EntryListItem)
     const { getServices } = await import('@/lib/runtime');
     const { engine } = await getServices();
     const full = engine.getEntry(entry.uuid);
@@ -68,26 +77,26 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
       tabIndex={0}
       role="button"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 space-y-1">
           {/* Title */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {entry.type === 'note' && (
-              <StickyNote className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-label="Secure note" />
+              <StickyNote className="h-4 w-4 shrink-0 text-muted-foreground" aria-label="Secure note" />
             )}
-            <h3 id={titleId} className="truncate text-sm font-medium text-foreground">
+            <h3 id={titleId} className="truncate text-sm font-medium leading-tight text-foreground">
               {entry.title}
             </h3>
           </div>
 
           {/* Username */}
           {entry.username && (
-            <p className="truncate text-xs text-muted-foreground">{entry.username}</p>
+            <p className="truncate text-xs leading-tight text-muted-foreground">{entry.username}</p>
           )}
 
           {/* URL */}
           {entry.url && (
-            <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+            <p className="flex items-center gap-1 truncate text-xs leading-tight text-muted-foreground">
               <ExternalLink className="h-3 w-3 shrink-0" aria-hidden="true" />
               <span className="truncate">{entry.url}</span>
             </p>
@@ -95,7 +104,7 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
 
           {/* Tags */}
           {entry.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 pt-1">
+            <div className="flex flex-wrap gap-1 pt-0.5">
               {entry.tags.slice(0, 5).map((tag) => (
                 <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0">
                   {tag}
@@ -110,46 +119,59 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
           )}
         </div>
 
-        {/* Right side: favorite + actions */}
-        <div className="flex flex-col items-end gap-1.5">
-          {entry.favorite && (
-            <Star
-              className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400"
-              aria-label="Favorite"
-            />
-          )}
-        </div>
+        {/* Favorite toggle — 36px touch target */}
+        <button
+          type="button"
+          title={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
+          aria-pressed={entry.favorite}
+          onClick={handleToggleFavorite}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Star
+            className={`h-4 w-4 ${entry.favorite ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground'}`}
+            aria-hidden="true"
+          />
+        </button>
       </div>
 
-      {/* Quick actions — only for password entries */}
+      {/* Quick actions — 36px touch targets, 16px icons */}
       {entry.type === 'password' && (
-        <div className="mt-3 flex items-center gap-1 border-t border-border pt-2" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="mt-2.5 flex items-center gap-0.5 border-t border-border pt-2"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           {entry.username && (
             <Button
               type="button"
               variant="ghost"
-              size="icon-xs"
+              size="icon"
+              title="Copy username"
               aria-label="Copy username"
+              className="h-9 w-9"
               onClick={handleCopyUsername}
             >
               {isCopied(`un-${entry.uuid}`) ? (
-                <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+                <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
               ) : (
-                <User className="h-3 w-3" aria-hidden="true" />
+                <User className="h-4 w-4" aria-hidden="true" />
               )}
             </Button>
           )}
           <Button
             type="button"
             variant="ghost"
-            size="icon-xs"
+            size="icon"
+            title="Copy password"
             aria-label="Copy password"
+            className="h-9 w-9"
             onClick={handleCopyPassword}
           >
             {isCopied(`pw-${entry.uuid}`) ? (
-              <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+              <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
             ) : (
-              <KeyRound className="h-3 w-3" aria-hidden="true" />
+              <KeyRound className="h-4 w-4" aria-hidden="true" />
             )}
           </Button>
           {entry.url && (
@@ -157,24 +179,28 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
               <Button
                 type="button"
                 variant="ghost"
-                size="icon-xs"
+                size="icon"
+                title="Copy URL"
                 aria-label="Copy URL"
+                className="h-9 w-9"
                 onClick={handleCopyUrl}
               >
                 {isCopied(`url-${entry.uuid}`) ? (
-                  <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+                  <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
                 ) : (
-                  <Clipboard className="h-3 w-3" aria-hidden="true" />
+                  <Clipboard className="h-4 w-4" aria-hidden="true" />
                 )}
               </Button>
               <Button
                 type="button"
                 variant="ghost"
-                size="icon-xs"
+                size="icon"
+                title="Open website"
                 aria-label="Open website"
+                className="h-9 w-9"
                 onClick={handleOpenUrl}
               >
-                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </Button>
             </>
           )}

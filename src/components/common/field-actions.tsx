@@ -38,6 +38,7 @@ export function OpenLinkAction({ url, disabled }: OpenLinkActionProps) {
         href={normalizeUrl(url)}
         target="_blank"
         rel="noopener noreferrer"
+        title="Open website"
         aria-label="Open website"
         className="inline-flex shrink-0 items-center justify-center rounded-[min(var(--radius-md),12px)] size-7 text-sm font-medium transition-all outline-none select-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0"
       >
@@ -51,6 +52,7 @@ export function OpenLinkAction({ url, disabled }: OpenLinkActionProps) {
       type="button"
       variant="ghost"
       size="icon-sm"
+      title="Open website"
       aria-label="Open website"
       disabled
     >

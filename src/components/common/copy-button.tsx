@@ -26,6 +26,7 @@ export function CopyButton({ copied, label, onClick, disabled = false, size = 'i
       type="button"
       variant="ghost"
       size={size}
+      title={label}
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
