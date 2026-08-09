@@ -10,21 +10,16 @@ import { CreateVaultForm } from '@/components/vault/create-vault-form';
 import { OpenVaultForm } from '@/components/vault/open-vault-form';
 import { VersionBadge } from '@/components/common/version-badge';
 
-/**
- * Home page — routes between vault selection, creation, open, or lock screen.
- */
 export default function HomePage() {
   const status = useVaultStore((s) => s.status);
   const vaultId = useVaultStore((s) => s.vaultId);
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'unlocked') {
-      router.replace('/vault');
-    }
+    if (status === 'unlocked') router.replace('/vault');
   }, [status, router]);
 
-  if (status === 'unlocked') return null;
+  if (status === 'unlocked' || status === 'unlocking') return null;
   if (vaultId && status === 'locked') return <LockScreen />;
 
   return <VaultSelection />;

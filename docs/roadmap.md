@@ -14,6 +14,11 @@
 - Click-to-record UI with reset-to-defaults
 - `useHotkeys` hook for global keyboard shortcuts
 - Lightweight fuzzy matching utilities
+- Branded loading spinner for all transitional states
+- Empty vault shows "Add First Entry" button
+- Shell, command palette, and vault list refactored into focused subcomponents
+- Toast readability fixed for light theme
+- IME/dead-key safety in keyboard shortcut handler
 
 ## v1.4.0
 
@@ -37,17 +42,6 @@
 
 
 ## Upcoming
-
-### v1.6.0 — Browser Extension ⭐⭐⭐
-
-First ecosystem feature. Still fully offline — no cloud sync, no accounts.
-
-- Read local vault (communicate with open Quflun tab or IndexedDB directly)
-- Autofill credentials on login forms
-- Copy credentials from popup
-- Lock/unlock from extension popup
-- Match entries by URL domain
-- No new network requests — extension reads local storage only
 
 ### Pre-release — Real-world Validation
 
