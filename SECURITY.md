@@ -17,8 +17,7 @@ Quflun is a privacy-first, offline-first password manager. We take security repo
 ### How to Report
 
 1. Use [GitHub Security Advisories](https://github.com/nomaanulhasan/quflun/security/advisories/new) (preferred — private by default)
-2. Email: nomaanulhasan+security@gmail.com
-3. Open a private issue if the repository supports it.
+2. Open a private issue if the repository supports it.
 
 ### What to Include
 
