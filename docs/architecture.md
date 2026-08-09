@@ -32,7 +32,7 @@ UI
 
 ### Service Layer (`src/lib/vault-engine/`, `src/lib/search/`, etc.)
 
-- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection, password change, password health report
+- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection, password change, vault health report
 - SearchEngine: in-memory substring search
 - PasswordGenerator: CSPRNG-based generation with rejection sampling
 - ClipboardManager: timed clipboard clearing with ownership detection

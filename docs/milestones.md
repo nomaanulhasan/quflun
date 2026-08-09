@@ -100,7 +100,7 @@ Date: 2026-08-09
 Status: Completed
 
 Highlights:
-- Password Health Dashboard: health score, weak/reused/old password detection, missing fields audit
+- Vault Health: health score, weak/reused/old password detection, missing fields audit
 - Tabbed UI: Credential Health + Vault Integrity in one unified page
 - Merged `/health-check` into `/password-health` (old route redirects)
 - Responsive page widths: info pages `max-w-3xl`, settings `max-w-4xl` 2-col grid, tools `max-w-2xl`
@@ -108,4 +108,20 @@ Highlights:
 - `NEXT_PUBLIC_BUILD_DATE` env variable added at build time
 - Navigation consolidated: single "Vault Health" link in sidebar
 - Tests synced with interface changes (ImportResult.total, AboutSettings)
+- 391 tests passing across 27 test files
+
+## v1.4.0
+
+Date: 2026-08-10
+Status: Completed
+
+Highlights:
+- Custom key-value fields on entries (API keys, recovery codes, license keys)
+- Plain text and secret (masked ProtectedValue) field types
+- File attachments stored in KDBX binary pool (encrypted at rest, max 10 MB)
+- Custom fields editor UI with add/remove, secret toggle, inline editing
+- Attachments editor: attach, download, remove files from entries
+- VaultEntry type extended with customFields and attachments
+- Idle auto-lock wired into Shell (was built but never connected)
+- Lock redirects user to home page
 - 391 tests passing across 27 test files

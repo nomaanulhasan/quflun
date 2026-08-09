@@ -1,8 +1,17 @@
 # Quflun Roadmap
 
-## v1.3.0 (current)
+## v1.4.0 (current)
 
-- Password Health Dashboard: weak, reused, old passwords + missing fields detection
+- Custom key-value fields on entries (API keys, recovery codes, etc.)
+- File attachments in KDBX binary pool (max 10 MB each, encrypted at rest)
+- Custom fields editor UI with plain/secret toggle
+- Attachments editor: attach, download, remove files
+- Idle auto-lock connected to Shell
+- Lock redirects to home page
+
+## v1.3.0
+
+- Vault Health: weak, reused, old passwords + missing fields detection
 - Health score (0–100) with weighted penalties
 - Clickable metrics grid with drill-down to affected entries
 - Tabbed format: Credential Health + Vault Integrity in one page
@@ -13,17 +22,6 @@
 
 
 ## Upcoming
-
-### v1.4.0 — Custom Fields & Attachments ⭐⭐⭐⭐⭐
-
-Leverages KDBX's native custom fields and binary attachments.
-
-- Custom key-value fields on entries (API keys, recovery codes, license keys)
-- File attachments (SSH keys, certificates, documents)
-- Field type hints: text, secret (masked), URL, date
-- Attachment size limit (configurable, default 10 MB per entry)
-- Attachment stored in KDBX binary pool (encrypted at rest)
-- Makes Quflun a secure information manager, not just a password vault
 
 ### v1.5.0 — Keyboard Productivity ⭐⭐⭐⭐
 
