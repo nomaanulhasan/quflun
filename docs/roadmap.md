@@ -14,6 +14,11 @@
 - Click-to-record UI with reset-to-defaults
 - `useHotkeys` hook for global keyboard shortcuts
 - Lightweight fuzzy matching utilities
+- Branded loading spinner for all transitional states
+- Empty vault shows "Add First Entry" button
+- Shell, command palette, and vault list refactored into focused subcomponents
+- Toast readability fixed for light theme
+- IME/dead-key safety in keyboard shortcut handler
 
 ## v1.4.0
 

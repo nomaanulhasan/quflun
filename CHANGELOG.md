@@ -22,6 +22,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `useHotkeys` hook for declarative global keyboard shortcut registration
 - `fuzzyFilter` / `fuzzyScore` utilities for lightweight fuzzy matching
 - Command palette shows entries, actions, and navigation grouped by section
+- "Add First Entry" button shown when vault is empty
+- Branded loading spinner (`LoadingSpinner` component) with shield icon
+
+### Fixed
+
+- Flash of vault selection screen during unlock transition
+- Toast text unreadable in light theme (description color too faint)
+- `useHotkeys` crash on IME/dead-key events where `e.key` is undefined
+- Ctrl+N / Ctrl+Shift+N replaced with Alt+N / Alt+Shift+N to avoid browser conflicts
+
+### Changed
+
+- Shell split into focused subcomponents (sidebar, mobile-header, nav-config, use-shell-shortcuts)
+- Command palette split into types, use-palette-items hook, and memo'd PaletteItemRow
+- Vault list keyboard handler uses refs for stable callback (zero re-creation)
+- `useHotkeys` registers listener once via ref (no re-attach on shortcut changes)
 
 ## [1.4.0] - Custom Fields & Attachments
 
