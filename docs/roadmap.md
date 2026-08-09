@@ -1,66 +1,96 @@
 # Quflun Roadmap
 
-## v1.2.2 (current)
+## v1.3.0 (current)
+
+- Password Health Dashboard: weak, reused, old passwords + missing fields detection
+- Health score (0–100) with weighted penalties
+- Clickable metrics grid with drill-down to affected entries
+- Tabbed format: Credential Health + Vault Integrity in one page
+- Merged `/health-check` route into `/password-health`
+- Responsive page widths: info pages wider, settings 2-column on desktop
+- About Settings: dynamic version, build date, crypto algorithms (no stale data)
+- Navigation consolidated: single "Vault Health" link under Tools
+
+
+## Upcoming
+
+### v1.4.0 — Custom Fields & Attachments ⭐⭐⭐⭐⭐
+
+Leverages KDBX's native custom fields and binary attachments.
+
+- Custom key-value fields on entries (API keys, recovery codes, license keys)
+- File attachments (SSH keys, certificates, documents)
+- Field type hints: text, secret (masked), URL, date
+- Attachment size limit (configurable, default 10 MB per entry)
+- Attachment stored in KDBX binary pool (encrypted at rest)
+- Makes Quflun a secure information manager, not just a password vault
+
+### v1.5.0 — Keyboard Productivity ⭐⭐⭐⭐
+
+Power-user features for daily workflow speed.
+
+- `Ctrl+K` — command/search palette (fuzzy search entries, actions)
+- `Ctrl+N` — new entry
+- `Ctrl+Shift+N` — new secure note
+- `Ctrl+L` — lock vault
+- Arrow key navigation in entry list
+- `Enter` to open selected entry
+- `Space` to reveal/copy password of selected entry
+- Shortcut hints displayed in command palette
+
+### v1.6.0 — Browser Extension ⭐⭐⭐
+
+First ecosystem feature. Still fully offline — no cloud sync, no accounts.
+
+- Read local vault (communicate with open Quflun tab or IndexedDB directly)
+- Autofill credentials on login forms
+- Copy credentials from popup
+- Lock/unlock from extension popup
+- Match entries by URL domain
+- No new network requests — extension reads local storage only
+
+### Pre-release — Real-world Validation
+
+Before making the repository public:
+
+- ~~About page: version, build date, KDBX version, crypto algorithms~~ ✅ (implemented in Settings → About)
+- Dogfood period: use Quflun as daily password manager for 2–4 weeks
+- Fix workflow friction, missing shortcuts, browser quirks, mobile usability
+- Performance validation with larger vaults (100+ entries)
+
+---
+
+## Completed Versions
+
+### v1.2.2
 
 - UI/UX improvements: card redesign, colored avatars, strength badges, relative dates
 - Code optimization: component extraction into dedicated files
 - Documentation fully synced with all features through v1.2.2
 
-## v1.2.1
+### v1.2.1
 
 - Favorite star toggleable on entry cards without opening editor
 - Touch targets 36px (WCAG AA), icons 16px (IBM Design Language)
 - Native tooltips on all icon buttons (desktop hover)
 
-## v1.2.0
+### v1.2.0
 
 - Quick copy actions: copy username, password, URL from entry cards and edit forms
 - useCopyAction hook with toast feedback and visual state
 - CopyButton, CopyAction, OpenLinkAction reusable components
 - Kiro steering: mandatory Security Review for all features
 
-## v1.1.0
+### v1.1.0
 
 - Change vault master password (Settings → Change Password)
 - Safe re-encryption with rollback on failure
 - Integrity verification before persisting new credentials
 - Lighthouse performance: trailing slash redirect fix
 
-## v1-utility-pages
-
-- Settings page (idle timeout, clipboard timeout, theme selector, backup reminder)
-- Import/export page (file picker UI, KDBX password prompt, CSV upload, result summary)
-- Health check page (trigger button, results display, backup recommendation)
-- Password generator standalone page
-- Security documentation page (algorithms, KDF, format version)
-- Privacy policy page (no data collected, local-only)
-- Security limitations page (browser constraints, clipboard behavior, JS memory)
-
-## v1-pwa-complete
-
-- Web App Manifest (icons, start_url, display: standalone)
-- Serwist service worker (precache, runtime caching)
-- Offline asset caching (all JS/CSS/HTML/fonts/WASM)
-- Update notification UI (new version available → activate)
-- SW registration failure handling (warning banner)
-- PWA installability verification
-
-## v1-beta
-
-- CSP via HTTP headers (`vercel.json` + `_headers`) with `'unsafe-inline'` for Next.js inline scripts
-- Security headers (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`)
-- Backup reminder system (first-time + periodic)
-- Accessibility audit (screen reader testing, focus management)
-- Performance profiling (10K entries load time, search latency)
-- Integration tests (full vault lifecycle end-to-end)
-- Compliance tests (no telemetry, no external requests, no forbidden storage)
-- README with build instructions and tech stack
-
-## v1.0.0
+### v1.0.0
 
 - All requirements from spec verified
 - All property tests passing (25 properties)
 - Public repository publication
 - Open source release (MIT license)
-- SECURITY.md finalized with contact information
-- CONTRIBUTING.md opened for public contributions

@@ -28,19 +28,19 @@ Next phase: v1-utility-pages
 
 ## v1-utility-pages
 
-Status: Planned
+Status: Completed
 
 ## v1-pwa-complete
 
-Status: Planned
+Status: Completed
 
 ## v1-beta
 
-Status: Planned
+Status: Completed
 
 ## v1.0.0
 
-Status: Planned
+Status: Completed
 
 ## v1.1.0
 
@@ -93,3 +93,19 @@ Highlights:
 - Code optimization: VaultListView, EntryEditorWrapper, ImportSection, ExportSection extracted
 - Documentation fully synced through v1.2.2
 - 392 tests passing across 27 test files
+
+## v1.3.0
+
+Date: 2026-08-09
+Status: Completed
+
+Highlights:
+- Password Health Dashboard: health score, weak/reused/old password detection, missing fields audit
+- Tabbed UI: Credential Health + Vault Integrity in one unified page
+- Merged `/health-check` into `/password-health` (old route redirects)
+- Responsive page widths: info pages `max-w-3xl`, settings `max-w-4xl` 2-col grid, tools `max-w-2xl`
+- About Settings: dynamic version, build date, crypto info (removed stale hardcoded values)
+- `NEXT_PUBLIC_BUILD_DATE` env variable added at build time
+- Navigation consolidated: single "Vault Health" link in sidebar
+- Tests synced with interface changes (ImportResult.total, AboutSettings)
+- 391 tests passing across 27 test files

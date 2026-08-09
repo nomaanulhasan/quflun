@@ -42,7 +42,7 @@ const navGroups: NavGroup[] = [
     label: 'Tools',
     items: [
       { href: '/import-export', label: 'Import/Export', icon: ArrowLeftRight },
-      { href: '/health-check', label: 'Health Check', icon: HeartPulse },
+      { href: '/password-health', label: 'Vault Health', icon: HeartPulse },
     ],
   },
   {

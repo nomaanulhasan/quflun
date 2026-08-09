@@ -4,8 +4,8 @@ import { PageHeader } from '@/components/common/page-header';
 export default function SecurityPage() {
   return (
     <Shell>
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Security" subtitle="How Quflun protects your data." />
+      <div className="mx-auto w-full space-y-6">
+        <PageHeader title="Security" subtitle="How Quflun protects your data." className='xl:justify-start' />
 
         <Section title="Encryption">
           Quflun encrypts your vault using AES-256 or ChaCha20 as specified by the KDBX 4.x format.

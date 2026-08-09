@@ -106,3 +106,16 @@
 - [x] Component extraction (VaultListView, EntryEditorWrapper, ImportSection, ExportSection)
 - [x] Documentation synced through v1.2.2
 - [x] 392+ tests passing
+
+### v1.3.0 ✅
+
+- [x] Password Health Dashboard with health score (0–100)
+- [x] Detects weak, reused, old passwords + missing fields
+- [x] Tabbed format: Credential Health + Vault Integrity
+- [x] Merged /health-check into /password-health (redirect preserved)
+- [x] Responsive page widths (info, settings, tools)
+- [x] Settings 2-column grid on desktop
+- [x] About Settings: dynamic version, build date, crypto info
+- [x] Navigation consolidated to single "Vault Health" link
+- [x] Tests synced with interface changes
+- [x] 391+ tests passing

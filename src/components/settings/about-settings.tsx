@@ -3,26 +3,17 @@ import { SettingsCard } from './settings-card';
 
 export function AboutSettings() {
   const version = process.env.NEXT_PUBLIC_APP_VERSION ?? '0.0.0';
+  const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE ?? 'unknown';
 
   return (
     <SettingsCard title="About">
       <div className="space-y-3 text-sm">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Application</span>
-          <span className="font-medium">Quflun</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Version</span>
-          <span className="font-mono text-xs">{version}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Milestone</span>
-          <span className="text-xs">v1-foundation-complete</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Tests</span>
-          <span className="text-xs">295 passing</span>
-        </div>
+        <AboutRow label="Application" value="Quflun" />
+        <AboutRow label="Version" value={version} mono />
+        <AboutRow label="Build" value={buildDate} mono />
+        <AboutRow label="Format" value="KDBX 4.x" />
+        <AboutRow label="KDF" value="Argon2id (64 MB, 2 iter)" />
+        <AboutRow label="Encryption" value="AES-256 / ChaCha20" />
 
         <div className="border-t border-border pt-3 space-y-1">
           <p className="text-xs text-muted-foreground">Private by design • Offline-first • Local-only</p>
@@ -32,17 +23,22 @@ export function AboutSettings() {
           <InfoLink href="/security" label="Security" />
           <InfoLink href="/privacy" label="Privacy" />
           <InfoLink href="/security-limitations" label="Limitations" />
-          <InfoLink href="https://github.com" label="Repository" external />
+          <InfoLink href="https://github.com/nomaanulhasan/quflun" label="Repository" />
         </div>
       </div>
     </SettingsCard>
   );
 }
 
-function InfoLink({ href, label, external = false }: { href: string; label: string; external?: boolean }) {
-  const classes = "text-xs text-primary underline-offset-2 hover:underline";
-  if (external) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>{label}</a>;
-  }
-  return <Link href={href} className={classes}>{label}</Link>;
+function AboutRow({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={mono ? 'font-mono text-xs' : 'text-xs'}>{value}</span>
+    </div>
+  );
+}
+
+function InfoLink({ href, label }: { href: string; label: string }) {
+  return <Link href={href} className="text-xs text-primary underline-offset-2 hover:underline">{label}</Link>;
 }

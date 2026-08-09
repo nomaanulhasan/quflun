@@ -168,12 +168,13 @@ describe('BackupSettings', () => {
 });
 
 describe('AboutSettings', () => {
-  it('renders app name, version, and milestone', async () => {
+  it('renders app name and crypto info', async () => {
     const { AboutSettings } = await import('@/components/settings/about-settings');
     render(<AboutSettings />);
 
     expect(screen.getByText('Quflun')).toBeDefined();
-    expect(screen.getByText('v1-foundation-complete')).toBeDefined();
+    expect(screen.getByText('KDBX 4.x')).toBeDefined();
+    expect(screen.getByText('Argon2id (64 MB, 2 iter)')).toBeDefined();
   });
 
   it('renders navigation links', async () => {
@@ -183,23 +184,13 @@ describe('AboutSettings', () => {
     expect(screen.getByText('Security')).toBeDefined();
     expect(screen.getByText('Privacy')).toBeDefined();
     expect(screen.getByText('Limitations')).toBeDefined();
-    expect(screen.getByText('Repository')).toBeDefined();
-  });
-
-  it('external link has rel="noopener noreferrer"', async () => {
-    const { AboutSettings } = await import('@/components/settings/about-settings');
-    render(<AboutSettings />);
-
-    const repoLink = screen.getByText('Repository');
-    expect(repoLink.getAttribute('rel')).toBe('noopener noreferrer');
-    expect(repoLink.getAttribute('target')).toBe('_blank');
   });
 });
 
 describe('ImportSummary', () => {
   it('renders imported count', async () => {
     const { ImportSummary } = await import('@/components/import-export/import-summary');
-    render(<ImportSummary result={{ imported: 5, skipped: [] }} />);
+    render(<ImportSummary result={{ imported: 5, skipped: [], total: 5 }} />);
 
     expect(screen.getByText('5')).toBeDefined();
     expect(screen.getByText(/entries imported/)).toBeDefined();
@@ -211,6 +202,7 @@ describe('ImportSummary', () => {
       <ImportSummary
         result={{
           imported: 3,
+          total: 5,
           skipped: [
             { identifier: 'entry1', reason: 'missing title' },
             { identifier: 'entry2', reason: 'duplicate' },
@@ -230,7 +222,7 @@ describe('ImportSummary', () => {
       identifier: `entry${i}`,
       reason: 'reason',
     }));
-    render(<ImportSummary result={{ imported: 2, skipped }} />);
+    render(<ImportSummary result={{ imported: 2, skipped, total: 10 }} />);
 
     expect(screen.getByText(/\.\.\.and 3 more/)).toBeDefined();
   });
