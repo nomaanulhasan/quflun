@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - Keyboard Shortcuts & Command Palette
+
+### Added
+
+- Command palette (Ctrl+K) — fuzzy search entries and quick actions from anywhere
+- Alt+N — navigate directly to new password entry form
+- Alt+Shift+N — navigate directly to new secure note form
+- Ctrl+L — lock vault instantly
+- Arrow key navigation in vault entry grid (↑↓←→, Home, End)
+- Enter to open selected entry from keyboard navigation
+- Space to copy password of selected entry
+- Keyboard shortcut hints displayed in command palette actions
+- Configurable shortcut bindings in Settings → Keyboard Shortcuts
+- Click-to-record interface for remapping shortcuts, with reset-to-defaults
+- `useHotkeys` hook for declarative global keyboard shortcut registration
+- `fuzzyFilter` / `fuzzyScore` utilities for lightweight fuzzy matching
+- Command palette shows entries, actions, and navigation grouped by section
+
 ## [1.4.0] - Custom Fields & Attachments
 
 ### Added

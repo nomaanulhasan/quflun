@@ -12,6 +12,7 @@ import { SecuritySettings } from "@/components/settings/security-settings";
 import { ChangePassword } from "@/components/settings/change-password";
 import { BackupSettings } from "@/components/settings/backup-settings";
 import { AboutSettings } from "@/components/settings/about-settings";
+import { ShortcutSettings } from "@/components/settings/shortcut-settings";
 
 export default function SettingsPage() {
   const status = useVaultStore((s) => s.status);
@@ -35,36 +36,37 @@ export default function SettingsPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="space-y-6">
             <ThemeSettings />
-            <SecuritySettings />
-            <BackupSettings />
+            <ChangePassword />
+            <ShortcutSettings />
           </div>
           <div className="space-y-6">
-            <ChangePassword />
+            <SecuritySettings />
+            <BackupSettings />
             <AboutSettings />
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3 pt-1">
+              {status === "unlocked" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={lock}
+                  className="gap-1.5"
+                >
+                  <Lock className="h-3.5 w-3.5" />
+                  Lock Vault
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push("/password-health")}
+                className="gap-1.5"
+              >
+                <HeartPulse className="h-3.5 w-3.5" />
+                Vault Health
+              </Button>
+            </div>
           </div>
-        </div>
-        {/* Actions */}
-        <div className="flex flex-wrap gap-3 pt-2">
-          {status === "unlocked" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={lock}
-              className="gap-1.5"
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Lock Vault
-            </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/password-health")}
-            className="gap-1.5"
-          >
-            <HeartPulse className="h-3.5 w-3.5" />
-            Vault Health
-          </Button>
         </div>
       </div>
     </Shell>

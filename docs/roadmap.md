@@ -1,6 +1,21 @@
 # Quflun Roadmap
 
-## v1.4.0 (current)
+## v1.5.0 (current)
+
+- Command palette (`Ctrl+K`) with fuzzy search for entries and quick actions
+- `Alt+N` — new password entry
+- `Alt+Shift+N` — new secure note
+- `Ctrl+L` — lock vault
+- Arrow key navigation in vault entry grid
+- `Enter` to open selected entry
+- `Space` to copy password of selected entry
+- Shortcut hints displayed in command palette
+- Configurable shortcut bindings (Settings → Keyboard Shortcuts)
+- Click-to-record UI with reset-to-defaults
+- `useHotkeys` hook for global keyboard shortcuts
+- Lightweight fuzzy matching utilities
+
+## v1.4.0
 
 - Custom key-value fields on entries (API keys, recovery codes, etc.)
 - File attachments in KDBX binary pool (max 10 MB each, encrypted at rest)
@@ -22,19 +37,6 @@
 
 
 ## Upcoming
-
-### v1.5.0 — Keyboard Productivity ⭐⭐⭐⭐
-
-Power-user features for daily workflow speed.
-
-- `Ctrl+K` — command/search palette (fuzzy search entries, actions)
-- `Ctrl+N` — new entry
-- `Ctrl+Shift+N` — new secure note
-- `Ctrl+L` — lock vault
-- Arrow key navigation in entry list
-- `Enter` to open selected entry
-- `Space` to reveal/copy password of selected entry
-- Shortcut hints displayed in command palette
 
 ### v1.6.0 — Browser Extension ⭐⭐⭐
 

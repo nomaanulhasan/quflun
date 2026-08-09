@@ -110,7 +110,25 @@ export interface AppSettings {
   lastBackupDate: string | null;
   /** UI theme preference */
   theme: 'light' | 'dark' | 'system';
+  /** Custom keyboard shortcut bindings */
+  shortcuts: ShortcutBindings;
 }
+
+// ─── Keyboard Shortcuts ────────────────────────────────────────────────────────
+
+/** Identifiers for configurable shortcuts */
+export type ShortcutId = 'commandPalette' | 'newEntry' | 'newNote' | 'lockVault';
+
+/** A single shortcut binding */
+export interface ShortcutBinding {
+  key: string;
+  ctrl?: boolean;
+  alt?: boolean;
+  shift?: boolean;
+}
+
+/** Map of all configurable shortcut bindings */
+export type ShortcutBindings = Record<ShortcutId, ShortcutBinding>;
 
 // ─── Vault Metadata ────────────────────────────────────────────────────────────
 

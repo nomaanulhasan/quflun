@@ -8,10 +8,17 @@
  * - Settings loaded imperatively on app start via StorageAdapter.getSettings()
  */
 import { create } from 'zustand';
-import type { AppSettings } from '@/types';
+import type { AppSettings, ShortcutBindings } from '@/types';
 import type { StorageAdapter } from '@/lib/storage';
 
 // ─── Defaults ──────────────────────────────────────────────────────────────────
+
+export const DEFAULT_SHORTCUTS: ShortcutBindings = {
+  commandPalette: { key: 'k', ctrl: true },
+  newEntry: { key: 'n', alt: true },
+  newNote: { key: 'n', alt: true, shift: true },
+  lockVault: { key: 'l', ctrl: true },
+};
 
 export const DEFAULT_SETTINGS: AppSettings = {
   idleTimeoutMinutes: 5,
@@ -19,6 +26,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   backupReminderDays: 30,
   lastBackupDate: null,
   theme: 'system',
+  shortcuts: { ...DEFAULT_SHORTCUTS },
 };
 
 // ─── State Types ───────────────────────────────────────────────────────────────
@@ -47,8 +55,11 @@ export function createUIStore(storageAdapter: StorageAdapter) {
 
     async loadSettings() {
       const saved = await storageAdapter.getSettings();
+      const merged = saved
+        ? { ...DEFAULT_SETTINGS, ...saved, shortcuts: { ...DEFAULT_SHORTCUTS, ...saved.shortcuts } }
+        : { ...DEFAULT_SETTINGS };
       set({
-        settings: saved ?? { ...DEFAULT_SETTINGS },
+        settings: merged,
         settingsLoaded: true,
       });
     },
