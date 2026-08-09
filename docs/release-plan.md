@@ -109,7 +109,7 @@
 
 ### v1.3.0 ✅
 
-- [x] Password Health Dashboard with health score (0–100)
+- [x] Vault Health page with health score (0–100)
 - [x] Detects weak, reused, old passwords + missing fields
 - [x] Tabbed format: Credential Health + Vault Integrity
 - [x] Merged /health-check into /password-health (redirect preserved)
@@ -118,4 +118,15 @@
 - [x] About Settings: dynamic version, build date, crypto info
 - [x] Navigation consolidated to single "Vault Health" link
 - [x] Tests synced with interface changes
+- [x] 391+ tests passing
+
+### v1.4.0 ✅
+
+- [x] Custom key-value fields on entries
+- [x] Plain text and secret (ProtectedValue) field types
+- [x] File attachments in KDBX binary pool (max 10 MB)
+- [x] Custom fields editor UI
+- [x] Attachments editor: attach, download, remove
+- [x] Idle auto-lock connected
+- [x] Lock redirects to home page
 - [x] 391+ tests passing

@@ -8,11 +8,13 @@ import { PasswordField } from '@/components/forms/password-field';
 import { GeneratorDialog } from '@/components/forms/generator-dialog';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
 import { TagsInput } from '@/components/forms/tags-input';
+import { CustomFieldsEditor } from '@/components/forms/custom-fields-editor';
+import { AttachmentsEditor } from '@/components/forms/attachments-editor';
 import { DeleteDialog } from '@/components/vault/delete-dialog';
 import { CopyAction, OpenLinkAction } from '@/components/common/field-actions';
 import { useCopyAction } from '@/hooks/use-copy-action';
 import { useVaultStore } from '@/components/providers';
-import type { VaultEntry } from '@/types';
+import type { VaultEntry, CustomField, AttachmentMeta } from '@/types';
 
 interface EditEntryFormProps {
   entry: VaultEntry;
@@ -27,6 +29,8 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
   const [notes, setNotes] = useState(entry.notes);
   const [tags, setTags] = useState<string[]>(entry.tags);
   const [favorite, setFavorite] = useState(entry.favorite);
+  const [customFields, setCustomFields] = useState<CustomField[]>(entry.customFields);
+  const [attachments, setAttachments] = useState<AttachmentMeta[]>(entry.attachments);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const editEntry = useVaultStore((s) => s.editEntry);
@@ -41,7 +45,7 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
 
     setLoading(true);
     try {
-      await editEntry(entry.uuid, { title: title.trim(), username, password, url, notes, tags, favorite });
+      await editEntry(entry.uuid, { title: title.trim(), username, password, url, notes, tags, favorite, customFields: customFields.filter((f) => f.key.trim()) });
       onBack();
     } catch (err) { setError((err as Error).message); }
     finally { setLoading(false); }
@@ -110,6 +114,38 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
         <label className="text-sm font-medium">Tags</label>
         <TagsInput value={tags} onChange={setTags} disabled={loading} />
       </div>
+      <CustomFieldsEditor fields={customFields} onChange={setCustomFields} disabled={loading} />
+      <AttachmentsEditor
+        attachments={attachments}
+        entryUuid={entry.uuid}
+        onAdd={async (filename, data) => {
+          const { getServices } = await import('@/lib/runtime');
+          const { engine } = await getServices();
+          await engine.addAttachment(entry.uuid, filename, data);
+          const updated = engine.getEntry(entry.uuid);
+          setAttachments(updated.attachments);
+        }}
+        onRemove={async (filename) => {
+          const { getServices } = await import('@/lib/runtime');
+          const { engine } = await getServices();
+          await engine.removeAttachment(entry.uuid, filename);
+          const updated = engine.getEntry(entry.uuid);
+          setAttachments(updated.attachments);
+        }}
+        onDownload={async (filename) => {
+          const { getServices } = await import('@/lib/runtime');
+          const { engine } = await getServices();
+          const buffer = engine.getAttachment(entry.uuid, filename);
+          const blob = new Blob([buffer]);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+        }}
+        disabled={loading}
+      />
       <FavoriteToggle checked={favorite} onChange={setFavorite} disabled={loading} />
       <FormError message={error} />
       <FormActions submitLabel="Save Changes" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !password} onBack={onBack} />

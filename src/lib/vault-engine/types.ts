@@ -80,6 +80,12 @@ export interface VaultEngine {
   // Password management
   changePassword(currentPassword: string, newPassword: string): Promise<void>;
 
+  // Custom fields & attachments
+  setCustomFields(entryUuid: string, fields: import('@/types').CustomField[]): Promise<void>;
+  addAttachment(entryUuid: string, filename: string, data: ArrayBuffer): Promise<void>;
+  removeAttachment(entryUuid: string, filename: string): Promise<void>;
+  getAttachment(entryUuid: string, filename: string): ArrayBuffer;
+
   /** Get current brute-force protection state */
   getBruteForceState(): BruteForceState;
 

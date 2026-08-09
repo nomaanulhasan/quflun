@@ -334,6 +334,89 @@ class VaultEngineImpl implements VaultEngine {
     }
   }
 
+  // ─── Custom Fields & Attachments ─────────────────────────────────────────────
+
+  async setCustomFields(entryUuid: string, fields: import('@/types').CustomField[]): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) throw new Error(`Entry not found: ${entryUuid}`);
+
+    // Remove existing custom fields
+    const standardFields = new Set(['Title', 'UserName', 'Password', 'URL', 'Notes']);
+    for (const key of [...entry.fields.keys()]) {
+      if (!standardFields.has(key)) {
+        entry.fields.delete(key);
+      }
+    }
+
+    // Set new ones
+    for (const field of fields) {
+      if (field.protected) {
+        entry.fields.set(field.key, kdbxweb.ProtectedValue.fromString(field.value));
+      } else {
+        entry.fields.set(field.key, field.value);
+      }
+    }
+
+    entry.times.update();
+    await this.save();
+  }
+
+  async addAttachment(entryUuid: string, filename: string, data: ArrayBuffer): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) throw new Error(`Entry not found: ${entryUuid}`);
+
+    // Size limit: 10 MB per attachment
+    if (data.byteLength > 10 * 1024 * 1024) {
+      throw new Error('Attachment exceeds 10 MB size limit.');
+    }
+
+    // Store in KDBX binary pool
+    const binaryWithHash = await db.createBinary(data);
+    entry.binaries.set(filename, binaryWithHash);
+    entry.times.update();
+    await this.save();
+  }
+
+  async removeAttachment(entryUuid: string, filename: string): Promise<void> {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) throw new Error(`Entry not found: ${entryUuid}`);
+
+    if (!entry.binaries.has(filename)) {
+      throw new Error(`Attachment not found: ${filename}`);
+    }
+
+    entry.binaries.delete(filename);
+    entry.times.update();
+    await this.save();
+  }
+
+  getAttachment(entryUuid: string, filename: string): ArrayBuffer {
+    const db = this.requireUnlockedDb();
+    const entry = this.findEntryByUuid(db, entryUuid);
+    if (!entry) throw new Error(`Entry not found: ${entryUuid}`);
+
+    if (!entry.binaries.has(filename)) {
+      throw new Error(`Attachment not found: ${filename}`);
+    }
+
+    const bin = entry.binaries.get(filename)!;
+
+    // KdbxBinaryWithHash has { hash, value } — value is KdbxBinary (ArrayBuffer | ProtectedValue)
+    // KdbxBinary is ArrayBuffer | ProtectedValue
+    const value = kdbxweb.KdbxBinaries.isKdbxBinaryWithHash(bin) ? bin.value : bin;
+
+    if (value instanceof ArrayBuffer) return value;
+    // ProtectedValue — get the underlying bytes
+    if (value && typeof (value as kdbxweb.ProtectedValue).getBinary === 'function') {
+      const bytes = (value as kdbxweb.ProtectedValue).getBinary();
+      return new Uint8Array(bytes).buffer as ArrayBuffer;
+    }
+    throw new Error(`Could not read attachment: ${filename}`);
+  }
+
   // ─── Entry CRUD (Task 4.2) ─────────────────────────────────────────────────
 
   async addEntry(data: EntryInput): Promise<EntryMeta> {
@@ -362,6 +445,17 @@ class VaultEngineImpl implements VaultEngine {
     // This keeps custom attributes invisible to other KeePass clients
     if (data.favorite) {
       this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
+    }
+
+    // Custom fields
+    if (data.customFields && data.customFields.length > 0) {
+      for (const field of data.customFields) {
+        if (field.protected) {
+          entry.fields.set(field.key, kdbxweb.ProtectedValue.fromString(field.value));
+        } else {
+          entry.fields.set(field.key, field.value);
+        }
+      }
     }
 
     // H-1 fix: Auto-save with rollback on failure
@@ -460,6 +554,23 @@ class VaultEngineImpl implements VaultEngine {
         this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
       } else {
         this.deleteCustomData(entry, CUSTOM_KEY_FAVORITE);
+      }
+    }
+    if (data.customFields !== undefined) {
+      // Remove existing custom fields (keep standard fields)
+      const standardFields = new Set(['Title', 'UserName', 'Password', 'URL', 'Notes']);
+      for (const key of [...entry.fields.keys()]) {
+        if (!standardFields.has(key)) {
+          entry.fields.delete(key);
+        }
+      }
+      // Set new custom fields
+      for (const field of data.customFields) {
+        if (field.protected) {
+          entry.fields.set(field.key, kdbxweb.ProtectedValue.fromString(field.value));
+        } else {
+          entry.fields.set(field.key, field.value);
+        }
       }
     }
 
@@ -1177,6 +1288,32 @@ class VaultEngineImpl implements VaultEngine {
       ? (entry.parentGroup?.name || null)
       : null;
 
+    // Extract custom fields (any field beyond the standard 5)
+    const standardFields = new Set(['Title', 'UserName', 'Password', 'URL', 'Notes']);
+    const customFields: import('@/types').CustomField[] = [];
+    for (const [key, val] of entry.fields) {
+      if (standardFields.has(key)) continue;
+      const isProtected = val instanceof kdbxweb.ProtectedValue;
+      customFields.push({
+        key,
+        value: isProtected ? val.getText() : (val ?? ''),
+        protected: isProtected,
+      });
+    }
+
+    // Extract attachment metadata
+    const attachments: import('@/types').AttachmentMeta[] = [];
+    for (const [key, bin] of entry.binaries) {
+      const value = kdbxweb.KdbxBinaries.isKdbxBinaryWithHash(bin) ? bin.value : bin;
+      let size = 0;
+      if (value instanceof ArrayBuffer) {
+        size = value.byteLength;
+      } else if (value && typeof (value as kdbxweb.ProtectedValue).getBinary === 'function') {
+        size = (value as kdbxweb.ProtectedValue).getBinary().byteLength;
+      }
+      attachments.push({ key, size });
+    }
+
     return {
       uuid: entry.uuid.toString(),
       type,
@@ -1190,6 +1327,8 @@ class VaultEngineImpl implements VaultEngine {
       favorite: this.getCustomDataValue(entry, CUSTOM_KEY_FAVORITE) === 'true',
       createdAt: entry.times.creationTime?.toISOString() || '',
       modifiedAt: entry.times.lastModTime?.toISOString() || '',
+      customFields,
+      attachments,
     };
   }
 

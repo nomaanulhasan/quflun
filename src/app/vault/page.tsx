@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useVaultStore } from '@/components/providers';
 import { Shell } from '@/components/layout/shell';
 import { VaultListView } from '@/components/vault/vault-list-view';
@@ -14,6 +14,7 @@ export default function VaultPage() {
   const vaultId = useVaultStore((s) => s.vaultId);
   const entries = useVaultStore((s) => s.entries);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editCounter, setEditCounter] = useState(0);
 
@@ -23,6 +24,16 @@ export default function VaultPage() {
     setEditingId(id);
     setEditCounter((c) => c + 1);
   }
+
+  // Handle edit param from command palette navigation
+  useEffect(() => {
+    const editParam = searchParams.get('edit');
+    if (editParam && status === 'unlocked') {
+      openEditor(editParam);
+      // Clean the URL without a full navigation
+      router.replace('/vault', { scroll: false });
+    }
+  }, [searchParams, status, router]);
 
   useEffect(() => {
     if (status === 'locked' && !vaultId) router.replace('/');

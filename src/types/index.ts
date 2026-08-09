@@ -31,6 +31,24 @@ export interface VaultEntry {
   createdAt: string;
   /** Last modification timestamp in ISO 8601 UTC */
   modifiedAt: string;
+  /** Custom key-value fields (API keys, recovery codes, etc.) */
+  customFields: CustomField[];
+  /** File attachments (SSH keys, certificates, etc.) */
+  attachments: AttachmentMeta[];
+}
+
+/** Custom field stored in KDBX entry.fields beyond the standard 5. */
+export interface CustomField {
+  key: string;
+  value: string;
+  /** Whether the value should be masked (stored as ProtectedValue in KDBX) */
+  protected: boolean;
+}
+
+/** Attachment metadata (binary content fetched separately to avoid memory bloat). */
+export interface AttachmentMeta {
+  key: string;
+  size: number;
 }
 
 /**
@@ -45,6 +63,7 @@ export interface EntryInput {
   category?: string;
   tags?: string[];
   favorite?: boolean;
+  customFields?: CustomField[];
 }
 
 /**
@@ -91,7 +110,25 @@ export interface AppSettings {
   lastBackupDate: string | null;
   /** UI theme preference */
   theme: 'light' | 'dark' | 'system';
+  /** Custom keyboard shortcut bindings */
+  shortcuts: ShortcutBindings;
 }
+
+// ─── Keyboard Shortcuts ────────────────────────────────────────────────────────
+
+/** Identifiers for configurable shortcuts */
+export type ShortcutId = 'commandPalette' | 'newEntry' | 'newNote' | 'lockVault';
+
+/** A single shortcut binding */
+export interface ShortcutBinding {
+  key: string;
+  ctrl?: boolean;
+  alt?: boolean;
+  shift?: boolean;
+}
+
+/** Map of all configurable shortcut bindings */
+export type ShortcutBindings = Record<ShortcutId, ShortcutBinding>;
 
 // ─── Vault Metadata ────────────────────────────────────────────────────────────
 

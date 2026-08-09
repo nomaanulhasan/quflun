@@ -9,13 +9,15 @@ import type { EntryListItem } from '@/types';
 interface EntryCardProps {
   entry: EntryListItem;
   onClick?: () => void;
+  /** Whether this card is keyboard-selected in the list */
+  selected?: boolean;
 }
 
 /**
  * Entry card for the vault list view.
  * Layout: Avatar + title/username (top), quick actions + strength badge (bottom).
  */
-export function EntryCard({ entry, onClick }: EntryCardProps) {
+export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
   const titleId = `entry-title-${entry.uuid}`;
   const { copy, isCopied } = useCopyAction();
   const setFavorite = useVaultStore((s) => s.setFavorite);
@@ -61,7 +63,10 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
   return (
     <article
       aria-labelledby={titleId}
-      className="group cursor-pointer rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-accent/50 focus-within:ring-2 focus-within:ring-ring"
+      data-entry-card
+      className={`group cursor-pointer rounded-lg border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-accent/50 focus-within:ring-2 focus-within:ring-ring ${
+        selected ? 'border-primary ring-2 ring-ring' : 'border-border'
+      }`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -69,8 +74,9 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
           onClick?.();
         }
       }}
-      tabIndex={0}
+      tabIndex={selected ? 0 : -1}
       role="button"
+      aria-selected={selected}
     >
       {/* ─── Top: Avatar + Info + Favorite ─── */}
       <div className="flex items-start gap-3">

@@ -5,11 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - Password Health Dashboard
+## [1.5.0] - Keyboard Shortcuts & Command Palette
 
 ### Added
 
-- Password Health Dashboard page (`/password-health`) with overall health score
+- Command palette (Ctrl+K) — fuzzy search entries and quick actions from anywhere
+- Alt+N — navigate directly to new password entry form
+- Alt+Shift+N — navigate directly to new secure note form
+- Ctrl+L — lock vault instantly
+- Arrow key navigation in vault entry grid (↑↓←→, Home, End)
+- Enter to open selected entry from keyboard navigation
+- Space to copy password of selected entry
+- Keyboard shortcut hints displayed in command palette actions
+- Configurable shortcut bindings in Settings → Keyboard Shortcuts
+- Click-to-record interface for remapping shortcuts, with reset-to-defaults
+- `useHotkeys` hook for declarative global keyboard shortcut registration
+- `fuzzyFilter` / `fuzzyScore` utilities for lightweight fuzzy matching
+- Command palette shows entries, actions, and navigation grouped by section
+
+## [1.4.0] - Custom Fields & Attachments
+
+### Added
+
+- Custom key-value fields on entries (API keys, recovery codes, license keys, SSH keys)
+- Field type: plain text or secret (masked with ProtectedValue, show/hide toggle)
+- File attachments stored in KDBX binary pool (encrypted at rest, max 10 MB each)
+- Attach, download, and remove attachments from the edit entry form
+- Custom fields editor: add/remove fields, toggle secret mode, inline editing
+- `setCustomFields()`, `addAttachment()`, `removeAttachment()`, `getAttachment()` on VaultEngine
+- `CustomField` and `AttachmentMeta` types
+- Custom fields included in `EntryInput` for create/edit operations
+- Idle auto-lock wired into Shell (was previously built but never connected)
+- Vault locks → redirects to home page (lock screen)
+
+### Changed
+
+- `VaultEntry` type extended with `customFields` and `attachments` arrays
+- `mapKdbxEntryToVaultEntry` now extracts non-standard KDBX fields and binary metadata
+- Edit entry form includes custom fields editor and attachments editor sections
+
+## [1.3.0] - Vault Health
+
+### Added
+
+- Vault Health page (`/password-health`) with overall health score (0–100)
 - Detects weak passwords, reused passwords, old passwords (90+ days)
 - Detects missing URLs, missing usernames
 - Clickable summary metrics that filter the issues list
@@ -22,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Merged `/health-check` into `/password-health` as "Vault Integrity" tab (old route redirects)
-- Sidebar: single "Vault Health" link replaces separate "Password Health" and "Health Check" links
+- Sidebar: single "Vault Health" link replaces two separate links
 - Page widths: info pages use `max-w-3xl`, settings uses `max-w-4xl` with 2-column grid, tools use `max-w-2xl`
 - Settings page uses 2-column layout on desktop to reduce scrolling
 - Vault Health page uses tabbed format (Credential Health / Vault Integrity)

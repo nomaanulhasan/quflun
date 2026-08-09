@@ -1,8 +1,32 @@
 # Quflun Roadmap
 
-## v1.3.0 (current)
+## v1.5.0 (current)
 
-- Password Health Dashboard: weak, reused, old passwords + missing fields detection
+- Command palette (`Ctrl+K`) with fuzzy search for entries and quick actions
+- `Alt+N` — new password entry
+- `Alt+Shift+N` — new secure note
+- `Ctrl+L` — lock vault
+- Arrow key navigation in vault entry grid
+- `Enter` to open selected entry
+- `Space` to copy password of selected entry
+- Shortcut hints displayed in command palette
+- Configurable shortcut bindings (Settings → Keyboard Shortcuts)
+- Click-to-record UI with reset-to-defaults
+- `useHotkeys` hook for global keyboard shortcuts
+- Lightweight fuzzy matching utilities
+
+## v1.4.0
+
+- Custom key-value fields on entries (API keys, recovery codes, etc.)
+- File attachments in KDBX binary pool (max 10 MB each, encrypted at rest)
+- Custom fields editor UI with plain/secret toggle
+- Attachments editor: attach, download, remove files
+- Idle auto-lock connected to Shell
+- Lock redirects to home page
+
+## v1.3.0
+
+- Vault Health: weak, reused, old passwords + missing fields detection
 - Health score (0–100) with weighted penalties
 - Clickable metrics grid with drill-down to affected entries
 - Tabbed format: Credential Health + Vault Integrity in one page
@@ -13,30 +37,6 @@
 
 
 ## Upcoming
-
-### v1.4.0 — Custom Fields & Attachments ⭐⭐⭐⭐⭐
-
-Leverages KDBX's native custom fields and binary attachments.
-
-- Custom key-value fields on entries (API keys, recovery codes, license keys)
-- File attachments (SSH keys, certificates, documents)
-- Field type hints: text, secret (masked), URL, date
-- Attachment size limit (configurable, default 10 MB per entry)
-- Attachment stored in KDBX binary pool (encrypted at rest)
-- Makes Quflun a secure information manager, not just a password vault
-
-### v1.5.0 — Keyboard Productivity ⭐⭐⭐⭐
-
-Power-user features for daily workflow speed.
-
-- `Ctrl+K` — command/search palette (fuzzy search entries, actions)
-- `Ctrl+N` — new entry
-- `Ctrl+Shift+N` — new secure note
-- `Ctrl+L` — lock vault
-- Arrow key navigation in entry list
-- `Enter` to open selected entry
-- `Space` to reveal/copy password of selected entry
-- Shortcut hints displayed in command palette
 
 ### v1.6.0 — Browser Extension ⭐⭐⭐
 

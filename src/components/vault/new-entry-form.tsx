@@ -9,7 +9,9 @@ import { PasswordField } from '@/components/forms/password-field';
 import { GeneratorDialog } from '@/components/forms/generator-dialog';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
 import { TagsInput } from '@/components/forms/tags-input';
+import { CustomFieldsEditor } from '@/components/forms/custom-fields-editor';
 import { useVaultStore } from '@/components/providers';
+import type { CustomField } from '@/types';
 
 export function NewEntryForm() {
   const [title, setTitle] = useState('');
@@ -19,6 +21,7 @@ export function NewEntryForm() {
   const [notes, setNotes] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [favorite, setFavorite] = useState(false);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const addEntry = useVaultStore((s) => s.addEntry);
@@ -32,7 +35,7 @@ export function NewEntryForm() {
 
     setLoading(true);
     try {
-      await addEntry({ title: title.trim(), username, password, url, notes, tags, favorite });
+      await addEntry({ title: title.trim(), username, password, url, notes, tags, favorite, customFields: customFields.filter((f) => f.key.trim()) });
       router.replace('/vault');
     } catch (err) { setError((err as Error).message); }
     finally { setLoading(false); }
@@ -61,6 +64,7 @@ export function NewEntryForm() {
         <label className="text-sm font-medium">Tags</label>
         <TagsInput value={tags} onChange={setTags} disabled={loading} />
       </div>
+      <CustomFieldsEditor fields={customFields} onChange={setCustomFields} disabled={loading} />
       <FavoriteToggle checked={favorite} onChange={setFavorite} disabled={loading} />
       <FormError message={error} />
       <FormActions submitLabel="Save Entry" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !password} onBack={() => router.back()} />

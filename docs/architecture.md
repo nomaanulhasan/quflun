@@ -32,8 +32,9 @@ UI
 
 ### Service Layer (`src/lib/vault-engine/`, `src/lib/search/`, etc.)
 
-- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection, password change, password health report
+- VaultEngine: vault lifecycle, entry CRUD, categories, tags, favorites, brute-force protection, password change, vault health report
 - SearchEngine: in-memory substring search
+- FuzzySearch: lightweight fuzzy matching for command palette
 - PasswordGenerator: CSPRNG-based generation with rejection sampling
 - ClipboardManager: timed clipboard clearing with ownership detection
 - IdleMonitor: activity event listeners with configurable timeout
@@ -52,6 +53,7 @@ UI
 - useIdle: connects IdleMonitor to vault lock
 - useClipboard: copy action wrapper
 - useCopyAction: clipboard copy with toast feedback and visual state
+- useHotkeys: declarative global keyboard shortcut registration
 
 ### UI Layer (`src/app/`, `src/components/`)
 
