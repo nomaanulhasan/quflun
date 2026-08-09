@@ -150,10 +150,10 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
       await sourceEngine.create('source-password', 'SourceVault');
 
       const entry1 = await sourceEngine.addEntry({
-        title: 'AWS Console',
-        username: 'admin@company.com',
-        password: 'aws-strong-password',
-        url: 'https://console.aws.amazon.com',
+        title: 'Cloud Console',
+        username: 'admin@example.com',
+        password: 'cloud-strong-password',
+        url: 'https://cloud.example.com',
         notes: 'Production account',
         tags: ['cloud', 'infra'],
         favorite: true,
@@ -163,7 +163,7 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
         title: 'Database',
         username: 'dbadmin',
         password: 'db-pass-789',
-        url: 'https://db.internal.com',
+        url: 'https://db.example.org',
         notes: 'Staging DB',
         tags: ['database'],
         favorite: false,
@@ -197,18 +197,18 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
       expect(importedEntries).toHaveLength(3);
 
       // Find entries by title and verify their data
-      const importedAws = importedEntries.find(e => e.title === 'AWS Console');
-      expect(importedAws).toBeDefined();
-      expect(importedAws!.username).toBe('admin@company.com');
-      expect(importedAws!.tags).toEqual(['cloud', 'infra']);
-      expect(importedAws!.favorite).toBe(true);
-      expect(importedAws!.type).toBe('password');
+      const importedCloud = importedEntries.find(e => e.title === 'Cloud Console');
+      expect(importedCloud).toBeDefined();
+      expect(importedCloud!.username).toBe('admin@example.com');
+      expect(importedCloud!.tags).toEqual(['cloud', 'infra']);
+      expect(importedCloud!.favorite).toBe(true);
+      expect(importedCloud!.type).toBe('password');
 
       // Verify full entry details
-      const awsDetail = targetEngine.getEntry(importedAws!.uuid);
-      expect(awsDetail.password).toBe('aws-strong-password');
-      expect(awsDetail.url).toBe('https://console.aws.amazon.com');
-      expect(awsDetail.notes).toBe('Production account');
+      const cloudDetail = targetEngine.getEntry(importedCloud!.uuid);
+      expect(cloudDetail.password).toBe('cloud-strong-password');
+      expect(cloudDetail.url).toBe('https://cloud.example.com');
+      expect(cloudDetail.notes).toBe('Production account');
 
       const importedDb = importedEntries.find(e => e.title === 'Database');
       expect(importedDb).toBeDefined();

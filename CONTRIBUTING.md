@@ -4,7 +4,7 @@ Thank you for your interest in Quflun.
 
 ## Current Status
 
-This repository is **currently private**. Public contributions will be accepted after v1.0 is released.
+This repository is open source under the MIT license. Contributions are welcome.
 
 ## Development Requirements
 
