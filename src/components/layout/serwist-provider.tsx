@@ -74,6 +74,13 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
 
     registerSW();
 
+    // Check for updates once on app open (after a short delay to not block initial load)
+    const updateTimer = setTimeout(() => {
+      if (registration && navigator.onLine) {
+        registration.update().catch(() => {/* ignore network errors */});
+      }
+    }, 3000);
+
     // Listen for controller change (new SW activated)
     function onControllerChange() {
       window.location.reload();
@@ -82,6 +89,7 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
     navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
 
     return () => {
+      clearTimeout(updateTimer);
       navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
     };
   }, []);
