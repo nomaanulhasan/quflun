@@ -32,6 +32,8 @@ export function useHotkeys(shortcuts: Shortcut[]) {
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      if (!e.key) return; // IME or dead-key events have no key
+
       const target = e.target as HTMLElement;
       const isInput =
         target.tagName === 'INPUT' ||

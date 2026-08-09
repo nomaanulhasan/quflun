@@ -7,6 +7,7 @@ import { Shell } from '@/components/layout/shell';
 import { VaultListView } from '@/components/vault/vault-list-view';
 import { EntryEditorWrapper } from '@/components/vault/entry-editor-wrapper';
 import { LockScreen } from '@/components/layout/lock-screen';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 import { useBackupReminder } from '@/hooks/use-backup-reminder';
 
 export default function VaultPage() {
@@ -25,12 +26,10 @@ export default function VaultPage() {
     setEditCounter((c) => c + 1);
   }
 
-  // Handle edit param from command palette navigation
   useEffect(() => {
     const editParam = searchParams.get('edit');
     if (editParam && status === 'unlocked') {
       openEditor(editParam);
-      // Clean the URL without a full navigation
       router.replace('/vault', { scroll: false });
     }
   }, [searchParams, status, router]);
@@ -40,7 +39,7 @@ export default function VaultPage() {
   }, [status, vaultId, router]);
 
   if (status === 'locked' && vaultId) return <LockScreen />;
-  if (status !== 'unlocked') return null;
+  if (status !== 'unlocked') return <LoadingSpinner label="Unlocking vault..." />;
 
   if (editingId) {
     return (

@@ -6,7 +6,8 @@ Quflun is a privacy-first, offline-first password manager. We take security repo
 
 | Version | Supported |
 |---------|-----------|
-| 1.0.x   | ✅ Active development |
+| 1.5.x   | ✅ Active development |
+| 1.0.x–1.4.x | ⚠️ Security fixes only |
 | < 1.0   | ❌ Not supported |
 
 ## Reporting a Vulnerability

@@ -125,7 +125,17 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
         hasActiveFilters={hasFilters} onClearFilters={() => { setShowFavorites(false); setSelectedCategory(null); setSelectedTag(null); setQuery(''); }}
       />
       {entries.length === 0 ? (
-        <EmptyState icon={FolderOpen} title="Your vault is empty" description="Add your first credential to get started." />
+        <div className="flex flex-col items-center gap-4">
+          <EmptyState icon={FolderOpen} title="Your vault is empty" description="Add your first credential to get started." />
+          <button
+            type="button"
+            onClick={onNew}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add First Entry
+          </button>
+        </div>
       ) : filtered.length === 0 ? (
         showFavorites ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
           : <EmptyState icon={Search} title="No results" description="Try a different query or clear filters." />

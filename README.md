@@ -7,6 +7,21 @@ Privacy-first, offline-first password manager. No accounts. No telemetry. No net
 
 Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, and credentials in an encrypted vault using the open KeePass KDBX 4.x format. It runs entirely in your browser — there is no backend server, no cloud sync, and no data collection.
 
+## Screenshots
+
+![Vault List](docs/screenshots/vault-list.png)
+
+![Command Palette](docs/screenshots/command-palette.png)
+
+![Entry Editor](docs/screenshots/entry-editor.png)
+
+![Vault Health](docs/screenshots/vault-health.png)
+
+![Settings Light](docs/screenshots/settings-light.png)
+
+![Settings Dark](docs/screenshots/settings-dark.png)
+
+
 ## Features
 
 - **KDBX 4.x format** — compatible with KeePass, KeePassXC, KeeWeb
@@ -29,6 +44,9 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Password strength indicator** — visual badge on cards (Weak / Fair / Strong)
 - **Custom fields** — store API keys, recovery codes, license keys as key-value pairs
 - **File attachments** — attach SSH keys, certificates, documents (encrypted in KDBX binary pool)
+- **Command palette** — Ctrl+K to fuzzy search entries and actions instantly
+- **Keyboard shortcuts** — Alt+N new entry, Alt+Shift+N new note, Ctrl+L lock vault, arrow keys to navigate
+- **Configurable shortcuts** — remap all keyboard shortcuts from Settings
 - **Offline-first** — works without internet after initial load
 - **No telemetry** — zero analytics, tracking, or external requests
 - **Static export** — deployable to any static hosting (Vercel, Netlify, Cloudflare Pages, S3, etc.)
@@ -57,7 +75,7 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 ### Install
 
 ```bash
-git clone https://github.com/your-org/quflun.git
+git clone https://github.com/nomaanulhasan/quflun.git
 cd quflun
 pnpm install
 ```
@@ -166,6 +184,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v1.0.1 — Production Ready**
+**v1.5.0 — Latest Release**
 
-All features implemented: core vault engine, UI, PWA (Serwist service worker), CSP via HTTP headers, security headers, backup reminders, import/export, settings, health check, and documentation pages. Deployed on Vercel.
+Full-featured password manager with keyboard shortcuts, command palette, vault health auditing, custom fields, file attachments, import/export, and configurable settings. Deployed as a static PWA.
