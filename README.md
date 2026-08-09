@@ -184,6 +184,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v1.5.0 — Latest Release**
+**v1.5.1 — Latest Release**
 
 Full-featured password manager with keyboard shortcuts, command palette, vault health auditing, custom fields, file attachments, import/export, and configurable settings. Deployed as a static PWA.

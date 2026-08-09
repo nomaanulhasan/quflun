@@ -23,7 +23,7 @@ export function AboutSettings() {
           <InfoLink href="/security" label="Security" />
           <InfoLink href="/privacy" label="Privacy" />
           <InfoLink href="/security-limitations" label="Limitations" />
-          <InfoLink href="https://github.com/nomaanulhasan/quflun" label="Repository" />
+          <InfoLink href="https://github.com/nomaanulhasan/quflun" label="Repository" external />
         </div>
       </div>
     </SettingsCard>
@@ -39,6 +39,10 @@ function AboutRow({ label, value, mono = false }: { label: string; value: string
   );
 }
 
-function InfoLink({ href, label }: { href: string; label: string }) {
-  return <Link href={href} className="text-xs text-primary underline-offset-2 hover:underline">{label}</Link>;
+function InfoLink({ href, label, external = false }: { href: string; label: string; external?: boolean }) {
+  const classes = "text-xs text-primary underline-offset-2 hover:underline";
+  if (external) {
+    return <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>{label}</a>;
+  }
+  return <Link href={href} className={classes}>{label}</Link>;
 }

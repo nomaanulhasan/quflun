@@ -43,14 +43,11 @@
 
 ## Upcoming
 
-### Pre-release — Real-world Validation
+### Post-launch Improvements
 
-Before making the repository public:
-
-- ~~About page: version, build date, KDBX version, crypto algorithms~~ ✅ (implemented in Settings → About)
-- Dogfood period: use Quflun as daily password manager for 2–4 weeks
-- Fix workflow friction, missing shortcuts, browser quirks, mobile usability
-- Performance validation with larger vaults (100+ entries)
+- Performance validation with larger vaults (500+ entries)
+- Accessibility audit with screen readers (NVDA, VoiceOver)
+- Community feedback integration
 
 ---
 

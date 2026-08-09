@@ -116,7 +116,7 @@ Lock clears all in-memory state. Only the encrypted blob remains.
 Content-Security-Policy is enforced via HTTP headers, not a `<meta>` tag:
 
 - **Delivery:** `vercel.json` (Vercel) and `public/_headers` (Netlify/Cloudflare Pages) set the CSP header on all responses
-- **`script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'`:** `'unsafe-inline'` is required because Next.js static export generates inline `<script>` tags for hydration data whose content changes every build (hashes can't be pre-computed reliably in CI). `'wasm-unsafe-eval'` allows Argon2 WASM compilation.
+- **`script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'`:** `'unsafe-inline'` is required because Next.js static export generates inline `<script>` tags for hydration data whose content changes every build (hashes can't be pre-computed reliably in CI). `'wasm-unsafe-eval'` allows Argon2 WASM compilation. `'unsafe-eval'` is required by argon2-browser's Emscripten-compiled glue code which uses `eval()` during initialization.
 - **`style-src 'self' 'unsafe-inline'`:** Required because Shadcn/Radix components apply inline styles dynamically at runtime via JavaScript — these cannot be pre-hashed.
 - **`frame-ancestors 'none'`:** Enforced via HTTP headers (ignored in meta tags per CSP spec).
 - **Development:** No CSP is applied. Next.js requires inline scripts and dynamic code execution for HMR/React Refresh.
