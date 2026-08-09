@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Lock, HeartPulse } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useVaultStore, useUIStore } from '@/components/providers';
-import { Shell } from '@/components/layout/shell';
-import { PageHeader } from '@/components/common/page-header';
-import { ThemeSettings } from '@/components/settings/theme-settings';
-import { SecuritySettings } from '@/components/settings/security-settings';
-import { ChangePassword } from '@/components/settings/change-password';
-import { BackupSettings } from '@/components/settings/backup-settings';
-import { AboutSettings } from '@/components/settings/about-settings';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Lock, HeartPulse } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useVaultStore, useUIStore } from "@/components/providers";
+import { Shell } from "@/components/layout/shell";
+import { PageHeader } from "@/components/common/page-header";
+import { ThemeSettings } from "@/components/settings/theme-settings";
+import { SecuritySettings } from "@/components/settings/security-settings";
+import { ChangePassword } from "@/components/settings/change-password";
+import { BackupSettings } from "@/components/settings/backup-settings";
+import { AboutSettings } from "@/components/settings/about-settings";
 
 export default function SettingsPage() {
   const status = useVaultStore((s) => s.status);
@@ -26,26 +26,44 @@ export default function SettingsPage() {
 
   return (
     <Shell>
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Settings" subtitle="Customize Quflun behavior and preferences." />
+      <div className="mx-auto w-full max-w-4xl space-y-6">
+        <PageHeader
+          title="Settings"
+          subtitle="Customize Quflun behavior and preferences."
+        />
 
-        <ThemeSettings />
-        <SecuritySettings />
-        <ChangePassword />
-        <BackupSettings />
-        <AboutSettings />
-
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-6">
+            <ThemeSettings />
+            <SecuritySettings />
+            <BackupSettings />
+          </div>
+          <div className="space-y-6">
+            <ChangePassword />
+            <AboutSettings />
+          </div>
+        </div>
         {/* Actions */}
         <div className="flex flex-wrap gap-3 pt-2">
-          {status === 'unlocked' && (
-            <Button variant="outline" size="sm" onClick={lock} className="gap-1.5">
+          {status === "unlocked" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={lock}
+              className="gap-1.5"
+            >
               <Lock className="h-3.5 w-3.5" />
               Lock Vault
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => router.push('/health-check')} className="gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/password-health")}
+            className="gap-1.5"
+          >
             <HeartPulse className="h-3.5 w-3.5" />
-            Run Health Check
+            Vault Health
           </Button>
         </div>
       </div>

@@ -4,8 +4,8 @@ import { PageHeader } from '@/components/common/page-header';
 export default function SecurityLimitationsPage() {
   return (
     <Shell>
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Security Limitations" subtitle="Known constraints of browser-based password management." />
+      <div className="mx-auto w-full space-y-6">
+        <PageHeader title="Security Limitations" subtitle="Known constraints of browser-based password management." className='xl:justify-start' />
 
         <Section title="Browser Extensions">
           Browser extensions with DOM access can potentially read page content, including form fields and displayed passwords.

@@ -4,8 +4,8 @@ import { PageHeader } from '@/components/common/page-header';
 export default function PrivacyPage() {
   return (
     <Shell>
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <PageHeader title="Privacy" subtitle="Your data stays on your device." />
+      <div className="mx-auto w-full space-y-6">
+        <PageHeader title="Privacy" subtitle="Your data stays on your device." className='xl:justify-start' />
 
         <Section title="No Data Collection">
           Quflun does not collect, transmit, or share any user data with third parties.

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Lock,
   Menu,
@@ -22,7 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { useVaultStore } from '@/components/providers';
+import { useVaultStore, useUIStore } from '@/components/providers';
 
 // ─── Navigation Items (grouped for hierarchy) ─────────────────────────────────
 
@@ -42,7 +42,7 @@ const navGroups: NavGroup[] = [
     label: 'Tools',
     items: [
       { href: '/import-export', label: 'Import/Export', icon: ArrowLeftRight },
-      { href: '/health-check', label: 'Health Check', icon: HeartPulse },
+      { href: '/password-health', label: 'Vault Health', icon: HeartPulse },
     ],
   },
   {
@@ -66,8 +66,42 @@ const navGroups: NavGroup[] = [
 export function Shell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const lock = useVaultStore((s) => s.lock);
   const status = useVaultStore((s) => s.status);
+  const idleTimeoutMinutes = useUIStore((s) => s.settings.idleTimeoutMinutes);
+
+  // ─── Idle auto-lock ────────────────────────────────────────────────────────
+  const lockRef = useRef(lock);
+  lockRef.current = lock;
+
+  useEffect(() => {
+    if (status !== 'unlocked' || idleTimeoutMinutes <= 0) return;
+
+    const timeoutMs = idleTimeoutMinutes * 60 * 1000;
+    let timer: ReturnType<typeof setTimeout>;
+
+    function resetTimer() {
+      clearTimeout(timer);
+      timer = setTimeout(() => lockRef.current(), timeoutMs);
+    }
+
+    const events = ['pointermove', 'keydown', 'touchstart', 'scroll'] as const;
+    events.forEach((e) => document.addEventListener(e, resetTimer, { passive: true }));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => document.removeEventListener(e, resetTimer));
+    };
+  }, [status, idleTimeoutMinutes]);
+
+  // ─── Redirect to home when vault locks ─────────────────────────────────────
+  useEffect(() => {
+    if (status === 'locked') {
+      router.replace('/');
+    }
+  }, [status, router]);
 
   return (
     <div className="flex h-full min-h-screen flex-col md:flex-row">

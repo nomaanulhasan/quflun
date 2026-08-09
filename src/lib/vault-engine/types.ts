@@ -74,6 +74,9 @@ export interface VaultEngine {
   // Health Check
   runHealthCheck(): Promise<import('./health-check').HealthCheckResult>;
 
+  // Password Health
+  getPasswordHealthReport(oldPasswordDays?: number): import('./password-health').PasswordHealthReport;
+
   // Password management
   changePassword(currentPassword: string, newPassword: string): Promise<void>;
 

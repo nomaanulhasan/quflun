@@ -25,7 +25,7 @@ export default function ImportExportPage() {
 
   return (
     <Shell>
-      <div className="mx-auto w-full max-w-lg space-y-6">
+      <div className="mx-auto w-full max-w-2xl space-y-6">
         <PageHeader title="Import & Export" subtitle="Back up your vault or migrate data." />
         <BackupStatusCard />
         <ImportSection />

@@ -17,7 +17,7 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Password generator** — cryptographically secure, configurable length and character sets
 - **Search** — case-insensitive substring matching across all fields
 - **Import/Export** — KDBX and CSV (RFC 4180) formats
-- **Vault health check** — structural integrity verification
+- **Vault health check** — credential quality audit + structural integrity verification
 - **Categories** — native KDBX groups (not metadata strings)
 - **Tags** — chip-style input with registry management
 - **Favorites** — quick access filtering
@@ -25,6 +25,7 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Clipboard protection** — timed auto-clear with ownership verification
 - **Brute-force protection** — incremental delay + 60-second cooldown
 - **Change password** — safely update vault master password with integrity verification
+- **Password health dashboard** — audit weak, reused, and outdated credentials with health score
 - **Quick copy actions** — copy username, password, URL from entry cards and edit forms
 - **Password strength indicator** — visual badge on cards (Weak / Fair / Strong)
 - **Offline-first** — works without internet after initial load
@@ -166,4 +167,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 **v1.0.1 — Production Ready**
 
-All features implemented: core vault engine, UI, PWA (Serwist service worker), CSP hardening (post-build hash extraction), security headers, backup reminders, import/export, settings, health check, and documentation pages. 388 tests passing across 27 test files. Deployed on Vercel.
+All features implemented: core vault engine, UI, PWA (Serwist service worker), CSP via HTTP headers, security headers, backup reminders, import/export, settings, health check, and documentation pages. Deployed on Vercel.

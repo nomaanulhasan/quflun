@@ -950,6 +950,139 @@ class VaultEngineImpl implements VaultEngine {
     return check.run(db);
   }
 
+  getPasswordHealthReport(oldPasswordDays = 90): import('@/lib/vault-engine/password-health').PasswordHealthReport {
+    const db = this.requireUnlockedDb();
+    const defaultGroup = db.getDefaultGroup();
+    const recycleBinUuid = db.meta.recycleBinUuid;
+
+    const issues: import('@/lib/vault-engine/password-health').PasswordHealthIssue[] = [];
+    const passwordHashes = new Map<string, string[]>(); // hash → list of entry titles
+    const now = Date.now();
+    const oldThresholdMs = oldPasswordDays * 24 * 60 * 60 * 1000;
+
+    let totalEntries = 0;
+    let totalPasswords = 0;
+    let totalNotes = 0;
+    let weakCount = 0;
+    let oldCount = 0;
+    let missingUrlCount = 0;
+    let missingUsernameCount = 0;
+    let noCategoryCount = 0;
+
+    for (const entry of defaultGroup.allEntries()) {
+      if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) continue;
+
+      totalEntries++;
+      const type = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note' ? 'note' : 'password';
+      const title = this.getStringField(entry, 'Title') || 'Untitled';
+      const uuid = entry.uuid.toString();
+
+      if (type === 'note') {
+        totalNotes++;
+        continue;
+      }
+
+      totalPasswords++;
+
+      // Category check — skipped, UI doesn't have a category selector yet
+      const isUncategorized = entry.parentGroup?.name === defaultGroup.name || !entry.parentGroup;
+      if (isUncategorized) {
+        noCategoryCount++;
+      }
+
+      // Username check
+      const username = this.getStringField(entry, 'UserName');
+      if (!username) {
+        missingUsernameCount++;
+        issues.push({ uuid, title, issue: 'missing-username' });
+      }
+
+      // URL check
+      const url = this.getStringField(entry, 'URL');
+      if (!url) {
+        missingUrlCount++;
+        issues.push({ uuid, title, issue: 'missing-url' });
+      }
+
+      // Password strength check
+      const strength = this.computePasswordStrength(entry);
+      if (strength === 'weak') {
+        weakCount++;
+        issues.push({ uuid, title, issue: 'weak' });
+      }
+
+      // Old password check
+      const lastMod = entry.times.lastModTime;
+      if (lastMod && (now - lastMod.getTime()) > oldThresholdMs) {
+        oldCount++;
+        issues.push({ uuid, title, issue: 'old' });
+      }
+
+      // Reuse detection: compute a simple hash of password for grouping
+      const pwField = entry.fields.get('Password');
+      if (pwField) {
+        const pw = typeof pwField === 'string' ? pwField : pwField.getText();
+        if (pw.length > 0) {
+          // Simple string hash for grouping — NOT cryptographic, just for equality detection
+          const hash = this.simpleHash(pw);
+          if (!passwordHashes.has(hash)) {
+            passwordHashes.set(hash, []);
+          }
+          passwordHashes.get(hash)!.push(uuid + '|' + title);
+        }
+      }
+    }
+
+    // Reused passwords: groups with 2+ entries sharing the same password
+    let reusedCount = 0;
+    for (const [, entries] of passwordHashes) {
+      if (entries.length > 1) {
+        for (const item of entries) {
+          const [uuid, title] = item.split('|', 2);
+          reusedCount++;
+          issues.push({ uuid, title, issue: 'reused' });
+        }
+      }
+    }
+
+    // Compute score (100 = perfect, deductions for each issue type)
+    let score = 100;
+    if (totalPasswords > 0) {
+      const weakPenalty = (weakCount / totalPasswords) * 30;
+      const reusedPenalty = (reusedCount / totalPasswords) * 25;
+      const oldPenalty = (oldCount / totalPasswords) * 15;
+      const missingPenalty = ((missingUrlCount + missingUsernameCount) / (totalPasswords * 2)) * 20;
+      score = Math.max(0, Math.round(score - weakPenalty - reusedPenalty - oldPenalty - missingPenalty));
+    }
+
+    return {
+      summary: {
+        totalEntries,
+        totalPasswords,
+        totalNotes,
+        weakPasswords: weakCount,
+        reusedPasswords: reusedCount,
+        oldPasswords: oldCount,
+        missingUrls: missingUrlCount,
+        missingUsernames: missingUsernameCount,
+        noCategory: noCategoryCount,
+        score,
+      },
+      issues,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /** Simple non-cryptographic hash for password equality grouping. Never exposed. */
+  private simpleHash(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      hash = ((hash << 5) - hash + ch) | 0;
+    }
+    return hash.toString(36);
+  }
+
   // ─── Helper Methods ────────────────────────────────────────────────────────
 
   private requireUnlockedDb(): kdbxweb.Kdbx {

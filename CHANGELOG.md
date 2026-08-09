@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0] - Password Health Dashboard
+
+### Added
+
+- Password Health Dashboard page (`/password-health`) with overall health score
+- Detects weak passwords, reused passwords, old passwords (90+ days)
+- Detects missing URLs, missing usernames
+- Clickable summary metrics that filter the issues list
+- Issues list with drill-down to affected entries
+- Vault Integrity check merged into the same page (was separate `/health-check`)
+- `getPasswordHealthReport()` method on VaultEngine
+- `PasswordHealthReport`, `PasswordHealthSummary`, `PasswordHealthIssue` types
+- Health score algorithm (0–100) with weighted penalties per issue type
+
+### Changed
+
+- Merged `/health-check` into `/password-health` as "Vault Integrity" tab (old route redirects)
+- Sidebar: single "Vault Health" link replaces separate "Password Health" and "Health Check" links
+- Page widths: info pages use `max-w-3xl`, settings uses `max-w-4xl` with 2-column grid, tools use `max-w-2xl`
+- Settings page uses 2-column layout on desktop to reduce scrolling
+- Vault Health page uses tabbed format (Credential Health / Vault Integrity)
+- About Settings: removed stale hardcoded values, now shows version, build date, crypto info dynamically
+- Added `NEXT_PUBLIC_BUILD_DATE` env variable (generated at build time)
+
+### Fixed
+
+- Tests updated: `ImportSummary` tests now include required `total` field
+- About Settings tests updated to match new dynamic content
 
 ## [1.2.2] - UI/UX Improvements + Code Optimization
 

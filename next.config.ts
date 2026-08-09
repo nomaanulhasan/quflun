@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
+    NEXT_PUBLIC_BUILD_DATE: new Date().toISOString().split('T')[0],
   },
   serverExternalPackages: ["argon2-browser"],
   turbopack: {},
