@@ -1,7 +1,9 @@
 'use client';
 
-import { Star, StickyNote, ExternalLink } from 'lucide-react';
+import { Star, StickyNote, ExternalLink, Clipboard, Check, User, KeyRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useCopyAction } from '@/hooks/use-copy-action';
 import type { EntryListItem } from '@/types';
 
 interface EntryCardProps {
@@ -11,11 +13,46 @@ interface EntryCardProps {
 
 /**
  * Entry card for the vault list view.
- * Displays title, username, URL, tags, favorite status, and note indicator.
+ * Displays title, username, URL, tags, favorite status, and quick action buttons.
  * Does NOT display passwords.
  */
 export function EntryCard({ entry, onClick }: EntryCardProps) {
   const titleId = `entry-title-${entry.uuid}`;
+  const { copy, isCopied } = useCopyAction();
+
+  async function handleCopyPassword(e: React.MouseEvent) {
+    e.stopPropagation();
+    // Fetch full entry from engine to get password (not in EntryListItem)
+    const { getServices } = await import('@/lib/runtime');
+    const { engine } = await getServices();
+    const full = engine.getEntry(entry.uuid);
+    if (full.password) {
+      await copy(full.password, 'Password', `pw-${entry.uuid}`);
+    }
+  }
+
+  async function handleCopyUsername(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (entry.username) {
+      await copy(entry.username, 'Username', `un-${entry.uuid}`);
+    }
+  }
+
+  async function handleCopyUrl(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (entry.url) {
+      await copy(entry.url, 'URL', `url-${entry.uuid}`);
+    }
+  }
+
+  function handleOpenUrl(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (entry.url) {
+      const protocol = 'https';
+      const href = /^[a-z][a-z0-9+\-.]*:\/\//i.test(entry.url) ? entry.url : `${protocol}://${entry.url}`;
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  }
 
   return (
     <article
@@ -73,14 +110,76 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
           )}
         </div>
 
-        {/* Favorite indicator */}
-        {entry.favorite && (
-          <Star
-            className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400"
-            aria-label="Favorite"
-          />
-        )}
+        {/* Right side: favorite + actions */}
+        <div className="flex flex-col items-end gap-1.5">
+          {entry.favorite && (
+            <Star
+              className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400"
+              aria-label="Favorite"
+            />
+          )}
+        </div>
       </div>
+
+      {/* Quick actions — only for password entries */}
+      {entry.type === 'password' && (
+        <div className="mt-3 flex items-center gap-1 border-t border-border pt-2" onClick={(e) => e.stopPropagation()}>
+          {entry.username && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label="Copy username"
+              onClick={handleCopyUsername}
+            >
+              {isCopied(`un-${entry.uuid}`) ? (
+                <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+              ) : (
+                <User className="h-3 w-3" aria-hidden="true" />
+              )}
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Copy password"
+            onClick={handleCopyPassword}
+          >
+            {isCopied(`pw-${entry.uuid}`) ? (
+              <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+            ) : (
+              <KeyRound className="h-3 w-3" aria-hidden="true" />
+            )}
+          </Button>
+          {entry.url && (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Copy URL"
+                onClick={handleCopyUrl}
+              >
+                {isCopied(`url-${entry.uuid}`) ? (
+                  <Check className="h-3 w-3 text-green-500" aria-hidden="true" />
+                ) : (
+                  <Clipboard className="h-3 w-3" aria-hidden="true" />
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Open website"
+                onClick={handleOpenUrl}
+              >
+                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              </Button>
+            </>
+          )}
+        </div>
+      )}
     </article>
   );
 }
