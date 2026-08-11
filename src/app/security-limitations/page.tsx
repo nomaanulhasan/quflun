@@ -24,9 +24,9 @@ export default function SecurityLimitationsPage() {
         </Section>
 
         <Section title="JavaScript Memory">
-          JavaScript does not provide deterministic memory erasure (no equivalent to C's memset).
-          When the vault is locked, all references are nulled and released for garbage collection,
-          but the runtime decides when memory is actually reclaimed.
+          JavaScript does not provide deterministic memory erasure (no equivalent to C&apos;s
+          memset). When the vault is locked, all references are nulled and released for garbage
+          collection, but the runtime decides when memory is actually reclaimed.
         </Section>
 
         <Section title="Clipboard Clearing">

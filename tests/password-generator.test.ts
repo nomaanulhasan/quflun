@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   createPasswordGenerator,
   PasswordGenerator,
@@ -7,9 +7,9 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 
-const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
-const DIGITS = '0123456789';
+const _UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const _LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
+const _DIGITS = '0123456789';
 const SYMBOLS = '!@#$%^&*()_+-=[]{}|;\':",./<>?`~\\';
 
 describe('PasswordGenerator', () => {

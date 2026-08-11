@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { AppSettings } from '@/types';
+import { DEFAULT_SHORTCUTS } from '@/stores/ui-store';
 import {
   shouldShowBackupReminder,
   getBackupReminderMessage,
@@ -16,6 +17,7 @@ function makeSettings(overrides: Partial<AppSettings> = {}): AppSettings {
     backupReminderDays: 30,
     lastBackupDate: null,
     theme: 'system',
+    shortcuts: { ...DEFAULT_SHORTCUTS },
     ...overrides,
   };
 }

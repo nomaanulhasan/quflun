@@ -44,7 +44,7 @@ export default function PasswordHealthPage() {
   if (status === 'locked' && vaultId) return <LockScreen />;
   if (status !== 'unlocked') return null;
 
-  function handleOpenEntry(uuid: string) {
+  function handleOpenEntry(_uuid: string) {
     router.push('/vault');
   }
 

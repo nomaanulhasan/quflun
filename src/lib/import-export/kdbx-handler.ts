@@ -70,7 +70,7 @@ export async function importKdbx(
   const sourceRecycleBinUuid = sourceDb.meta.recycleBinUuid;
 
   let sourceEntryCount = 0;
-  for (const _ of sourceDefaultGroup.allEntries()) {
+  for (const _entry of sourceDefaultGroup.allEntries()) {
     sourceEntryCount++;
     if (sourceEntryCount > IMPORT_MAX_ENTRIES) {
       throw new Error(`Import file contains more than ${IMPORT_MAX_ENTRIES} entries.`);

@@ -42,7 +42,6 @@ function randomIndex(setSize: number): number {
   const threshold = 256 - (256 % setSize);
   const buf = new Uint8Array(1);
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     crypto.getRandomValues(buf);
     const byte = buf[0];

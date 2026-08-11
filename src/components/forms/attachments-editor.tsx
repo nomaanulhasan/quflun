@@ -20,7 +20,7 @@ interface AttachmentsEditorProps {
  */
 export function AttachmentsEditor({
   attachments,
-  entryUuid,
+  entryUuid: _entryUuid,
   onAdd,
   onRemove,
   onDownload,
