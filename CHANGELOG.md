@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - "Open URL" now opens in system browser instead of PWA webview (removed window features that caused popup behavior)
+- Vault Integrity check displays "Categories" instead of "Groups" (matches app terminology)
 
 ### Removed
 
