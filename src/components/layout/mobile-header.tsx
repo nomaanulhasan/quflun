@@ -6,6 +6,7 @@ import { Lock, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { NavLinks, LockButton } from './nav-links';
+import { ScrollFade } from '@/components/common/scroll-fade';
 
 interface MobileHeaderProps {
   isUnlocked: boolean;
@@ -34,9 +35,11 @@ export const MobileHeader = memo(function MobileHeader({
             <SheetTitle className="text-lg font-semibold">Quflun</SheetTitle>
           </SheetHeader>
 
-          <nav className="mask-fade-y min-h-0 flex-1 overflow-y-auto" aria-label="Main navigation">
-            <NavLinks onNavigate={() => setOpen(false)} />
-          </nav>
+          <ScrollFade direction="vertical" className="min-h-0 flex-1 overflow-y-auto">
+            <nav aria-label="Main navigation">
+              <NavLinks onNavigate={() => setOpen(false)} />
+            </nav>
+          </ScrollFade>
 
           {isUnlocked && (
             <div className="border-border shrink-0 border-t pt-3 pb-4">

@@ -4,20 +4,21 @@ import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { FolderOpen, Star, Search, Plus } from 'lucide-react';
 import { PageHeader } from '@/components/common/page-header';
 import { EmptyState } from '@/components/common/empty-state';
+import { ScrollFade } from '@/components/common/scroll-fade';
 import { EntryCard } from '@/components/entries/entry-card';
 import { VaultSearchBar } from '@/components/vault/vault-search-bar';
 import { VaultFilters } from '@/components/vault/vault-filters';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem } from '@/types';
 
-// Page size adapts to screen — single column shows fewer items
+// Page size adapts to screen
 function getPageSize(): number {
   if (typeof window === 'undefined') return 24;
   const width = window.innerWidth;
-  if (width < 768) return 8; // mobile — 1 column
-  if (width < 1024) return 10; // tablet — 2 columns
-  if (width < 1536) return 12; // desktop — 3 columns
-  return 20; // desktop — 4 columns
+  if (width < 768) return 8;
+  if (width < 1024) return 10;
+  if (width < 1536) return 12;
+  return 20;
 }
 
 interface VaultListViewProps {
@@ -35,8 +36,9 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   const [visibleCount, setVisibleCount] = useState(() => getPageSize());
   const pageSize = useRef(getPageSize());
   const gridRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Refs for keyboard handler to avoid re-creation on every state change
+  // Refs for stable keyboard handler
   const selectedIndexRef = useRef(selectedIndex);
   selectedIndexRef.current = selectedIndex;
   const onEditRef = useRef(onEdit);
@@ -67,33 +69,29 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   }, [entries, query, showFavorites, selectedCategory, selectedTag]);
 
   const hasFilters = showFavorites || !!selectedCategory || !!selectedTag;
-
-  // Paginated slice of filtered results
   const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
   const hasMore = visibleCount < filtered.length;
 
-  // Keyboard navigation uses visible (paginated) entries only
   const visibleRef = useRef(visible);
   visibleRef.current = visible;
 
-  // Infinite scroll — load more when sentinel enters viewport
+  // Infinite scroll
   const sentinelRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if (!sentinelRef.current) return;
+    if (!sentinelRef.current || !scrollContainerRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && visibleCount < filtered.length) {
           setVisibleCount((c) => c + pageSize.current);
         }
       },
-      { rootMargin: '200px' } // trigger 200px before sentinel is visible
+      { root: scrollContainerRef.current, rootMargin: '200px' }
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
   }, [visibleCount, filtered.length]);
 
-  // Reset selection and pagination when filter results change
+  // Reset on filter change
   useEffect(() => {
     setSelectedIndex(-1);
     setVisibleCount(pageSize.current);
@@ -106,7 +104,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
     cards[selectedIndex]?.scrollIntoView({ block: 'nearest' });
   }, [selectedIndex]);
 
-  // Stable keyboard handler — uses refs so it never re-creates
+  // Keyboard handler (stable — never re-creates)
   const handleListKeyDown = useCallback((e: React.KeyboardEvent) => {
     const list = visibleRef.current;
     if (list.length === 0) return;
@@ -143,11 +141,11 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
         setSelectedIndex(list.length - 1);
         break;
     }
-  }, []); // stable — never re-creates
+  }, []);
 
   return (
     <div className="flex h-full flex-col">
-      {/* Sticky header — title, search, filters, add button */}
+      {/* Sticky header */}
       <div className="shrink-0 space-y-4 pr-4 pb-4 md:pr-6">
         <div className="flex items-center justify-between">
           <PageHeader
@@ -160,7 +158,6 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
             className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
-
             <span>
               Add New <span className="hidden sm:inline">Entry</span>
             </span>
@@ -187,7 +184,11 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
       </div>
 
       {/* Scrollable card grid */}
-      <div className="mask-fade-y min-h-0 flex-1 overflow-y-auto pr-4 sm:pr-6">
+      <ScrollFade
+        direction="vertical"
+        scrollRef={scrollContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto pr-4 sm:pr-6"
+      >
         {entries.length === 0 ? (
           <div className="flex flex-col items-center gap-4 pt-12">
             <EmptyState
@@ -242,11 +243,10 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
                 </button>
               )}
             </div>
-            {/* Sentinel for infinite scroll — triggers loading next batch */}
             {hasMore && <div ref={sentinelRef} className="h-1" aria-hidden="true" />}
           </>
         )}
-      </div>
+      </ScrollFade>
     </div>
   );
 }
@@ -262,6 +262,6 @@ async function copyPasswordForEntry(uuid: string) {
       await navigator.clipboard.writeText(full.password);
     }
   } catch {
-    // Silently fail — user can use the card action instead
+    // Silently fail
   }
 }

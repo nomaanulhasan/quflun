@@ -222,6 +222,12 @@ describe('UI Store (Task 10.2)', { timeout: 30_000 }, () => {
         backupReminderDays: 7,
         lastBackupDate: '2024-06-01T00:00:00.000Z',
         theme: 'dark',
+        shortcuts: {
+          commandPalette: { key: 'k', ctrl: true },
+          newEntry: { key: 'n', alt: true },
+          newNote: { key: 'n', alt: true, shift: true },
+          lockVault: { key: 'l', ctrl: true },
+        },
       });
 
       await useStore.getState().loadSettings();

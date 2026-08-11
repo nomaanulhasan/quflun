@@ -43,7 +43,7 @@ describe('IdleMonitor', () => {
 
       // Each event type should only be registered once
       const pointermoveCalls = addEventListenerSpy.mock.calls.filter(
-        ([event]) => event === 'pointermove'
+        ([event]: [string, ...unknown[]]) => event === 'pointermove'
       );
       expect(pointermoveCalls).toHaveLength(1);
     });
