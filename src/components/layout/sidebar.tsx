@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import Link from 'next/link';
 import { NavLinks, LockButton } from './nav-links';
+import { ScrollFade } from '@/components/common/scroll-fade';
 
 interface SidebarProps {
   isUnlocked: boolean;
@@ -19,9 +20,11 @@ export const Sidebar = memo(function Sidebar({ isUnlocked, onLock }: SidebarProp
         </Link>
       </header>
 
-      <nav className="mask-fade-y min-h-0 flex-1 overflow-y-auto p-3" aria-label="Main navigation">
-        <NavLinks />
-      </nav>
+      <ScrollFade direction="vertical" className="min-h-0 flex-1 overflow-y-auto p-3">
+        <nav aria-label="Main navigation">
+          <NavLinks />
+        </nav>
+      </ScrollFade>
 
       {isUnlocked && (
         <div className="border-border shrink-0 border-t p-3">

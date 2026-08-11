@@ -139,6 +139,12 @@
     transparent 100%
   );
 }
+.mask-fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0, black 12px);
+}
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black calc(100% - 12px), transparent 100%);
+}
 
 /* Hide scrollbar while keeping scroll functionality */
 .scrollbar-none {

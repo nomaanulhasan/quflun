@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { StorageAdapterImpl } from '@/lib/storage/storage-adapter';
 import { DB_NAME } from '@/lib/storage/schema';
 import type { AppSettings } from '@/types';
+import { DEFAULT_SHORTCUTS } from '@/stores/ui-store';
 
 let adapter: StorageAdapterImpl;
 
@@ -107,6 +108,7 @@ describe('StorageAdapter', () => {
         backupReminderDays: 14,
         lastBackupDate: null,
         theme: 'dark',
+        shortcuts: { ...DEFAULT_SHORTCUTS },
       };
 
       await adapter.saveSettings(settings);
@@ -127,6 +129,7 @@ describe('StorageAdapter', () => {
         backupReminderDays: 30,
         lastBackupDate: null,
         theme: 'system',
+        shortcuts: { ...DEFAULT_SHORTCUTS },
       };
 
       const updated: AppSettings = {
@@ -135,6 +138,7 @@ describe('StorageAdapter', () => {
         backupReminderDays: 7,
         lastBackupDate: '2024-01-15T10:00:00.000Z',
         theme: 'light',
+        shortcuts: { ...DEFAULT_SHORTCUTS },
       };
 
       await adapter.saveSettings(initial);
@@ -158,6 +162,7 @@ describe('StorageAdapter', () => {
         backupReminderDays: 30,
         lastBackupDate: null,
         theme: 'system',
+        shortcuts: { ...DEFAULT_SHORTCUTS },
       });
 
       expect(spy).not.toHaveBeenCalled();
