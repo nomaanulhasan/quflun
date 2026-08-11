@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -127,4 +127,41 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Scroll fade hint — top/bottom edges fade out to signal more content */
+.mask-fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 12px,
+    black calc(100% - 12px),
+    transparent 100%
+  );
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Horizontal scroll fade hint — left/right edges */
+.mask-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 12px,
+    black calc(100% - 12px),
+    transparent 100%
+  );
+}
+.mask-fade-left {
+  mask-image: linear-gradient(to right, transparent 0, black 12px);
+}
+.mask-fade-right {
+  mask-image: linear-gradient(to right, black calc(100% - 12px), transparent 100%);
 }

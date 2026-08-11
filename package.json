@@ -1,6 +1,6 @@
 {
   "name": "quflun",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
@@ -8,6 +8,7 @@
     "build:turbo": "next build && serwist build",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\"",
     "test": "vitest --run",
     "test:watch": "vitest"
   },
@@ -49,9 +50,12 @@
     "fake-indexeddb": "^6.2.5",
     "fast-check": "^4.8.0",
     "happy-dom": "^20.10.2",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "shadcn": "^4.10.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.8"
-  }
+  },
+  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1"
 }

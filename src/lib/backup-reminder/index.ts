@@ -4,7 +4,4 @@ export {
   timeSinceLastBackup,
 } from './backup-reminder';
 
-export {
-  getDestructiveWarningMessage,
-  type DestructiveOperation,
-} from './destructive-warning';
+export { getDestructiveWarningMessage, type DestructiveOperation } from './destructive-warning';

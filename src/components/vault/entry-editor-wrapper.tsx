@@ -21,17 +21,23 @@ export function EntryEditorWrapper({ entryId, onBack }: EntryEditorWrapperProps)
         const { getServices } = await import('@/lib/runtime');
         const { engine } = await getServices();
         setEntry(engine.getEntry(entryId));
-      } catch (err) { setError((err as Error).message); }
+      } catch (err) {
+        setError((err as Error).message);
+      }
     })();
   }, [entryId]);
 
-  if (error) return <p className="py-8 text-center text-sm text-destructive">{error}</p>;
-  if (!entry) return <p className="text-sm text-muted-foreground">Loading...</p>;
+  if (error) return <p className="text-destructive py-8 text-center text-sm">{error}</p>;
+  if (!entry) return <p className="text-muted-foreground text-sm">Loading...</p>;
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
       <PageHeader title={entry.type === 'note' ? 'Edit Note' : 'Edit Entry'} />
-      {entry.type === 'note' ? <EditNoteForm entry={entry} onBack={onBack} /> : <EditEntryForm entry={entry} onBack={onBack} />}
+      {entry.type === 'note' ? (
+        <EditNoteForm entry={entry} onBack={onBack} />
+      ) : (
+        <EditEntryForm entry={entry} onBack={onBack} />
+      )}
     </div>
   );
 }

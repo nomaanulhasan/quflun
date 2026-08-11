@@ -26,19 +26,16 @@ describe('Property 8: Search correctness', () => {
     const engine = createSearchEngine();
 
     fc.assert(
-      fc.property(
-        fc.array(entryArb, { minLength: 1, maxLength: 20 }),
-        (entries) => {
-          engine.index(entries);
-          const target = entries[0];
-          // Use first 3 chars of title as query (guaranteed substring)
-          if (target.title.length < 1) return;
-          const query = target.title.slice(0, Math.min(3, target.title.length));
-          const results = engine.search(query);
-          const uuids = results.map((r) => r.uuid);
-          expect(uuids).toContain(target.uuid);
-        }
-      ),
+      fc.property(fc.array(entryArb, { minLength: 1, maxLength: 20 }), (entries) => {
+        engine.index(entries);
+        const target = entries[0];
+        // Use first 3 chars of title as query (guaranteed substring)
+        if (target.title.length < 1) return;
+        const query = target.title.slice(0, Math.min(3, target.title.length));
+        const results = engine.search(query);
+        const uuids = results.map((r) => r.uuid);
+        expect(uuids).toContain(target.uuid);
+      }),
       { numRuns: 20 }
     );
   });
@@ -65,24 +62,21 @@ describe('Property 8: Search correctness', () => {
     const engine = createSearchEngine();
 
     fc.assert(
-      fc.property(
-        fc.string({ minLength: 5, maxLength: 50 }),
-        (body) => {
-          const noteEntry: SearchableEntry = {
-            uuid: 'note-1',
-            type: 'note',
-            title: 'My Note',
-            username: '',
-            url: '',
-            notes: body,
-            tags: [],
-          };
-          engine.index([noteEntry]);
-          const query = body.slice(0, 5);
-          const results = engine.search(query);
-          expect(results.length).toBe(1);
-        }
-      ),
+      fc.property(fc.string({ minLength: 5, maxLength: 50 }), (body) => {
+        const noteEntry: SearchableEntry = {
+          uuid: 'note-1',
+          type: 'note',
+          title: 'My Note',
+          username: '',
+          url: '',
+          notes: body,
+          tags: [],
+        };
+        engine.index([noteEntry]);
+        const query = body.slice(0, 5);
+        const results = engine.search(query);
+        expect(results.length).toBe(1);
+      }),
       { numRuns: 10 }
     );
   });
@@ -105,14 +99,11 @@ describe('Property 9: Whitespace query returns all entries', () => {
     const engine = createSearchEngine();
 
     fc.assert(
-      fc.property(
-        fc.array(entryArb, { minLength: 0, maxLength: 20 }),
-        (entries) => {
-          engine.index(entries);
-          const results = engine.search('');
-          expect(results.length).toBe(entries.length);
-        }
-      ),
+      fc.property(fc.array(entryArb, { minLength: 0, maxLength: 20 }), (entries) => {
+        engine.index(entries);
+        const results = engine.search('');
+        expect(results.length).toBe(entries.length);
+      }),
       { numRuns: 15 }
     );
   });
@@ -140,13 +131,15 @@ describe('Property 9: Whitespace query returns all entries', () => {
 describe('Property 10: Password generator length correctness', () => {
   const generator = createPasswordGenerator();
 
-  const validConfig: fc.Arbitrary<PasswordGeneratorConfig> = fc.record({
-    length: fc.integer({ min: 4, max: 128 }),
-    uppercase: fc.boolean(),
-    lowercase: fc.boolean(),
-    digits: fc.boolean(),
-    symbols: fc.boolean(),
-  }).filter((c) => c.uppercase || c.lowercase || c.digits || c.symbols)
+  const validConfig: fc.Arbitrary<PasswordGeneratorConfig> = fc
+    .record({
+      length: fc.integer({ min: 4, max: 128 }),
+      uppercase: fc.boolean(),
+      lowercase: fc.boolean(),
+      digits: fc.boolean(),
+      symbols: fc.boolean(),
+    })
+    .filter((c) => c.uppercase || c.lowercase || c.digits || c.symbols)
     .filter((c) => {
       const sets = [c.uppercase, c.lowercase, c.digits, c.symbols].filter(Boolean).length;
       return c.length >= sets;
@@ -173,13 +166,15 @@ describe('Property 11: Password character set compliance', () => {
   const DIGIT = /[0-9]/;
   const SYMBOL_CHARS = '!@#$%^&*()_+-=[]{}|;\':",./<>?`~\\';
 
-  const validConfig: fc.Arbitrary<PasswordGeneratorConfig> = fc.record({
-    length: fc.integer({ min: 4, max: 50 }),
-    uppercase: fc.boolean(),
-    lowercase: fc.boolean(),
-    digits: fc.boolean(),
-    symbols: fc.boolean(),
-  }).filter((c) => c.uppercase || c.lowercase || c.digits || c.symbols)
+  const validConfig: fc.Arbitrary<PasswordGeneratorConfig> = fc
+    .record({
+      length: fc.integer({ min: 4, max: 50 }),
+      uppercase: fc.boolean(),
+      lowercase: fc.boolean(),
+      digits: fc.boolean(),
+      symbols: fc.boolean(),
+    })
+    .filter((c) => c.uppercase || c.lowercase || c.digits || c.symbols)
     .filter((c) => {
       const sets = [c.uppercase, c.lowercase, c.digits, c.symbols].filter(Boolean).length;
       return c.length >= sets;

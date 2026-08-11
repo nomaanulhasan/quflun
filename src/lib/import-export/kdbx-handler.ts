@@ -48,9 +48,7 @@ export async function importKdbx(
   // ─── Size validation ─────────────────────────────────────────────────
 
   if (file.byteLength > MAX_FILE_SIZE_BYTES) {
-    throw new Error(
-      `Import file exceeds the maximum size of ${IMPORT_MAX_FILE_SIZE_MB} MB.`
-    );
+    throw new Error(`Import file exceeds the maximum size of ${IMPORT_MAX_FILE_SIZE_MB} MB.`);
   }
 
   // ─── Decrypt source database ─────────────────────────────────────────
@@ -75,9 +73,7 @@ export async function importKdbx(
   for (const _ of sourceDefaultGroup.allEntries()) {
     sourceEntryCount++;
     if (sourceEntryCount > IMPORT_MAX_ENTRIES) {
-      throw new Error(
-        `Import file contains more than ${IMPORT_MAX_ENTRIES} entries.`
-      );
+      throw new Error(`Import file contains more than ${IMPORT_MAX_ENTRIES} entries.`);
     }
   }
 

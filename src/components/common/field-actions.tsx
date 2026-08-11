@@ -40,7 +40,7 @@ export function OpenLinkAction({ url, disabled }: OpenLinkActionProps) {
         rel="noopener noreferrer"
         title="Open website"
         aria-label="Open website"
-        className="inline-flex shrink-0 items-center justify-center rounded-[min(var(--radius-md),12px)] size-7 text-sm font-medium transition-all outline-none select-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+        className="hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 inline-flex size-7 shrink-0 items-center justify-center rounded-[min(var(--radius-md),12px)] text-sm font-medium transition-all outline-none select-none focus-visible:ring-3 [&_svg]:pointer-events-none [&_svg]:shrink-0"
       >
         <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
       </a>

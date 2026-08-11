@@ -39,26 +39,31 @@ export function ShortcutSettings() {
   );
 
   return (
-    <SettingsCard title="Keyboard Shortcuts" description="Click a shortcut to reassign it. Press Escape to cancel.">
-      <div className="space-y-2">
-        {SHORTCUT_ORDER.map((id) => (
-          <ShortcutRow
-            key={id}
-            id={id}
-            label={SHORTCUT_LABELS[id]}
-            binding={shortcuts?.[id] ?? DEFAULT_SHORTCUTS[id]}
-            isRecording={recording === id}
-            onStartRecording={() => setRecording(id)}
-            onRecord={handleUpdate}
-            onCancel={() => setRecording(null)}
-          />
-        ))}
-      </div>
-      <Button variant="ghost" size="sm" onClick={handleReset} className="mt-2 gap-1.5 text-xs">
-        <RotateCcw className="h-3 w-3" aria-hidden="true" />
-        Reset to defaults
-      </Button>
-    </SettingsCard>
+    <div className="hidden md:block">
+      <SettingsCard
+        title="Keyboard Shortcuts"
+        description="Click a shortcut to reassign it. Press Escape to cancel."
+      >
+        <div className="space-y-2">
+          {SHORTCUT_ORDER.map((id) => (
+            <ShortcutRow
+              key={id}
+              id={id}
+              label={SHORTCUT_LABELS[id]}
+              binding={shortcuts?.[id] ?? DEFAULT_SHORTCUTS[id]}
+              isRecording={recording === id}
+              onStartRecording={() => setRecording(id)}
+              onRecord={handleUpdate}
+              onCancel={() => setRecording(null)}
+            />
+          ))}
+        </div>
+        <Button variant="ghost" size="sm" onClick={handleReset} className="mt-2 gap-1.5 text-xs">
+          <RotateCcw className="h-3 w-3" aria-hidden="true" />
+          Reset to defaults
+        </Button>
+      </SettingsCard>
+    </div>
   );
 }
 
@@ -74,7 +79,15 @@ interface ShortcutRowProps {
   onCancel: () => void;
 }
 
-function ShortcutRow({ id, label, binding, isRecording, onStartRecording, onRecord, onCancel }: ShortcutRowProps) {
+function ShortcutRow({
+  id,
+  label,
+  binding,
+  isRecording,
+  onStartRecording,
+  onRecord,
+  onCancel,
+}: ShortcutRowProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -110,18 +123,20 @@ function ShortcutRow({ id, label, binding, isRecording, onStartRecording, onReco
   }, [isRecording, id, onRecord, onCancel]);
 
   return (
-    <div className="flex items-center justify-between rounded-md px-2 py-2 hover:bg-muted/50">
+    <div className="hover:bg-muted/50 flex items-center justify-between rounded-md px-2 py-2">
       <span className="text-sm">{label}</span>
       <button
         ref={btnRef}
         type="button"
         onClick={onStartRecording}
-        className={`inline-flex items-center rounded border px-2 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        className={`focus-visible:ring-ring inline-flex items-center rounded border px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none ${
           isRecording
             ? 'border-primary bg-primary/10 text-primary animate-pulse'
             : 'border-border bg-muted text-muted-foreground hover:border-primary/40'
         }`}
-        aria-label={isRecording ? `Press new shortcut for ${label}` : `Change shortcut for ${label}`}
+        aria-label={
+          isRecording ? `Press new shortcut for ${label}` : `Change shortcut for ${label}`
+        }
       >
         {isRecording ? 'Press keys...' : formatBinding(binding)}
       </button>

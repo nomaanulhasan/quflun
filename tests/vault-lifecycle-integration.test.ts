@@ -197,7 +197,7 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
       expect(importedEntries).toHaveLength(3);
 
       // Find entries by title and verify their data
-      const importedCloud = importedEntries.find(e => e.title === 'Cloud Console');
+      const importedCloud = importedEntries.find((e) => e.title === 'Cloud Console');
       expect(importedCloud).toBeDefined();
       expect(importedCloud!.username).toBe('admin@example.com');
       expect(importedCloud!.tags).toEqual(['cloud', 'infra']);
@@ -210,7 +210,7 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
       expect(cloudDetail.url).toBe('https://cloud.example.com');
       expect(cloudDetail.notes).toBe('Production account');
 
-      const importedDb = importedEntries.find(e => e.title === 'Database');
+      const importedDb = importedEntries.find((e) => e.title === 'Database');
       expect(importedDb).toBeDefined();
       expect(importedDb!.username).toBe('dbadmin');
       expect(importedDb!.tags).toEqual(['database']);
@@ -218,7 +218,7 @@ describe('Vault Lifecycle Integration', { timeout: 30_000 }, () => {
       const dbDetail = targetEngine.getEntry(importedDb!.uuid);
       expect(dbDetail.password).toBe('db-pass-789');
 
-      const importedNote = importedEntries.find(e => e.title === 'Server IPs');
+      const importedNote = importedEntries.find((e) => e.title === 'Server IPs');
       expect(importedNote).toBeDefined();
       expect(importedNote!.type).toBe('note');
 

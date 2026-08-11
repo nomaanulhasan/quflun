@@ -10,6 +10,16 @@ import { VaultFilters } from '@/components/vault/vault-filters';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem } from '@/types';
 
+// Page size adapts to screen — single column shows fewer items
+function getPageSize(): number {
+  if (typeof window === 'undefined') return 24;
+  const width = window.innerWidth;
+  if (width < 768) return 8; // mobile — 1 column
+  if (width < 1024) return 10; // tablet — 2 columns
+  if (width < 1536) return 12; // desktop — 3 columns
+  return 20; // desktop — 4 columns
+}
+
 interface VaultListViewProps {
   entries: EntryListItem[];
   onEdit: (id: string) => void;
@@ -22,6 +32,8 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [visibleCount, setVisibleCount] = useState(() => getPageSize());
+  const pageSize = useRef(getPageSize());
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Refs for keyboard handler to avoid re-creation on every state change
@@ -34,10 +46,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
     () => [...new Set(entries.map((e) => e.category).filter(Boolean) as string[])].sort(),
     [entries]
   );
-  const tags = useMemo(
-    () => [...new Set(entries.flatMap((e) => e.tags))].sort(),
-    [entries]
-  );
+  const tags = useMemo(() => [...new Set(entries.flatMap((e) => e.tags))].sort(), [entries]);
 
   const filtered = useMemo(() => {
     let r = entries;
@@ -46,24 +55,48 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
     if (selectedTag) r = r.filter((e) => e.tags.includes(selectedTag));
     if (query.trim()) {
       const q = query.trim().toLowerCase().slice(0, SEARCH_MAX_QUERY_LENGTH);
-      r = r.filter((e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.username.toLowerCase().includes(q) ||
-        e.url.toLowerCase().includes(q) ||
-        e.tags.some((t) => t.toLowerCase().includes(q))
+      r = r.filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          e.username.toLowerCase().includes(q) ||
+          e.url.toLowerCase().includes(q) ||
+          e.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
     return r;
   }, [entries, query, showFavorites, selectedCategory, selectedTag]);
 
-  const filteredRef = useRef(filtered);
-  filteredRef.current = filtered;
-
   const hasFilters = showFavorites || !!selectedCategory || !!selectedTag;
 
-  // Reset selection when filter results change
+  // Paginated slice of filtered results
+  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
+  const hasMore = visibleCount < filtered.length;
+
+  // Keyboard navigation uses visible (paginated) entries only
+  const visibleRef = useRef(visible);
+  visibleRef.current = visible;
+
+  // Infinite scroll — load more when sentinel enters viewport
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && visibleCount < filtered.length) {
+          setVisibleCount((c) => c + pageSize.current);
+        }
+      },
+      { rootMargin: '200px' } // trigger 200px before sentinel is visible
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [visibleCount, filtered.length]);
+
+  // Reset selection and pagination when filter results change
   useEffect(() => {
     setSelectedIndex(-1);
+    setVisibleCount(pageSize.current);
   }, [filtered.length, query, showFavorites, selectedCategory, selectedTag]);
 
   // Scroll selected card into view
@@ -75,7 +108,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
 
   // Stable keyboard handler — uses refs so it never re-creates
   const handleListKeyDown = useCallback((e: React.KeyboardEvent) => {
-    const list = filteredRef.current;
+    const list = visibleRef.current;
     if (list.length === 0) return;
 
     switch (e.key) {
@@ -113,60 +146,107 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   }, []); // stable — never re-creates
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <PageHeader title="Vault" subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`} />
-      </div>
-      <VaultSearchBar query={query} onChange={setQuery} />
-      <VaultFilters
-        showFavorites={showFavorites} onToggleFavorites={() => setShowFavorites(!showFavorites)}
-        categories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory}
-        tags={tags} selectedTag={selectedTag} onSelectTag={setSelectedTag}
-        hasActiveFilters={hasFilters} onClearFilters={() => { setShowFavorites(false); setSelectedCategory(null); setSelectedTag(null); setQuery(''); }}
-      />
-      {entries.length === 0 ? (
-        <div className="flex flex-col items-center gap-4">
-          <EmptyState icon={FolderOpen} title="Your vault is empty" description="Add your first credential to get started." />
+    <div className="flex h-full flex-col">
+      {/* Sticky header — title, search, filters, add button */}
+      <div className="shrink-0 space-y-4 pr-4 pb-4 md:pr-6">
+        <div className="flex items-center justify-between">
+          <PageHeader
+            title="Vault"
+            subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
+          />
           <button
             type="button"
             onClick={onNew}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
-            Add First Entry
+
+            <span>
+              Add New <span className="hidden sm:inline">Entry</span>
+            </span>
           </button>
         </div>
-      ) : filtered.length === 0 ? (
-        showFavorites ? <EmptyState icon={Star} title="No favorites yet" description="Star entries for quick access." />
-          : <EmptyState icon={Search} title="No results" description="Try a different query or clear filters." />
-      ) : (
-        <div
-          ref={gridRef}
-          className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
-          role="grid"
-          aria-label="Vault entries"
-          tabIndex={0}
-          onKeyDown={handleListKeyDown}
-        >
-          {filtered.map((e, idx) => (
-            <EntryCard
-              key={e.uuid}
-              entry={e}
-              onClick={() => onEdit(e.uuid)}
-              selected={idx === selectedIndex}
+        <VaultSearchBar query={query} onChange={setQuery} />
+        <VaultFilters
+          showFavorites={showFavorites}
+          onToggleFavorites={() => setShowFavorites(!showFavorites)}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          tags={tags}
+          selectedTag={selectedTag}
+          onSelectTag={setSelectedTag}
+          hasActiveFilters={hasFilters}
+          onClearFilters={() => {
+            setShowFavorites(false);
+            setSelectedCategory(null);
+            setSelectedTag(null);
+            setQuery('');
+          }}
+        />
+      </div>
+
+      {/* Scrollable card grid */}
+      <div className="mask-fade-y min-h-0 flex-1 overflow-y-auto pr-4 sm:pr-6">
+        {entries.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 pt-12">
+            <EmptyState
+              icon={FolderOpen}
+              title="Your vault is empty"
+              description="Add your first credential to get started."
             />
-          ))}
-          <button
-            type="button"
-            onClick={onNew}
-            className="flex flex-col cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Add new entry"
-          >
-            <Plus className="h-6 w-6" aria-hidden="true" />
-            <span className="text-sm font-medium">New Entry</span>
-          </button>
-        </div>
-      )}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="pt-12">
+            {showFavorites ? (
+              <EmptyState
+                icon={Star}
+                title="No favorites yet"
+                description="Star entries for quick access."
+              />
+            ) : (
+              <EmptyState
+                icon={Search}
+                title="No results"
+                description="Try a different query or clear filters."
+              />
+            )}
+          </div>
+        ) : (
+          <>
+            <div
+              ref={gridRef}
+              className="grid gap-3 pb-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+              role="grid"
+              aria-label="Vault entries"
+              tabIndex={0}
+              onKeyDown={handleListKeyDown}
+            >
+              {visible.map((e, idx) => (
+                <EntryCard
+                  key={e.uuid}
+                  entry={e}
+                  onClick={() => onEdit(e.uuid)}
+                  selected={idx === selectedIndex}
+                />
+              ))}
+              {!hasMore && (
+                <button
+                  type="button"
+                  onClick={onNew}
+                  className="border-border text-muted-foreground hover:border-primary/40 hover:bg-accent/50 hover:text-foreground focus-visible:ring-ring flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  aria-label="Add new entry"
+                >
+                  <Plus className="h-6 w-6" aria-hidden="true" />
+                  <span className="text-sm font-medium">New Entry</span>
+                </button>
+              )}
+            </div>
+            {/* Sentinel for infinite scroll — triggers loading next batch */}
+            {hasMore && <div ref={sentinelRef} className="h-1" aria-hidden="true" />}
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -52,8 +52,7 @@ function isExcludedFromUrlScan(filePath: string): boolean {
   const parentDir = path.basename(path.dirname(filePath));
   return (
     EXCLUDED_URL_FILES.includes(fileName) ||
-    (fileName === 'page.tsx' &&
-      ['security', 'privacy', 'security-limitations'].includes(parentDir))
+    (fileName === 'page.tsx' && ['security', 'privacy', 'security-limitations'].includes(parentDir))
   );
 }
 
@@ -103,9 +102,7 @@ describe('Compliance: No telemetry, no external requests, no forbidden storage',
       ];
 
       const found = dependencies.filter((dep: string) =>
-        TELEMETRY_PACKAGES.some(
-          (telemetry) => dep === telemetry || dep.startsWith(telemetry + '/')
-        )
+        TELEMETRY_PACKAGES.some((telemetry) => dep === telemetry || dep.startsWith(telemetry + '/'))
       );
 
       expect(found).toEqual([]);
@@ -215,12 +212,8 @@ describe('Compliance: No telemetry, no external requests, no forbidden storage',
       }
 
       if (violations.length > 0) {
-        const details = violations
-          .map((v) => `  ${v.file}:${v.line} → ${v.url}`)
-          .join('\n');
-        expect.fail(
-          `Found ${violations.length} external URL(s) in source code:\n${details}`
-        );
+        const details = violations.map((v) => `  ${v.file}:${v.line} → ${v.url}`).join('\n');
+        expect.fail(`Found ${violations.length} external URL(s) in source code:\n${details}`);
       }
     });
   });
@@ -255,12 +248,8 @@ describe('Compliance: No telemetry, no external requests, no forbidden storage',
       }
 
       if (violations.length > 0) {
-        const details = violations
-          .map((v) => `  ${v.file}:${v.line} → ${v.content}`)
-          .join('\n');
-        expect.fail(
-          `Found uuid package import(s) in source code:\n${details}`
-        );
+        const details = violations.map((v) => `  ${v.file}:${v.line} → ${v.content}`).join('\n');
+        expect.fail(`Found uuid package import(s) in source code:\n${details}`);
       }
     });
   });
@@ -295,12 +284,8 @@ describe('Compliance: No telemetry, no external requests, no forbidden storage',
       }
 
       if (violations.length > 0) {
-        const details = violations
-          .map((v) => `  ${v.file}:${v.line} → ${v.content}`)
-          .join('\n');
-        expect.fail(
-          `Found eval() usage in source code:\n${details}`
-        );
+        const details = violations.map((v) => `  ${v.file}:${v.line} → ${v.content}`).join('\n');
+        expect.fail(`Found eval() usage in source code:\n${details}`);
       }
     });
 
@@ -332,12 +317,8 @@ describe('Compliance: No telemetry, no external requests, no forbidden storage',
       }
 
       if (violations.length > 0) {
-        const details = violations
-          .map((v) => `  ${v.file}:${v.line} → ${v.content}`)
-          .join('\n');
-        expect.fail(
-          `Found new Function() usage in source code:\n${details}`
-        );
+        const details = violations.map((v) => `  ${v.file}:${v.line} → ${v.content}`).join('\n');
+        expect.fail(`Found new Function() usage in source code:\n${details}`);
       }
     });
   });

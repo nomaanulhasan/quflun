@@ -34,7 +34,11 @@ export function ImportCard({ onImportKdbx, onImportCsv }: ImportCardProps) {
 
     try {
       if (isKdbx) {
-        if (!password) { setError('Password required for KDBX files.'); setLoading(false); return; }
+        if (!password) {
+          setError('Password required for KDBX files.');
+          setLoading(false);
+          return;
+        }
         const r = await onImportKdbx(file, password);
         setResult(r);
       } else if (isCsv) {
@@ -62,7 +66,12 @@ export function ImportCard({ onImportKdbx, onImportCsv }: ImportCardProps) {
           accept=".kdbx,.csv"
           fileName={fileName}
           disabled={loading}
-          onFileSelected={(buf, name) => { setFile(buf); setFileName(name); setError(null); setResult(null); }}
+          onFileSelected={(buf, name) => {
+            setFile(buf);
+            setFileName(name);
+            setError(null);
+            setResult(null);
+          }}
           onError={setError}
         />
         {isKdbx && (

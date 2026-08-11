@@ -18,7 +18,7 @@ export function FormError({ message, id }: FormErrorProps) {
     <div
       id={id}
       role="alert"
-      className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+      className="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md p-3 text-sm"
     >
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <span>{message}</span>

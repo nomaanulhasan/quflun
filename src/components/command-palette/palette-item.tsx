@@ -8,7 +8,12 @@ interface PaletteItemRowProps {
   onSelect: (index: number) => void;
 }
 
-export const PaletteItemRow = memo(function PaletteItemRow({ item, index, isSelected, onSelect }: PaletteItemRowProps) {
+export const PaletteItemRow = memo(function PaletteItemRow({
+  item,
+  index,
+  isSelected,
+  onSelect,
+}: PaletteItemRowProps) {
   const Icon = item.icon;
   return (
     <div
@@ -22,11 +27,13 @@ export const PaletteItemRow = memo(function PaletteItemRow({ item, index, isSele
         isSelected ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent/50'
       }`}
     >
-      <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <Icon className="text-muted-foreground h-4 w-4 shrink-0" aria-hidden="true" />
       <span className="flex-1 truncate">{item.label}</span>
-      {item.subtitle && <span className="truncate text-xs text-muted-foreground">{item.subtitle}</span>}
+      {item.subtitle && (
+        <span className="text-muted-foreground truncate text-xs">{item.subtitle}</span>
+      )}
       {item.shortcut && (
-        <kbd className="ml-auto inline-flex items-center rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+        <kbd className="border-border bg-muted text-muted-foreground ml-auto inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium">
           {item.shortcut}
         </kbd>
       )}

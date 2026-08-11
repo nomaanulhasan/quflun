@@ -24,9 +24,7 @@ export async function initArgon2(): Promise<void> {
   const argon2Module = argon2.default || argon2;
 
   if (typeof argon2Module.hash !== 'function') {
-    throw new Error(
-      'argon2-browser failed to load correctly: hash function not found'
-    );
+    throw new Error('argon2-browser failed to load correctly: hash function not found');
   }
 
   kdbxweb.CryptoEngine.setArgon2Impl(

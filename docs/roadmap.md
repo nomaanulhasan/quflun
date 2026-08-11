@@ -1,24 +1,18 @@
 # Quflun Roadmap
 
-## v1.5.1 (current)
+## v1.5.2 (current)
 
-- Command palette (`Ctrl+K`) with fuzzy search for entries and quick actions
-- `Alt+N` — new password entry
-- `Alt+Shift+N` — new secure note
-- `Ctrl+L` — lock vault
-- Arrow key navigation in vault entry grid
-- `Enter` to open selected entry
-- `Space` to copy password of selected entry
-- Shortcut hints displayed in command palette
-- Configurable shortcut bindings (Settings → Keyboard Shortcuts)
-- Click-to-record UI with reset-to-defaults
-- `useHotkeys` hook for global keyboard shortcuts
-- Lightweight fuzzy matching utilities
-- Branded loading spinner for all transitional states
-- Empty vault shows "Add First Entry" button
-- Shell, command palette, and vault list refactored into focused subcomponents
-- Toast readability fixed for light theme
-- IME/dead-key safety in keyboard shortcut handler
+- Prettier code formatter with Tailwind plugin (format on save, `pnpm format`)
+- Viewport-adaptive pagination on vault entry list
+- Sticky vault header with scrollable card grid
+- Floating "Add Entry" button accessible at any scroll position
+- Scroll fade mask on sidebar/drawer nav for scroll affordance
+- Shared `NavLinks` + `LockButton` components (no duplicate code)
+- Shell locked to viewport height — sidebar full-screen, only content scrolls
+- Mobile: keyboard shortcuts settings hidden, palette footer hints hidden
+- Mobile: search button in header opens command palette
+- Command palette no longer lists entries (performance at scale)
+- Entry card selection ring desktop-only
 
 ## v1.4.0
 
@@ -39,7 +33,6 @@
 - Responsive page widths: info pages wider, settings 2-column on desktop
 - About Settings: dynamic version, build date, crypto algorithms (no stale data)
 - Navigation consolidated: single "Vault Health" link under Tools
-
 
 ## Upcoming
 

@@ -31,9 +31,18 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
     e.preventDefault();
     setError(null);
 
-    if (!name.trim()) { setError('Vault name is required.'); return; }
-    if (!password) { setError('Password is required.'); return; }
-    if (password !== confirm) { setError('Passwords do not match.'); return; }
+    if (!name.trim()) {
+      setError('Vault name is required.');
+      return;
+    }
+    if (!password) {
+      setError('Password is required.');
+      return;
+    }
+    if (password !== confirm) {
+      setError('Passwords do not match.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -55,7 +64,7 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold">Create New Vault</h1>
-          <p className="text-sm text-muted-foreground">Choose a strong master password.</p>
+          <p className="text-muted-foreground text-sm">Choose a strong master password.</p>
           <p className="text-xs font-medium text-amber-600 dark:text-amber-500">
             ⚠ Password is never recoverable. If you forget it, your data is lost.
           </p>
@@ -63,7 +72,9 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="vault-name" className="text-sm font-medium">Vault Name</label>
+            <label htmlFor="vault-name" className="text-sm font-medium">
+              Vault Name
+            </label>
             <Input
               id="vault-name"
               value={name}
@@ -75,7 +86,9 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="create-password" className="text-sm font-medium">Master Password</label>
+            <label htmlFor="create-password" className="text-sm font-medium">
+              Master Password
+            </label>
             <PasswordInput
               id="create-password"
               value={password}
@@ -92,7 +105,9 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirm-password" className="text-sm font-medium">Confirm Password</label>
+            <label htmlFor="confirm-password" className="text-sm font-medium">
+              Confirm Password
+            </label>
             <PasswordInput
               id="confirm-password"
               value={confirm}
@@ -100,9 +115,7 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
               placeholder="Re-enter password"
               disabled={loading}
             />
-            {mismatch && (
-              <p className="text-xs text-destructive">Passwords do not match.</p>
-            )}
+            {mismatch && <p className="text-destructive text-xs">Passwords do not match.</p>}
           </div>
 
           <FormError message={error} />

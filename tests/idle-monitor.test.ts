@@ -25,21 +25,15 @@ describe('IdleMonitor', () => {
       const onIdle = vi.fn();
       monitor.start(60_000, onIdle);
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'pointermove',
-        expect.any(Function),
-        { passive: true }
-      );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'keydown',
-        expect.any(Function),
-        { passive: true }
-      );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'touchstart',
-        expect.any(Function),
-        { passive: true }
-      );
+      expect(addEventListenerSpy).toHaveBeenCalledWith('pointermove', expect.any(Function), {
+        passive: true,
+      });
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), {
+        passive: true,
+      });
+      expect(addEventListenerSpy).toHaveBeenCalledWith('touchstart', expect.any(Function), {
+        passive: true,
+      });
     });
 
     it('should not register duplicate listeners if called multiple times', () => {
@@ -130,18 +124,9 @@ describe('IdleMonitor', () => {
 
       monitor.stop();
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'pointermove',
-        expect.any(Function)
-      );
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'keydown',
-        expect.any(Function)
-      );
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'touchstart',
-        expect.any(Function)
-      );
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('pointermove', expect.any(Function));
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('touchstart', expect.any(Function));
     });
 
     it('should clear the timer so onIdle does not fire', () => {

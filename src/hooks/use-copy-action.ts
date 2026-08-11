@@ -47,10 +47,7 @@ export function useCopyAction() {
     [clipboardTimeoutSeconds]
   );
 
-  const isCopied = useCallback(
-    (fieldKey: string) => copiedField === fieldKey,
-    [copiedField]
-  );
+  const isCopied = useCallback((fieldKey: string) => copiedField === fieldKey, [copiedField]);
 
   return { copy, isCopied };
 }

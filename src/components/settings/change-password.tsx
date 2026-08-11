@@ -6,7 +6,11 @@ import { Button } from '@/components/ui/button';
 import { PasswordField } from '@/components/forms/password-field';
 import { SettingsCard } from './settings-card';
 import { useVaultStore } from '@/components/providers';
-import { MASTER_PASSWORD_MIN_LENGTH, MASTER_PASSWORD_MAX_LENGTH, MASTER_PASSWORD_WEAK_THRESHOLD } from '@/lib/constants';
+import {
+  MASTER_PASSWORD_MIN_LENGTH,
+  MASTER_PASSWORD_MAX_LENGTH,
+  MASTER_PASSWORD_WEAK_THRESHOLD,
+} from '@/lib/constants';
 
 export function ChangePassword() {
   const status = useVaultStore((s) => s.status);
@@ -22,9 +26,11 @@ export function ChangePassword() {
   // Only show when vault is unlocked
   if (status !== 'unlocked') return null;
 
-  const newPasswordTooShort = newPassword.length > 0 && newPassword.length < MASTER_PASSWORD_MIN_LENGTH;
+  const newPasswordTooShort =
+    newPassword.length > 0 && newPassword.length < MASTER_PASSWORD_MIN_LENGTH;
   const newPasswordTooLong = newPassword.length > MASTER_PASSWORD_MAX_LENGTH;
-  const newPasswordWeak = newPassword.length > 0 && newPassword.length < MASTER_PASSWORD_WEAK_THRESHOLD;
+  const newPasswordWeak =
+    newPassword.length > 0 && newPassword.length < MASTER_PASSWORD_WEAK_THRESHOLD;
   const passwordsMatch = confirmPassword.length === 0 || newPassword === confirmPassword;
   const canSubmit =
     currentPassword.length >= MASTER_PASSWORD_MIN_LENGTH &&
@@ -55,13 +61,20 @@ export function ChangePassword() {
   }
 
   return (
-    <SettingsCard title="Change Password" description="Update your vault master password. All data remains intact.">
+    <SettingsCard
+      title="Change Password"
+      description="Update your vault master password. All data remains intact."
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <PasswordField
           id="current-password"
           label="Current password"
           value={currentPassword}
-          onChange={(v) => { setCurrentPassword(v); setError(null); setSuccess(false); }}
+          onChange={(v) => {
+            setCurrentPassword(v);
+            setError(null);
+            setSuccess(false);
+          }}
           placeholder="Enter current password"
           disabled={loading}
           required
@@ -71,13 +84,19 @@ export function ChangePassword() {
           id="new-password"
           label="New password"
           value={newPassword}
-          onChange={(v) => { setNewPassword(v); setError(null); setSuccess(false); }}
+          onChange={(v) => {
+            setNewPassword(v);
+            setError(null);
+            setSuccess(false);
+          }}
           placeholder="Enter new password"
           disabled={loading}
           error={
-            newPasswordTooShort ? 'Password is too short.' :
-            newPasswordTooLong ? `Maximum ${MASTER_PASSWORD_MAX_LENGTH} characters.` :
-            undefined
+            newPasswordTooShort
+              ? 'Password is too short.'
+              : newPasswordTooLong
+                ? `Maximum ${MASTER_PASSWORD_MAX_LENGTH} characters.`
+                : undefined
           }
           required
         />
@@ -92,7 +111,11 @@ export function ChangePassword() {
           id="confirm-password"
           label="Confirm new password"
           value={confirmPassword}
-          onChange={(v) => { setConfirmPassword(v); setError(null); setSuccess(false); }}
+          onChange={(v) => {
+            setConfirmPassword(v);
+            setError(null);
+            setSuccess(false);
+          }}
           placeholder="Re-enter new password"
           disabled={loading}
           error={!passwordsMatch ? 'Passwords do not match.' : undefined}
@@ -100,7 +123,9 @@ export function ChangePassword() {
         />
 
         {error && (
-          <p className="text-sm text-destructive" role="alert">{error}</p>
+          <p className="text-destructive text-sm" role="alert">
+            {error}
+          </p>
         )}
 
         {success && (

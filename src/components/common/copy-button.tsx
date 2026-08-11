@@ -20,7 +20,13 @@ interface CopyButtonProps {
  * Reusable copy button with clipboard → check icon transition.
  * Does NOT perform clipboard logic — that's handled by the caller via useCopyAction.
  */
-export function CopyButton({ copied, label, onClick, disabled = false, size = 'icon-sm' }: CopyButtonProps) {
+export function CopyButton({
+  copied,
+  label,
+  onClick,
+  disabled = false,
+  size = 'icon-sm',
+}: CopyButtonProps) {
   return (
     <Button
       type="button"

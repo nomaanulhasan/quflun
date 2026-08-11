@@ -64,14 +64,19 @@ export function AttachmentsEditor({
       </div>
 
       {attachments.length === 0 && (
-        <p className="text-xs text-muted-foreground">No attachments. Attach SSH keys, certificates, or documents (max 10 MB each).</p>
+        <p className="text-muted-foreground text-xs">
+          No attachments. Attach SSH keys, certificates, or documents (max 10 MB each).
+        </p>
       )}
 
       {attachments.map((att) => (
-        <div key={att.key} className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
-          <Paperclip className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <div
+          key={att.key}
+          className="border-border flex items-center gap-2 rounded-md border px-3 py-2"
+        >
+          <Paperclip className="text-muted-foreground h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="flex-1 truncate text-xs">{att.key}</span>
-          <span className="shrink-0 text-[10px] text-muted-foreground">{formatSize(att.size)}</span>
+          <span className="text-muted-foreground shrink-0 text-[10px]">{formatSize(att.size)}</span>
           <Button
             type="button"
             variant="ghost"
@@ -92,7 +97,7 @@ export function AttachmentsEditor({
             onClick={() => onRemove(att.key)}
             disabled={disabled}
           >
-            <Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" />
+            <Trash2 className="text-destructive h-3 w-3" aria-hidden="true" />
           </Button>
         </div>
       ))}

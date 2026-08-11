@@ -39,11 +39,11 @@ function VaultSelection() {
     <div className="flex flex-1 flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-8">
         <div className="flex flex-col items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="h-5 w-5 text-primary" />
+          <div className="bg-primary/10 flex h-11 w-11 items-center justify-center rounded-full">
+            <Shield className="text-primary h-5 w-5" />
           </div>
           <h1 className="text-2xl font-semibold">Quflun</h1>
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-center text-sm">
             Privacy-first password manager. Your data stays on your device.
           </p>
         </div>

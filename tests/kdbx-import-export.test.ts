@@ -39,9 +39,7 @@ async function getCryptoAdapter() {
 }
 
 async function createTestDb(name: string, password = 'test-pass'): Promise<kdbxweb.Kdbx> {
-  const credentials = new kdbxweb.Credentials(
-    kdbxweb.ProtectedValue.fromString(password)
-  );
+  const credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(password));
   return kdbxweb.Kdbx.create(credentials, name);
 }
 
@@ -225,9 +223,7 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       // Create a buffer slightly over 100 MB
       const bigBuffer = new ArrayBuffer(101 * 1024 * 1024);
 
-      await expect(
-        importKdbx(targetDb, bigBuffer, 'pw', crypto)
-      ).rejects.toThrow(/maximum size/);
+      await expect(importKdbx(targetDb, bigBuffer, 'pw', crypto)).rejects.toThrow(/maximum size/);
     });
 
     it('should reject wrong password with clear error', async () => {
@@ -237,9 +233,9 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const sourceBuffer = await sourceDb.save();
       const targetDb = await createTestDb('Target');
 
-      await expect(
-        importKdbx(targetDb, sourceBuffer, 'wrong-pw', crypto)
-      ).rejects.toThrow(/password/i);
+      await expect(importKdbx(targetDb, sourceBuffer, 'wrong-pw', crypto)).rejects.toThrow(
+        /password/i
+      );
     });
 
     it('should reject invalid (non-KDBX) file', async () => {
@@ -247,9 +243,9 @@ describe('KDBX Import/Export (Task 8.1)', { timeout: 30_000 }, () => {
       const targetDb = await createTestDb('Target');
       const garbage = new TextEncoder().encode('not a kdbx file').buffer as ArrayBuffer;
 
-      await expect(
-        importKdbx(targetDb, garbage, 'any', crypto)
-      ).rejects.toThrow(/not a valid KDBX/);
+      await expect(importKdbx(targetDb, garbage, 'any', crypto)).rejects.toThrow(
+        /not a valid KDBX/
+      );
     });
 
     it('should return detailed ImportResult', async () => {

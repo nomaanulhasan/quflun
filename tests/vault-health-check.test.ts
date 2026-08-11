@@ -34,9 +34,7 @@ async function registerTestArgon2(): Promise<void> {
 }
 
 async function createTestDb(): Promise<kdbxweb.Kdbx> {
-  const credentials = new kdbxweb.Credentials(
-    kdbxweb.ProtectedValue.fromString('test-password')
-  );
+  const credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString('test-password'));
   return kdbxweb.Kdbx.create(credentials, 'HealthCheckTest');
 }
 

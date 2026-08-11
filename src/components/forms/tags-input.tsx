@@ -51,9 +51,13 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
   );
 
   // Expose commitPending to parent
-  useImperativeHandle(ref, () => ({
-    commitPending: () => addTag(input),
-  }), [addTag, input]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      commitPending: () => addTag(input),
+    }),
+    [addTag, input]
+  );
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' || e.key === 'Tab') {
@@ -73,15 +77,15 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
 
   return (
     <div className="space-y-1">
-      <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2 py-1.5 focus-within:ring-2 focus-within:ring-ring">
+      <div className="border-input bg-background focus-within:ring-ring flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1.5 focus-within:ring-2">
         {value.map((tag) => (
-          <Badge key={tag} variant="secondary" className="gap-1 pl-2 pr-1 text-xs">
+          <Badge key={tag} variant="secondary" className="gap-1 pr-1 pl-2 text-xs">
             {tag}
             <button
               type="button"
               onClick={() => removeTag(tag)}
               disabled={disabled}
-              className="ml-0.5 rounded-sm hover:bg-muted-foreground/20"
+              className="hover:bg-muted-foreground/20 ml-0.5 rounded-sm"
               aria-label={`Remove tag ${tag}`}
             >
               <X className="h-3 w-3" />
@@ -96,11 +100,11 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
           onBlur={handleBlur}
           placeholder={value.length === 0 ? placeholder : ''}
           disabled={disabled || value.length >= maxTags}
-          className="flex-1 min-w-[80px] bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"
+          className="placeholder:text-muted-foreground min-w-[80px] flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
           aria-label="Add tag"
         />
       </div>
-      <p className="text-xs text-muted-foreground">Press Enter or Tab to add a tag</p>
+      <p className="text-muted-foreground text-xs">Press Enter or Tab to add a tag</p>
     </div>
   );
 });

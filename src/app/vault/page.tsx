@@ -44,14 +44,22 @@ export default function VaultPage() {
   if (editingId) {
     return (
       <Shell>
-        <EntryEditorWrapper key={`${editingId}-${editCounter}`} entryId={editingId} onBack={() => setEditingId(null)} />
+        <EntryEditorWrapper
+          key={`${editingId}-${editCounter}`}
+          entryId={editingId}
+          onBack={() => setEditingId(null)}
+        />
       </Shell>
     );
   }
 
   return (
     <Shell>
-      <VaultListView entries={entries} onEdit={openEditor} onNew={() => router.push('/vault/new')} />
+      <VaultListView
+        entries={entries}
+        onEdit={openEditor}
+        onNew={() => router.push('/vault/new')}
+      />
     </Shell>
   );
 }

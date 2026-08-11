@@ -66,7 +66,10 @@ export interface VaultEngine {
   setFavorite(entryUuid: string, favorite: boolean): Promise<void>;
 
   // Import/Export (Task 14.2)
-  importKdbx(file: ArrayBuffer, password: string): Promise<import('@/lib/import-export').ImportResult>;
+  importKdbx(
+    file: ArrayBuffer,
+    password: string
+  ): Promise<import('@/lib/import-export').ImportResult>;
   exportKdbx(): Promise<ArrayBuffer>;
   importCsvEntries(csvContent: string): Promise<import('@/lib/import-export').ImportResult>;
   exportCsvEntries(): Promise<string>;
@@ -75,7 +78,9 @@ export interface VaultEngine {
   runHealthCheck(): Promise<import('./health-check').HealthCheckResult>;
 
   // Password Health
-  getPasswordHealthReport(oldPasswordDays?: number): import('./password-health').PasswordHealthReport;
+  getPasswordHealthReport(
+    oldPasswordDays?: number
+  ): import('./password-health').PasswordHealthReport;
 
   // Password management
   changePassword(currentPassword: string, newPassword: string): Promise<void>;

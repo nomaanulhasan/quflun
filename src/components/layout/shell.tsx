@@ -53,10 +53,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [status, router]);
 
   return (
-    <div className="flex h-full min-h-screen flex-col md:flex-row">
+    <div className="flex h-screen flex-col overflow-hidden md:flex-row">
       <Sidebar isUnlocked={isUnlocked} onLock={lock} />
-      <MobileHeader isUnlocked={isUnlocked} onLock={lock} />
-      <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+      <MobileHeader isUnlocked={isUnlocked} onLock={lock} onOpenPalette={openPalette} />
+      <main className="flex-1 overflow-y-auto p-4 pr-0 md:p-6 md:pr-0">{children}</main>
       <CommandPalette open={paletteOpen} onClose={closePalette} />
     </div>
   );

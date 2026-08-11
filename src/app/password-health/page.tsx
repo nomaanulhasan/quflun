@@ -51,13 +51,14 @@ export default function PasswordHealthPage() {
   return (
     <Shell>
       <div className="mx-auto w-full max-w-2xl space-y-6">
-        <PageHeader
-          title="Vault Health"
-          subtitle="Audit credentials and verify vault integrity."
-        />
+        <PageHeader title="Vault Health" subtitle="Audit credentials and verify vault integrity." />
 
         {/* Tabs */}
-        <div className="flex gap-1 rounded-lg bg-muted p-1" role="tablist" aria-label="Health sections">
+        <div
+          className="bg-muted flex gap-1 rounded-lg p-1"
+          role="tablist"
+          aria-label="Health sections"
+        >
           <TabButton
             active={tab === 'credentials'}
             onClick={() => setTab('credentials')}
@@ -73,12 +74,12 @@ export default function PasswordHealthPage() {
         </div>
 
         {/* Tab content */}
-        {tab === 'credentials' && (
-          loading ? (
+        {tab === 'credentials' &&
+          (loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-center space-y-2">
-                <ShieldAlert className="h-8 w-8 mx-auto text-muted-foreground animate-pulse" />
-                <p className="text-sm text-muted-foreground">Analyzing vault...</p>
+              <div className="space-y-2 text-center">
+                <ShieldAlert className="text-muted-foreground mx-auto h-8 w-8 animate-pulse" />
+                <p className="text-muted-foreground text-sm">Analyzing vault...</p>
               </div>
             </div>
           ) : report ? (
@@ -86,13 +87,13 @@ export default function PasswordHealthPage() {
               <HealthScore score={report.summary.score} />
 
               <div className="grid grid-cols-2 gap-3 text-center text-sm">
-                <div className="rounded-lg bg-muted/50 p-2.5">
+                <div className="bg-muted/50 rounded-lg p-2.5">
                   <p className="text-lg font-semibold">{report.summary.totalPasswords}</p>
-                  <p className="text-xs text-muted-foreground">Passwords</p>
+                  <p className="text-muted-foreground text-xs">Passwords</p>
                 </div>
-                <div className="rounded-lg bg-muted/50 p-2.5">
+                <div className="bg-muted/50 rounded-lg p-2.5">
                   <p className="text-lg font-semibold">{report.summary.totalNotes}</p>
-                  <p className="text-xs text-muted-foreground">Notes</p>
+                  <p className="text-muted-foreground text-xs">Notes</p>
                 </div>
               </div>
 
@@ -105,12 +106,11 @@ export default function PasswordHealthPage() {
                 onOpenEntry={handleOpenEntry}
               />
 
-              <p className="text-[10px] text-muted-foreground text-center">
+              <p className="text-muted-foreground text-center text-[10px]">
                 Analyzed {new Date(report.timestamp).toLocaleString()}
               </p>
             </div>
-          ) : null
-        )}
+          ) : null)}
 
         {tab === 'integrity' && <VaultIntegrity />}
       </div>
@@ -120,14 +120,24 @@ export default function PasswordHealthPage() {
 
 // ─── Tab Button ────────────────────────────────────────────────────────────────
 
-function TabButton({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+function TabButton({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
   return (
     <button
       type="button"
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+      className={`focus-visible:ring-ring flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none ${
         active
           ? 'bg-background text-foreground shadow-sm'
           : 'text-muted-foreground hover:text-foreground'

@@ -29,13 +29,7 @@ export function createSearchEngine(): SearchEngine {
   let indexed: IndexedEntry[] = [];
 
   function buildSearchText(entry: SearchableEntry): string {
-    return [
-      entry.title,
-      entry.username,
-      entry.url,
-      entry.notes,
-      entry.tags.join(' '),
-    ]
+    return [entry.title, entry.username, entry.url, entry.notes, entry.tags.join(' ')]
       .join(' ')
       .toLowerCase();
   }
@@ -57,9 +51,7 @@ export function createSearchEngine(): SearchEngine {
       }
 
       // Truncate to max query length
-      const normalizedQuery = trimmed
-        .slice(0, SEARCH_MAX_QUERY_LENGTH)
-        .toLowerCase();
+      const normalizedQuery = trimmed.slice(0, SEARCH_MAX_QUERY_LENGTH).toLowerCase();
 
       return indexed
         .filter((item) => item.searchText.includes(normalizedQuery))

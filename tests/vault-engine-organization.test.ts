@@ -264,7 +264,11 @@ describe('VaultEngine Organization (Task 4.4)', { timeout: 30_000 }, () => {
       const { engine } = await createUnlockedEngine();
 
       await engine.createTag('cleanup');
-      const meta1 = await engine.addEntry({ title: 'E1', password: 'p', tags: ['cleanup', 'keep'] });
+      const meta1 = await engine.addEntry({
+        title: 'E1',
+        password: 'p',
+        tags: ['cleanup', 'keep'],
+      });
       const meta2 = await engine.addEntry({ title: 'E2', password: 'p', tags: ['cleanup'] });
 
       await engine.deleteTag('cleanup');

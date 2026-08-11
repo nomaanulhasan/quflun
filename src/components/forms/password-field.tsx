@@ -59,7 +59,7 @@ export function PasswordField({
           <button
             type="button"
             onClick={() => setVisible(!visible)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
             aria-label={visible ? 'Hide password' : 'Show password'}
             aria-pressed={visible}
             tabIndex={-1}
@@ -70,7 +70,9 @@ export function PasswordField({
         {trailing}
       </div>
       {error && (
-        <p id={`${id}-error`} className="text-xs text-destructive">{error}</p>
+        <p id={`${id}-error`} className="text-destructive text-xs">
+          {error}
+        </p>
       )}
     </div>
   );

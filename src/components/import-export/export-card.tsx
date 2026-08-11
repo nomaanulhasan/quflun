@@ -13,7 +13,12 @@ interface ExportCardProps {
   onBackupComplete?: () => void;
 }
 
-export function ExportCard({ onExportKdbx, onExportCsv, vaultName, onBackupComplete }: ExportCardProps) {
+export function ExportCard({
+  onExportKdbx,
+  onExportCsv,
+  vaultName,
+  onBackupComplete,
+}: ExportCardProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,8 +29,11 @@ export function ExportCard({ onExportKdbx, onExportCsv, vaultName, onBackupCompl
       const buffer = await onExportKdbx();
       downloadFile(buffer, `${vaultName}.kdbx`, 'application/octet-stream');
       onBackupComplete?.();
-    } catch (err) { setError((err as Error).message); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleExportCsv() {
@@ -35,22 +43,37 @@ export function ExportCard({ onExportKdbx, onExportCsv, vaultName, onBackupCompl
       const csv = await onExportCsv();
       downloadFile(new TextEncoder().encode(csv), `${vaultName}.csv`, 'text/csv');
       onBackupComplete?.();
-    } catch (err) { setError((err as Error).message); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <SettingsCard title="Export" description="Download a backup of your vault.">
       <div className="space-y-3">
         <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant="outline" onClick={handleExportKdbx} disabled={loading} className="gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportKdbx}
+            disabled={loading}
+            className="gap-1.5"
+          >
             <Download className="h-3.5 w-3.5" /> Export KDBX
           </Button>
-          <Button size="sm" variant="outline" onClick={handleExportCsv} disabled={loading} className="gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportCsv}
+            disabled={loading}
+            className="gap-1.5"
+          >
             <Download className="h-3.5 w-3.5" /> Export CSV
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           CSV exports are not encrypted. Store backup files securely.
         </p>
         <FormError message={error} />

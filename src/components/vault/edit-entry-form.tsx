@@ -40,15 +40,33 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    if (!title.trim()) { setError('Title is required.'); return; }
-    if (!password) { setError('Password is required.'); return; }
+    if (!title.trim()) {
+      setError('Title is required.');
+      return;
+    }
+    if (!password) {
+      setError('Password is required.');
+      return;
+    }
 
     setLoading(true);
     try {
-      await editEntry(entry.uuid, { title: title.trim(), username, password, url, notes, tags, favorite, customFields: customFields.filter((f) => f.key.trim()) });
+      await editEntry(entry.uuid, {
+        title: title.trim(),
+        username,
+        password,
+        url,
+        notes,
+        tags,
+        favorite,
+        customFields: customFields.filter((f) => f.key.trim()),
+      });
       onBack();
-    } catch (err) { setError((err as Error).message); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleDelete() {
@@ -59,17 +77,35 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label htmlFor="edit-title" className="text-sm font-medium">Title *</label>
-        <Input id="edit-title" value={title} onChange={(e) => setTitle((e.target as HTMLInputElement).value)} disabled={loading} />
+        <label htmlFor="edit-title" className="text-sm font-medium">
+          Title *
+        </label>
+        <Input
+          id="edit-title"
+          value={title}
+          onChange={(e) => setTitle((e.target as HTMLInputElement).value)}
+          disabled={loading}
+        />
       </div>
       <div className="space-y-2">
-        <label htmlFor="edit-username" className="text-sm font-medium">Username</label>
+        <label htmlFor="edit-username" className="text-sm font-medium">
+          Username
+        </label>
         <div className="flex gap-1">
-          <Input id="edit-username" value={username} onChange={(e) => setUsername((e.target as HTMLInputElement).value)} disabled={loading} className="flex-1" />
+          <Input
+            id="edit-username"
+            value={username}
+            onChange={(e) => setUsername((e.target as HTMLInputElement).value)}
+            disabled={loading}
+            className="flex-1"
+          />
           <CopyAction
             copied={isCopied('username')}
             label="Copy username"
-            onCopy={(e) => { e.preventDefault(); if (username) copy(username, 'Username', 'username'); }}
+            onCopy={(e) => {
+              e.preventDefault();
+              if (username) copy(username, 'Username', 'username');
+            }}
             disabled={!username || loading}
           />
         </div>
@@ -86,7 +122,10 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
             <CopyAction
               copied={isCopied('password')}
               label="Copy password"
-              onCopy={(e) => { e.preventDefault(); if (password) copy(password, 'Password', 'password'); }}
+              onCopy={(e) => {
+                e.preventDefault();
+                if (password) copy(password, 'Password', 'password');
+              }}
               disabled={!password || loading}
             />
             <GeneratorDialog onInsert={setPassword} />
@@ -94,21 +133,41 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
         }
       />
       <div className="space-y-2">
-        <label htmlFor="edit-url" className="text-sm font-medium">URL</label>
+        <label htmlFor="edit-url" className="text-sm font-medium">
+          URL
+        </label>
         <div className="flex gap-1">
-          <Input id="edit-url" value={url} onChange={(e) => setUrl((e.target as HTMLInputElement).value)} disabled={loading} className="flex-1" />
+          <Input
+            id="edit-url"
+            value={url}
+            onChange={(e) => setUrl((e.target as HTMLInputElement).value)}
+            disabled={loading}
+            className="flex-1"
+          />
           <CopyAction
             copied={isCopied('url')}
             label="Copy URL"
-            onCopy={(e) => { e.preventDefault(); if (url) copy(url, 'URL', 'url'); }}
+            onCopy={(e) => {
+              e.preventDefault();
+              if (url) copy(url, 'URL', 'url');
+            }}
             disabled={!url || loading}
           />
           <OpenLinkAction url={url} disabled={loading} />
         </div>
       </div>
       <div className="space-y-2">
-        <label htmlFor="edit-notes" className="text-sm font-medium">Notes</label>
-        <textarea id="edit-notes" value={notes} onChange={(e) => setNotes(e.target.value)} disabled={loading} rows={3} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50" />
+        <label htmlFor="edit-notes" className="text-sm font-medium">
+          Notes
+        </label>
+        <textarea
+          id="edit-notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          disabled={loading}
+          rows={3}
+          className="border-input bg-background placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
+        />
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium">Tags</label>
@@ -148,8 +207,14 @@ export function EditEntryForm({ entry, onBack }: EditEntryFormProps) {
       />
       <FavoriteToggle checked={favorite} onChange={setFavorite} disabled={loading} />
       <FormError message={error} />
-      <FormActions submitLabel="Save Changes" loadingLabel="Saving..." loading={loading} disabled={!title.trim() || !password} onBack={onBack} />
-      <div className="border-t border-border pt-4">
+      <FormActions
+        submitLabel="Save Changes"
+        loadingLabel="Saving..."
+        loading={loading}
+        disabled={!title.trim() || !password}
+        onBack={onBack}
+      />
+      <div className="border-border border-t pt-4">
         <DeleteDialog title={entry.title} onConfirm={handleDelete} disabled={loading} />
       </div>
     </form>

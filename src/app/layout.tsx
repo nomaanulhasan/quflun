@@ -1,29 +1,29 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { Providers } from "@/components/providers";
-import "./globals.css";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import { Providers } from '@/components/providers';
+import './globals.css';
 
 const geistSans = localFont({
-  src: "../fonts/GeistVF.woff2",
-  variable: "--font-geist-sans",
-  display: "swap",
+  src: '../fonts/GeistVF.woff2',
+  variable: '--font-geist-sans',
+  display: 'swap',
 });
 
 const geistMono = localFont({
-  src: "../fonts/GeistMonoVF.woff2",
-  variable: "--font-geist-mono",
-  display: "swap",
+  src: '../fonts/GeistMonoVF.woff2',
+  variable: '--font-geist-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "Quflun — Password Manager",
+  title: 'Quflun — Password Manager',
   description:
-    "A privacy-first, offline-first password manager. No accounts, no telemetry, no network requests.",
-  applicationName: "Quflun",
+    'A privacy-first, offline-first password manager. No accounts, no telemetry, no network requests.',
+  applicationName: 'Quflun',
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "Quflun Password Manager",
+    statusBarStyle: 'default',
+    title: 'Quflun Password Manager',
   },
   formatDetection: {
     telephone: false,
@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased overflow-x-clip`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full overflow-x-clip antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -63,11 +63,9 @@ export default function RootLayout({
           which is the standard approach for static exports.
         */}
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-clip">
+      <body className="bg-background text-foreground flex min-h-full flex-col overflow-x-clip">
         <main className="flex flex-1 flex-col">
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
         </main>
       </body>
     </html>
