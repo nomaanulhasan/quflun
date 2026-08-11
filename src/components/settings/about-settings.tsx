@@ -15,8 +15,10 @@ export function AboutSettings() {
         <AboutRow label="KDF" value="Argon2id (64 MB, 2 iter)" />
         <AboutRow label="Encryption" value="AES-256 / ChaCha20" />
 
-        <div className="border-t border-border pt-3 space-y-1">
-          <p className="text-xs text-muted-foreground">Private by design • Offline-first • Local-only</p>
+        <div className="border-border space-y-1 border-t pt-3">
+          <p className="text-muted-foreground text-xs">
+            Private by design • Offline-first • Local-only
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 pt-1">
@@ -30,7 +32,15 @@ export function AboutSettings() {
   );
 }
 
-function AboutRow({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
+function AboutRow({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
   return (
     <div className="flex justify-between">
       <span className="text-muted-foreground">{label}</span>
@@ -39,10 +49,26 @@ function AboutRow({ label, value, mono = false }: { label: string; value: string
   );
 }
 
-function InfoLink({ href, label, external = false }: { href: string; label: string; external?: boolean }) {
-  const classes = "text-xs text-primary underline-offset-2 hover:underline";
+function InfoLink({
+  href,
+  label,
+  external = false,
+}: {
+  href: string;
+  label: string;
+  external?: boolean;
+}) {
+  const classes = 'text-xs text-primary underline-offset-2 hover:underline';
   if (external) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>{label}</a>;
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+        {label}
+      </a>
+    );
   }
-  return <Link href={href} className={classes}>{label}</Link>;
+  return (
+    <Link href={href} className={classes}>
+      {label}
+    </Link>
+  );
 }

@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - Responsive UX & Developer Tooling
+
+### Added
+
+- Prettier code formatter with Tailwind CSS plugin (format on save)
+- `pnpm format` script for batch formatting
+- Viewport-adaptive pagination on vault list (page size based on screen)
+- Floating "Add Entry" button always accessible on all devices
+- Scroll fade mask on nav (`.mask-fade-y`) — hints at more content
+- Shared `NavLinks` and `LockButton` components (DRY sidebar/mobile drawer)
+- Sticky vault header with scrollable card grid layout
+- Search button in mobile header to open command palette on touch devices
+
+### Changed
+
+- Shell uses `h-screen overflow-hidden` — sidebar full-height, only main area scrolls
+- Sidebar and mobile drawer restructured: logo top, nav scrolls, lock pinned bottom
+- Keyboard shortcuts settings hidden on mobile (`hidden md:block`)
+- Command palette footer hints hidden on small screens (`hidden sm:flex`)
+- Entry card selection ring only visible on desktop (`md:` prefix)
+- Command palette no longer lists vault entries (avoids performance issue at 100+ entries)
+- `aria-selected` removed from entry cards (misleading on touch)
+
+### Fixed
+
+- "New Entry" dashed card hidden on desktop when paginated (now always visible)
+- Nav items duplicated across sidebar and mobile drawer (extracted to shared component)
+
 ## [1.5.1] - Polish & Bug Fixes
 
 ### Fixed

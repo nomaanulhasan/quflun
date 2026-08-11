@@ -36,11 +36,7 @@ export function fuzzyScore(query: string, target: string): number {
 /**
  * Fuzzy-filter and sort an array of items.
  */
-export function fuzzyFilter<T>(
-  items: T[],
-  query: string,
-  getText: (item: T) => string
-): T[] {
+export function fuzzyFilter<T>(items: T[], query: string, getText: (item: T) => string): T[] {
   if (!query.trim()) return items;
 
   const scored = items

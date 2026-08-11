@@ -40,12 +40,9 @@ export function useVault(useStore: () => VaultState) {
     isLocked: store.status === 'locked',
 
     // Actions (wrapped with loading state)
-    create: (password: string, name: string) =>
-      withLoading(() => store.create(password, name))(),
-    open: (file: ArrayBuffer, password: string) =>
-      withLoading(() => store.open(file, password))(),
-    unlock: (password: string) =>
-      withLoading(() => store.unlock(password))(),
+    create: (password: string, name: string) => withLoading(() => store.create(password, name))(),
+    open: (file: ArrayBuffer, password: string) => withLoading(() => store.open(file, password))(),
+    unlock: (password: string) => withLoading(() => store.unlock(password))(),
     lock: store.lock,
 
     // Entry CRUD

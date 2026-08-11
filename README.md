@@ -2,7 +2,6 @@
 
 Privacy-first, offline-first password manager. No accounts. No telemetry. No network requests. Your data stays on your device.
 
-
 ## What is Quflun?
 
 Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, and credentials in an encrypted vault using the open KeePass KDBX 4.x format. It runs entirely in your browser — there is no backend server, no cloud sync, and no data collection.
@@ -20,7 +19,6 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 ![Settings Light](docs/screenshots/settings-light.png)
 
 ![Settings Dark](docs/screenshots/settings-dark.png)
-
 
 ## Features
 
@@ -53,17 +51,17 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 16 (App Router, static export) |
-| Language | TypeScript (strict mode) |
-| UI | React 19, Tailwind CSS v4, Shadcn UI (base-nova) |
-| State | Zustand 5 (no persist middleware) |
-| Crypto | kdbxweb, argon2-browser (WASM) |
-| Storage | IndexedDB via idb |
-| Icons | Lucide React |
-| Testing | Vitest, fast-check, @testing-library/react |
-| Build | webpack (via Next.js), pnpm |
+| Layer     | Technology                                       |
+| --------- | ------------------------------------------------ |
+| Framework | Next.js 16 (App Router, static export)           |
+| Language  | TypeScript (strict mode)                         |
+| UI        | React 19, Tailwind CSS v4, Shadcn UI (base-nova) |
+| State     | Zustand 5 (no persist middleware)                |
+| Crypto    | kdbxweb, argon2-browser (WASM)                   |
+| Storage   | IndexedDB via idb                                |
+| Icons     | Lucide React                                     |
+| Testing   | Vitest, fast-check, @testing-library/react       |
+| Build     | webpack (via Next.js), pnpm                      |
 
 ## Getting Started
 
@@ -105,6 +103,7 @@ Produces a static export in `out/` — deployable to any static hosting.
 ```bash
 pnpm test          # Run all tests
 pnpm test:watch    # Watch mode
+pnpm format        # Format all source files (Prettier)
 ```
 
 ## Architecture

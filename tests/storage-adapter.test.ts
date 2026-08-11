@@ -95,9 +95,7 @@ describe('StorageAdapter', () => {
     });
 
     it('should not throw when deleting non-existent vault', async () => {
-      await expect(
-        adapter.deleteVault('non-existent')
-      ).resolves.not.toThrow();
+      await expect(adapter.deleteVault('non-existent')).resolves.not.toThrow();
     });
   });
 

@@ -50,10 +50,7 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
           if (!newWorker) return;
 
           newWorker.addEventListener('statechange', () => {
-            if (
-              newWorker.state === 'installed' &&
-              navigator.serviceWorker.controller
-            ) {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               // New version installed but waiting to activate
               setUpdateAvailable(true);
               setWaitingWorker(newWorker);
@@ -77,7 +74,9 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
     // Check for updates once on app open (after a short delay to not block initial load)
     const updateTimer = setTimeout(() => {
       if (registration && navigator.onLine) {
-        registration.update().catch(() => {/* ignore network errors */});
+        registration.update().catch(() => {
+          /* ignore network errors */
+        });
       }
     }, 3000);
 
@@ -119,7 +118,7 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
         <div
           role="alert"
           aria-live="polite"
-          className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 border-t border-yellow-500/30 bg-yellow-50 px-4 py-3 text-sm text-yellow-900 dark:border-yellow-500/20 dark:bg-yellow-950/80 dark:text-yellow-100"
+          className="fixed right-0 bottom-0 left-0 z-50 flex items-center justify-between gap-3 border-t border-yellow-500/30 bg-yellow-50 px-4 py-3 text-sm text-yellow-900 dark:border-yellow-500/20 dark:bg-yellow-950/80 dark:text-yellow-100"
         >
           <div className="flex items-center gap-2">
             <svg
@@ -130,9 +129,7 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
             >
               <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1ZM7 5a1 1 0 1 1 2 0v3a1 1 0 0 1-2 0V5Zm1 6.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
             </svg>
-            <span>
-              Offline mode is unavailable. The app will continue to work while online.
-            </span>
+            <span>Offline mode is unavailable. The app will continue to work while online.</span>
           </div>
           <button
             onClick={dismissFailure}
@@ -149,7 +146,7 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
         <div
           role="alert"
           aria-live="polite"
-          className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-3 border-t border-blue-500/30 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:border-blue-500/20 dark:bg-blue-950/80 dark:text-blue-100"
+          className="fixed right-0 bottom-0 left-0 z-50 flex items-center justify-between gap-3 border-t border-blue-500/30 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:border-blue-500/20 dark:bg-blue-950/80 dark:text-blue-100"
         >
           <div className="flex items-center gap-2">
             <svg

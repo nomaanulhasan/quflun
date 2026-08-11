@@ -50,8 +50,8 @@ export function FilePicker({
         {fileName ? 'Change' : 'Choose File'}
       </Button>
       <span
-        className={`flex items-center text-sm truncate ${
-          fileName ? 'font-medium text-foreground' : 'text-muted-foreground'
+        className={`flex items-center truncate text-sm ${
+          fileName ? 'text-foreground font-medium' : 'text-muted-foreground'
         }`}
       >
         {fileName || 'No file selected'}

@@ -25,13 +25,15 @@ export function BackupSettings() {
           id="backup-reminder"
           value={settings.backupReminderDays}
           onChange={(e) => updateSettings({ backupReminderDays: Number(e.target.value) })}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
         >
           {REMINDER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
           ))}
         </select>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Export your vault regularly using KDBX format for safe backup.
         </p>
       </div>

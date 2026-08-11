@@ -34,9 +34,7 @@ class CryptoAdapterImpl implements CryptoAdapter {
   async createDatabase(password: string, name: string): Promise<kdbxweb.Kdbx> {
     await this.ensureInitialized(); // C-1 fix
 
-    const credentials = new kdbxweb.Credentials(
-      kdbxweb.ProtectedValue.fromString(password)
-    );
+    const credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(password));
     const db = kdbxweb.Kdbx.create(credentials, name);
 
     // Configure Argon2id parameters: 64 MB memory, 2 iterations, 1 parallelism
@@ -47,16 +45,8 @@ class CryptoAdapterImpl implements CryptoAdapter {
         kdbxweb.VarDictionary.ValueType.UInt64,
         kdbxweb.Int64.from(64 * 1024 * 1024)
       );
-      kdfParams.set(
-        'I',
-        kdbxweb.VarDictionary.ValueType.UInt64,
-        kdbxweb.Int64.from(2)
-      );
-      kdfParams.set(
-        'P',
-        kdbxweb.VarDictionary.ValueType.UInt32,
-        1
-      );
+      kdfParams.set('I', kdbxweb.VarDictionary.ValueType.UInt64, kdbxweb.Int64.from(2));
+      kdfParams.set('P', kdbxweb.VarDictionary.ValueType.UInt32, 1);
     }
 
     return db;
@@ -65,9 +55,7 @@ class CryptoAdapterImpl implements CryptoAdapter {
   async loadDatabase(buffer: ArrayBuffer, password: string): Promise<kdbxweb.Kdbx> {
     await this.ensureInitialized(); // C-1 fix
 
-    const credentials = new kdbxweb.Credentials(
-      kdbxweb.ProtectedValue.fromString(password)
-    );
+    const credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(password));
     const db = await kdbxweb.Kdbx.load(buffer, credentials);
     return db;
   }

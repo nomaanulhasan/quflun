@@ -14,7 +14,7 @@ export function CharsetToggle({ label, checked, onChange }: CharsetToggleProps) 
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 rounded border-border"
+        className="border-border h-4 w-4 rounded"
       />
       {label}
     </label>

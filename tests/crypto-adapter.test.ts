@@ -136,8 +136,6 @@ describe('CryptoAdapter', () => {
     const db = await cryptoAdapter.createDatabase('correct-password', 'TestDB');
     const buffer = await cryptoAdapter.saveDatabase(db);
 
-    await expect(
-      cryptoAdapter.loadDatabase(buffer, 'wrong-password')
-    ).rejects.toThrow();
+    await expect(cryptoAdapter.loadDatabase(buffer, 'wrong-password')).rejects.toThrow();
   });
 });

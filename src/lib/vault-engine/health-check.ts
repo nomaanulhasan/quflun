@@ -54,7 +54,10 @@ export function createVaultHealthCheck(): VaultHealthCheck {
 
         const visitedGroups = new Set<string>();
 
-        function countGroups(group: kdbxweb.KdbxGroup, expectedParent: kdbxweb.KdbxGroup | undefined): void {
+        function countGroups(
+          group: kdbxweb.KdbxGroup,
+          expectedParent: kdbxweb.KdbxGroup | undefined
+        ): void {
           groupCount++;
           const groupId = group.uuid.toString();
 
@@ -67,9 +70,7 @@ export function createVaultHealthCheck(): VaultHealthCheck {
 
           // Verify parent reference (root group has no parent)
           if (expectedParent !== undefined && group.parentGroup !== expectedParent) {
-            errors.push(
-              `Group "${group.name || groupId}" has incorrect parent reference.`
-            );
+            errors.push(`Group "${group.name || groupId}" has incorrect parent reference.`);
           }
 
           // Recurse into child groups

@@ -13,12 +13,7 @@ export interface PasswordHealthIssue {
 }
 
 export type PasswordIssueType =
-  | 'weak'
-  | 'reused'
-  | 'old'
-  | 'missing-url'
-  | 'missing-username'
-  | 'no-category';
+  'weak' | 'reused' | 'old' | 'missing-url' | 'missing-username' | 'no-category';
 
 /** Summary statistics for the dashboard */
 export interface PasswordHealthSummary {

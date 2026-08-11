@@ -35,7 +35,7 @@ export function VaultIntegrity() {
     <div className="space-y-4">
       <div>
         <h2 className="text-sm font-semibold">Vault Integrity</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="text-muted-foreground mt-0.5 text-xs">
           Verify group hierarchy, entry integrity, and KDBX serialization.
         </p>
       </div>
@@ -45,7 +45,7 @@ export function VaultIntegrity() {
         {loading ? 'Checking...' : 'Run Integrity Check'}
       </Button>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
       {result && <HealthResult result={result} />}
     </div>
   );

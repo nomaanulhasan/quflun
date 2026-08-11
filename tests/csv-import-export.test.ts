@@ -208,7 +208,13 @@ describe('CSV Export (Task 8.2)', () => {
 
     it('round-trip: exported CSV can be re-imported', () => {
       const entries: CsvExportEntry[] = [
-        { title: 'RoundTrip', username: 'admin', password: 's3cret!', url: 'https://rt.com', notes: 'A note, with "quotes"' },
+        {
+          title: 'RoundTrip',
+          username: 'admin',
+          password: 's3cret!',
+          url: 'https://rt.com',
+          notes: 'A note, with "quotes"',
+        },
       ];
 
       const csv = exportCsv(entries);

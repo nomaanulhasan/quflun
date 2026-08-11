@@ -7,7 +7,7 @@ export interface PaletteItem {
   icon: typeof KeyRound;
   shortcut?: string;
   action: () => void;
-  section: 'actions' | 'navigation' | 'entries';
+  section: 'actions' | 'navigation';
 }
 
 export interface PaletteSection {

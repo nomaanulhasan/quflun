@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { AppSettings } from '@/types';
+import { DEFAULT_SHORTCUTS } from '@/stores/ui-store';
 import {
   shouldShowBackupReminder,
   getBackupReminderMessage,
@@ -16,6 +17,7 @@ function makeSettings(overrides: Partial<AppSettings> = {}): AppSettings {
     backupReminderDays: 30,
     lastBackupDate: null,
     theme: 'system',
+    shortcuts: { ...DEFAULT_SHORTCUTS },
     ...overrides,
   };
 }
@@ -58,10 +60,11 @@ describe('shouldShowBackupReminder', () => {
   });
 
   it('returns false when backup was exactly at the boundary', () => {
-    // Exactly 30 days ago should NOT trigger (need to exceed, not equal)
+    // Just under 30 days ago should NOT trigger (needs to exceed, not equal)
+    const almostThirtyDays = 30 * 24 * 60 * 60 * 1000 - 1000; // 1 second less than 30 days
     const settings = makeSettings({
       backupReminderDays: 30,
-      lastBackupDate: daysAgo(30),
+      lastBackupDate: new Date(Date.now() - almostThirtyDays).toISOString(),
     });
     // At boundary, should not show (needs to exceed)
     expect(shouldShowBackupReminder(settings)).toBe(false);

@@ -94,9 +94,7 @@ class VaultEngineImpl implements VaultEngine {
       this.validatePassword(password);
 
       if (this.bruteForce.failedOpenAttempts >= MAX_OPEN_ATTEMPTS) {
-        throw new Error(
-          'Too many failed attempts. Please re-select the vault file.'
-        );
+        throw new Error('Too many failed attempts. Please re-select the vault file.');
       }
 
       let db: kdbxweb.Kdbx;
@@ -123,9 +121,7 @@ class VaultEngineImpl implements VaultEngine {
 
         this.bruteForce.failedOpenAttempts++;
         if (this.bruteForce.failedOpenAttempts >= MAX_OPEN_ATTEMPTS) {
-          throw new Error(
-            'Too many failed attempts. Please re-select the vault file.'
-          );
+          throw new Error('Too many failed attempts. Please re-select the vault file.');
         }
         throw new Error('Failed to open vault file.');
       }
@@ -239,11 +235,7 @@ class VaultEngineImpl implements VaultEngine {
     }
 
     const buffer = await this.cryptoAdapter.saveDatabase(this.db);
-    await this.storageAdapter.saveVault(
-      this.vaultId,
-      this.vaultName || 'Unnamed Vault',
-      buffer
-    );
+    await this.storageAdapter.saveVault(this.vaultId, this.vaultName || 'Unnamed Vault', buffer);
   }
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
@@ -288,9 +280,7 @@ class VaultEngineImpl implements VaultEngine {
       // Save old credentials for rollback
       const oldCredentials = this.db.credentials;
 
-      this.db.credentials = new kdbxweb.Credentials(
-        kdbxweb.ProtectedValue.fromString(newPassword)
-      );
+      this.db.credentials = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(newPassword));
 
       let newBuffer: ArrayBuffer;
       try {
@@ -630,9 +620,8 @@ class VaultEngineImpl implements VaultEngine {
       const username = this.getStringField(entry, 'UserName');
       const url = this.getStringField(entry, 'URL');
       const favorite = this.getCustomDataValue(entry, CUSTOM_KEY_FAVORITE) === 'true';
-      const category = entry.parentGroup?.name !== defaultGroup.name
-        ? (entry.parentGroup?.name || null)
-        : null;
+      const category =
+        entry.parentGroup?.name !== defaultGroup.name ? entry.parentGroup?.name || null : null;
 
       items.push({
         uuid: entry.uuid.toString(),
@@ -1001,7 +990,10 @@ class VaultEngineImpl implements VaultEngine {
 
   // ─── Import/Export (Task 14.2) ─────────────────────────────────────────────
 
-  async importKdbx(file: ArrayBuffer, password: string): Promise<import('@/lib/import-export').ImportResult> {
+  async importKdbx(
+    file: ArrayBuffer,
+    password: string
+  ): Promise<import('@/lib/import-export').ImportResult> {
     const db = this.requireUnlockedDb();
     const { importKdbx } = await import('@/lib/import-export/kdbx-handler');
     const result = await importKdbx(db, file, password, this.cryptoAdapter);
@@ -1061,7 +1053,9 @@ class VaultEngineImpl implements VaultEngine {
     return check.run(db);
   }
 
-  getPasswordHealthReport(oldPasswordDays = 90): import('@/lib/vault-engine/password-health').PasswordHealthReport {
+  getPasswordHealthReport(
+    oldPasswordDays = 90
+  ): import('@/lib/vault-engine/password-health').PasswordHealthReport {
     const db = this.requireUnlockedDb();
     const defaultGroup = db.getDefaultGroup();
     const recycleBinUuid = db.meta.recycleBinUuid;
@@ -1124,7 +1118,7 @@ class VaultEngineImpl implements VaultEngine {
 
       // Old password check
       const lastMod = entry.times.lastModTime;
-      if (lastMod && (now - lastMod.getTime()) > oldThresholdMs) {
+      if (lastMod && now - lastMod.getTime() > oldThresholdMs) {
         oldCount++;
         issues.push({ uuid, title, issue: 'old' });
       }
@@ -1163,7 +1157,10 @@ class VaultEngineImpl implements VaultEngine {
       const reusedPenalty = (reusedCount / totalPasswords) * 25;
       const oldPenalty = (oldCount / totalPasswords) * 15;
       const missingPenalty = ((missingUrlCount + missingUsernameCount) / (totalPasswords * 2)) * 20;
-      score = Math.max(0, Math.round(score - weakPenalty - reusedPenalty - oldPenalty - missingPenalty));
+      score = Math.max(
+        0,
+        Math.round(score - weakPenalty - reusedPenalty - oldPenalty - missingPenalty)
+      );
     }
 
     return {
@@ -1277,16 +1274,18 @@ class VaultEngineImpl implements VaultEngine {
   }
 
   private mapKdbxEntryToVaultEntry(entry: kdbxweb.KdbxEntry): VaultEntry {
-    const type = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note' ? 'note' as const : 'password' as const;
+    const type =
+      this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note'
+        ? ('note' as const)
+        : ('password' as const);
 
     // M-1 fix: Use getFieldText which handles ProtectedValue for notes correctly
     const password = this.getFieldText(entry, 'Password');
     const notes = this.getFieldText(entry, 'Notes');
 
     const defaultGroup = this.db!.getDefaultGroup();
-    const category = entry.parentGroup?.name !== defaultGroup.name
-      ? (entry.parentGroup?.name || null)
-      : null;
+    const category =
+      entry.parentGroup?.name !== defaultGroup.name ? entry.parentGroup?.name || null : null;
 
     // Extract custom fields (any field beyond the standard 5)
     const standardFields = new Set(['Title', 'UserName', 'Password', 'URL', 'Notes']);
@@ -1464,9 +1463,6 @@ class VaultEngineImpl implements VaultEngine {
  * Factory function to create a VaultEngine instance.
  * Not a singleton — the engine is stateful per-vault.
  */
-export function createVaultEngine(
-  crypto: CryptoAdapter,
-  storage: StorageAdapter
-): VaultEngine {
+export function createVaultEngine(crypto: CryptoAdapter, storage: StorageAdapter): VaultEngine {
   return new VaultEngineImpl(crypto, storage);
 }

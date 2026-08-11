@@ -41,7 +41,7 @@ export function importCsv(csvContent: string): { rows: CsvRow[]; result: ImportR
   if (missingColumns.length > 0) {
     throw new Error(
       `CSV is missing required columns: ${missingColumns.join(', ')}. ` +
-      `Expected: title, username, password, url`
+        `Expected: title, username, password, url`
     );
   }
 

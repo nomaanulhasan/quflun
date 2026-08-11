@@ -6,16 +6,24 @@ interface HealthResultProps {
 }
 
 export function HealthResult({ result }: HealthResultProps) {
-  const icon = result.status === 'healthy'
-    ? <CheckCircle className="h-5 w-5 text-green-600" />
-    : result.status === 'corrupted'
-      ? <XCircle className="h-5 w-5 text-destructive" />
-      : <AlertTriangle className="h-5 w-5 text-amber-600" />;
+  const icon =
+    result.status === 'healthy' ? (
+      <CheckCircle className="h-5 w-5 text-green-600" />
+    ) : result.status === 'corrupted' ? (
+      <XCircle className="text-destructive h-5 w-5" />
+    ) : (
+      <AlertTriangle className="h-5 w-5 text-amber-600" />
+    );
 
-  const label = result.status === 'healthy' ? 'Healthy' : result.status === 'corrupted' ? 'Issues Detected' : 'Error';
+  const label =
+    result.status === 'healthy'
+      ? 'Healthy'
+      : result.status === 'corrupted'
+        ? 'Issues Detected'
+        : 'Error';
 
   return (
-    <div className="rounded-lg border border-border bg-card p-5 space-y-4">
+    <div className="border-border bg-card space-y-4 rounded-lg border p-5">
       <div className="flex items-center gap-3">
         {icon}
         <h2 className="text-base font-semibold">{label}</h2>
@@ -28,9 +36,11 @@ export function HealthResult({ result }: HealthResultProps) {
 
       {result.errors.length > 0 && (
         <div className="space-y-1">
-          <p className="text-sm font-medium text-destructive">Errors:</p>
-          <ul className="ml-4 list-disc text-xs text-muted-foreground space-y-0.5">
-            {result.errors.map((err, i) => <li key={i}>{err}</li>)}
+          <p className="text-destructive text-sm font-medium">Errors:</p>
+          <ul className="text-muted-foreground ml-4 list-disc space-y-0.5 text-xs">
+            {result.errors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
           </ul>
         </div>
       )}
@@ -41,16 +51,18 @@ export function HealthResult({ result }: HealthResultProps) {
         </p>
       )}
 
-      <p className="text-xs text-muted-foreground">Checked: {new Date(result.timestamp).toLocaleString()}</p>
+      <p className="text-muted-foreground text-xs">
+        Checked: {new Date(result.timestamp).toLocaleString()}
+      </p>
     </div>
   );
 }
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-md bg-muted/50 p-2 text-center">
+    <div className="bg-muted/50 rounded-md p-2 text-center">
       <p className="text-lg font-semibold">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-muted-foreground text-xs">{label}</p>
     </div>
   );
 }

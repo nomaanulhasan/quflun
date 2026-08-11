@@ -122,34 +122,34 @@ describe('VaultEngine Entry CRUD (Task 4.2)', { timeout: 30_000 }, () => {
     it('should reject entry without title', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addEntry({ title: '', password: 'pass' })
-      ).rejects.toThrow('Title is required');
+      await expect(engine.addEntry({ title: '', password: 'pass' })).rejects.toThrow(
+        'Title is required'
+      );
     });
 
     it('should reject entry without password', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addEntry({ title: 'Test', password: '' })
-      ).rejects.toThrow('Password is required');
+      await expect(engine.addEntry({ title: 'Test', password: '' })).rejects.toThrow(
+        'Password is required'
+      );
     });
 
     it('should reject title exceeding 256 characters', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addEntry({ title: 'a'.repeat(257), password: 'pass' })
-      ).rejects.toThrow(/Title must be at most/);
+      await expect(engine.addEntry({ title: 'a'.repeat(257), password: 'pass' })).rejects.toThrow(
+        /Title must be at most/
+      );
     });
 
     it('should reject more than 20 tags', async () => {
       const { engine } = await createUnlockedEngine();
 
       const tags = Array.from({ length: 21 }, (_, i) => `tag${i}`);
-      await expect(
-        engine.addEntry({ title: 'Test', password: 'pass', tags })
-      ).rejects.toThrow(/Maximum.*tags/);
+      await expect(engine.addEntry({ title: 'Test', password: 'pass', tags })).rejects.toThrow(
+        /Maximum.*tags/
+      );
     });
 
     it('should auto-save to IndexedDB after adding', async () => {
@@ -206,17 +206,15 @@ describe('VaultEngine Entry CRUD (Task 4.2)', { timeout: 30_000 }, () => {
 
       const meta = await engine.addEntry({ title: 'HasTitle', password: 'pw' });
 
-      await expect(
-        engine.editEntry(meta.uuid, { title: '' })
-      ).rejects.toThrow('Title is required');
+      await expect(engine.editEntry(meta.uuid, { title: '' })).rejects.toThrow('Title is required');
     });
 
     it('should throw for non-existent UUID', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.editEntry('non-existent-uuid', { title: 'X' })
-      ).rejects.toThrow(/Entry not found/);
+      await expect(engine.editEntry('non-existent-uuid', { title: 'X' })).rejects.toThrow(
+        /Entry not found/
+      );
     });
 
     it('should update password with ProtectedValue', async () => {
@@ -420,9 +418,9 @@ describe('VaultEngine Entry CRUD (Task 4.2)', { timeout: 30_000 }, () => {
 
       const meta = await engine.addEntry({ title: 'PwRequired', password: 'original' });
 
-      await expect(
-        engine.editEntry(meta.uuid, { password: '' })
-      ).rejects.toThrow('Password is required');
+      await expect(engine.editEntry(meta.uuid, { password: '' })).rejects.toThrow(
+        'Password is required'
+      );
 
       // Verify original password unchanged
       const entry = engine.getEntry(meta.uuid);
@@ -447,9 +445,9 @@ describe('VaultEngine Entry CRUD (Task 4.2)', { timeout: 30_000 }, () => {
       };
 
       // addEntry should throw due to save failure
-      await expect(
-        engine.addEntry({ title: 'Ghost', password: 'ghost-pw' })
-      ).rejects.toThrow('Simulated IndexedDB write failure');
+      await expect(engine.addEntry({ title: 'Ghost', password: 'ghost-pw' })).rejects.toThrow(
+        'Simulated IndexedDB write failure'
+      );
 
       // Restore saveVault so listEntries/save can work
       storage.saveVault = originalSave;

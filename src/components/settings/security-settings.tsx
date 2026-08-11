@@ -8,7 +8,10 @@ export function SecuritySettings() {
   const updateSettings = useUIStore((s) => s.updateSettings);
 
   return (
-    <SettingsCard title="Security" description="Configure automatic locking and clipboard behavior.">
+    <SettingsCard
+      title="Security"
+      description="Configure automatic locking and clipboard behavior."
+    >
       <div className="space-y-4">
         {/* Idle timeout */}
         <div className="space-y-1">
@@ -24,7 +27,7 @@ export function SecuritySettings() {
             onChange={(e) => updateSettings({ idleTimeoutMinutes: Number(e.target.value) })}
             className="w-full"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Automatically lock the vault after inactivity.
           </p>
         </div>
@@ -43,7 +46,7 @@ export function SecuritySettings() {
             onChange={(e) => updateSettings({ clipboardTimeoutSeconds: Number(e.target.value) })}
             className="w-full"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Clear copied passwords from the clipboard.
           </p>
         </div>

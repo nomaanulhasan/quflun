@@ -21,6 +21,7 @@ pnpm build        # Production build (webpack)
 pnpm test         # Run all tests
 pnpm test:watch   # Watch mode
 pnpm lint         # ESLint
+pnpm format       # Prettier (auto-runs on save via VS Code settings)
 ```
 
 ## Coding Standards

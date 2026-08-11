@@ -98,9 +98,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <VaultStoreContext.Provider value={vaultStore}>
       <UIStoreContext.Provider value={uiStore}>
         <ThemeProvider>
-          <SerwistProvider>
-            {children}
-          </SerwistProvider>
+          <SerwistProvider>{children}</SerwistProvider>
           <Toaster position="bottom-right" />
         </ThemeProvider>
       </UIStoreContext.Provider>

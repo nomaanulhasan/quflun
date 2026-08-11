@@ -106,33 +106,33 @@ describe('VaultEngine Secure Notes (Task 4.3)', { timeout: 30_000 }, () => {
     it('should reject note without title', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addNote({ title: '', body: 'Some body' })
-      ).rejects.toThrow('Title is required');
+      await expect(engine.addNote({ title: '', body: 'Some body' })).rejects.toThrow(
+        'Title is required'
+      );
     });
 
     it('should reject note without body', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addNote({ title: 'Empty Note', body: '' })
-      ).rejects.toThrow('Body is required');
+      await expect(engine.addNote({ title: 'Empty Note', body: '' })).rejects.toThrow(
+        'Body is required'
+      );
     });
 
     it('should reject title exceeding 256 characters', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addNote({ title: 'a'.repeat(257), body: 'body' })
-      ).rejects.toThrow(/Title must be at most/);
+      await expect(engine.addNote({ title: 'a'.repeat(257), body: 'body' })).rejects.toThrow(
+        /Title must be at most/
+      );
     });
 
     it('should reject body exceeding 10000 characters', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.addNote({ title: 'Big Note', body: 'x'.repeat(10001) })
-      ).rejects.toThrow(/Body must be at most/);
+      await expect(engine.addNote({ title: 'Big Note', body: 'x'.repeat(10001) })).rejects.toThrow(
+        /Body must be at most/
+      );
     });
   });
 
@@ -188,9 +188,7 @@ describe('VaultEngine Secure Notes (Task 4.3)', { timeout: 30_000 }, () => {
 
       const meta = await engine.addNote({ title: 'Has Title', body: 'body' });
 
-      await expect(
-        engine.editNote(meta.uuid, { title: '' })
-      ).rejects.toThrow('Title is required');
+      await expect(engine.editNote(meta.uuid, { title: '' })).rejects.toThrow('Title is required');
     });
 
     it('should reject removing body from note', async () => {
@@ -198,9 +196,7 @@ describe('VaultEngine Secure Notes (Task 4.3)', { timeout: 30_000 }, () => {
 
       const meta = await engine.addNote({ title: 'Note', body: 'Has body' });
 
-      await expect(
-        engine.editNote(meta.uuid, { body: '' })
-      ).rejects.toThrow('Body is required');
+      await expect(engine.editNote(meta.uuid, { body: '' })).rejects.toThrow('Body is required');
     });
 
     it('should update favorite on note', async () => {
@@ -222,9 +218,9 @@ describe('VaultEngine Secure Notes (Task 4.3)', { timeout: 30_000 }, () => {
     it('should throw for non-existent UUID', async () => {
       const { engine } = await createUnlockedEngine();
 
-      await expect(
-        engine.editNote('non-existent', { body: 'x' })
-      ).rejects.toThrow(/Entry not found/);
+      await expect(engine.editNote('non-existent', { body: 'x' })).rejects.toThrow(
+        /Entry not found/
+      );
     });
   });
 
@@ -325,9 +321,9 @@ describe('VaultEngine Secure Notes (Task 4.3)', { timeout: 30_000 }, () => {
 
       const meta = await engine.addNote({ title: 'Note', body: 'body' });
 
-      await expect(
-        engine.editEntry(meta.uuid, { title: 'Nope' })
-      ).rejects.toThrow(/Use editNote instead/);
+      await expect(engine.editEntry(meta.uuid, { title: 'Nope' })).rejects.toThrow(
+        /Use editNote instead/
+      );
 
       // Entry remains unchanged
       const entry = engine.getEntry(meta.uuid);

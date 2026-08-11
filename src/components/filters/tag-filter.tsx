@@ -10,26 +10,28 @@ interface TagFilterProps {
 }
 
 /**
- * Tag filter chips with toggle selection.
+ * Tag filter chips — inline, no wrapping (participates in parent horizontal scroll).
  */
 export function TagFilter({ tags, selected, onSelect, maxVisible = 10 }: TagFilterProps) {
   if (tags.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-1 items-center">
+    <>
       {tags.slice(0, maxVisible).map((tag) => (
         <Badge
           key={tag}
           variant={selected === tag ? 'default' : 'secondary'}
-          className="cursor-pointer border border-border p-3 rounded-md"
+          className="border-border shrink-0 cursor-pointer rounded-md border px-2.5 py-3.25 select-none"
           onClick={() => onSelect(selected === tag ? null : tag)}
         >
           {tag}
         </Badge>
       ))}
       {tags.length > maxVisible && (
-        <Badge variant="secondary">+{tags.length - maxVisible}</Badge>
+        <Badge variant="secondary" className="shrink-0 select-none">
+          +{tags.length - maxVisible}
+        </Badge>
       )}
-    </div>
+    </>
   );
 }

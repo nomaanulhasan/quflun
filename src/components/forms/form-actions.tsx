@@ -23,7 +23,13 @@ export function FormActions({
   return (
     <div className="flex gap-3">
       {onBack && (
-        <Button type="button" variant="outline" className="flex-1" onClick={onBack} disabled={loading}>
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1"
+          onClick={onBack}
+          disabled={loading}
+        >
           {backLabel}
         </Button>
       )}

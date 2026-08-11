@@ -12,20 +12,23 @@ interface VaultSearchBarProps {
 export function VaultSearchBar({ query, onChange }: VaultSearchBarProps) {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+      <Search
+        className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
+        aria-hidden="true"
+      />
       <Input
         type="search"
         placeholder="Search entries..."
         value={query}
         onChange={(e) => onChange((e.target as HTMLInputElement).value)}
-        className="pl-9 pr-9"
+        className="pr-9 pl-9"
         aria-label="Search entries"
         maxLength={SEARCH_MAX_QUERY_LENGTH}
       />
       {query && (
         <button
           onClick={() => onChange('')}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
           aria-label="Clear search"
         >
           <X className="h-4 w-4" />

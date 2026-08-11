@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface DeleteDialogProps {
   title: string;
@@ -34,13 +40,21 @@ export function DeleteDialog({ title, onConfirm, disabled = false }: DeleteDialo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={<Button type="button" variant="destructive" size="sm" disabled={disabled} className="gap-1.5" />}
+        render={
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            disabled={disabled}
+            className="gap-1.5"
+          />
+        }
       >
         <Trash2 className="h-3.5 w-3.5" /> Delete
       </DialogTrigger>
       <DialogContent className="max-w-sm p-6">
         <DialogTitle className="text-base font-semibold">Delete &ldquo;{title}&rdquo;?</DialogTitle>
-        <DialogDescription className="text-sm text-muted-foreground">
+        <DialogDescription className="text-muted-foreground text-sm">
           This action cannot be undone. The entry will be permanently removed.
         </DialogDescription>
         <p className="text-xs text-amber-600 dark:text-amber-500">

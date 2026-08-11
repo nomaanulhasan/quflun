@@ -71,9 +71,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
       const meta = await engine.create('password-abc', 'TestVault');
       const after = new Date().toISOString();
 
-      expect(meta.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-      );
+      expect(meta.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
       expect(meta.name).toBe('TestVault');
       expect(meta.lastOpened).toBeDefined();
       expect(meta.lastOpened >= before).toBe(true);
@@ -134,9 +132,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
       await engine.create('correct-password', 'BruteTest');
       engine.lock();
 
-      await expect(engine.unlock('wrong-password')).rejects.toThrow(
-        'Incorrect password'
-      );
+      await expect(engine.unlock('wrong-password')).rejects.toThrow('Incorrect password');
 
       const state = engine.getBruteForceState();
       expect(state.failedAttempts).toBe(1);
@@ -151,9 +147,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
       // Start a first unlock — don't await it yet
       const p1 = engine.unlock('my-pass');
       // Immediately try a second unlock — should reject because first is in progress
-      await expect(engine.unlock('my-pass')).rejects.toThrow(
-        /already in progress/
-      );
+      await expect(engine.unlock('my-pass')).rejects.toThrow(/already in progress/);
       // Let the first complete
       await p1;
     });
@@ -191,9 +185,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
       expect(state.cooldownUntil).toBeGreaterThan(Date.now());
 
       // Next attempt should immediately throw cooldown error
-      await expect(engine.unlock('correct-pass')).rejects.toThrow(
-        /wait.*seconds/i
-      );
+      await expect(engine.unlock('correct-pass')).rejects.toThrow(/wait.*seconds/i);
     });
 
     it('successful unlock should reset failedAttempts', async () => {
@@ -225,10 +217,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
   describe('open()', () => {
     it('should load an external KDBX file', async () => {
       const { cryptoAdapter } = await import('@/lib/crypto/crypto-adapter');
-      const exportDb = await cryptoAdapter.createDatabase(
-        'open-test-pass',
-        'ExternalVault'
-      );
+      const exportDb = await cryptoAdapter.createDatabase('open-test-pass', 'ExternalVault');
       const fileBuffer = await cryptoAdapter.saveDatabase(exportDb);
 
       const { engine } = await createFreshEngine();
@@ -286,20 +275,17 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
       }
 
       // 5th attempt triggers re-select
-      await expect(engine.open(fileBuffer, 'wrong')).rejects.toThrow(
-        /re-select/i
-      );
+      await expect(engine.open(fileBuffer, 'wrong')).rejects.toThrow(/re-select/i);
 
       // Further attempts also throw re-select error immediately
-      await expect(engine.open(fileBuffer, 'wrong')).rejects.toThrow(
-        /re-select/i
-      );
+      await expect(engine.open(fileBuffer, 'wrong')).rejects.toThrow(/re-select/i);
     });
 
     // H-2 fix: Invalid file format should NOT count toward brute-force
     it('should not count invalid file format toward failedOpenAttempts', async () => {
       const { engine } = await createFreshEngine();
-      const garbageBuffer = new TextEncoder().encode('this is not a kdbx file').buffer as ArrayBuffer;
+      const garbageBuffer = new TextEncoder().encode('this is not a kdbx file')
+        .buffer as ArrayBuffer;
 
       await expect(engine.open(garbageBuffer, 'any-pass')).rejects.toThrow(
         /not a supported vault format/i
@@ -318,9 +304,7 @@ describe('VaultEngine', { timeout: 30_000 }, () => {
 
       const { engine } = await createFreshEngine();
       const p1 = engine.open(fileBuffer, 'pass');
-      await expect(engine.open(fileBuffer, 'pass')).rejects.toThrow(
-        /already in progress/
-      );
+      await expect(engine.open(fileBuffer, 'pass')).rejects.toThrow(/already in progress/);
       await p1;
     });
 

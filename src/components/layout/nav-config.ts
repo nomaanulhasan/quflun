@@ -22,9 +22,7 @@ export interface NavGroup {
 export const navGroups: NavGroup[] = [
   {
     label: 'Vault',
-    items: [
-      { href: '/vault', label: 'Vault', icon: KeyRound },
-    ],
+    items: [{ href: '/vault', label: 'Vault', icon: KeyRound }],
   },
   {
     label: 'Tools',
@@ -43,8 +41,6 @@ export const navGroups: NavGroup[] = [
   },
   {
     label: 'Settings',
-    items: [
-      { href: '/settings', label: 'Settings', icon: Settings },
-    ],
+    items: [{ href: '/settings', label: 'Settings', icon: Settings }],
   },
 ];

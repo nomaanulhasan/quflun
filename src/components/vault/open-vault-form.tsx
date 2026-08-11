@@ -25,8 +25,14 @@ export function OpenVaultForm({ onBack }: OpenVaultFormProps) {
     e.preventDefault();
     setError(null);
 
-    if (!file) { setError('Please select a KDBX file.'); return; }
-    if (!password) { setError('Password is required.'); return; }
+    if (!file) {
+      setError('Please select a KDBX file.');
+      return;
+    }
+    if (!password) {
+      setError('Password is required.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -44,26 +50,34 @@ export function OpenVaultForm({ onBack }: OpenVaultFormProps) {
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold">Open Vault File</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Select a KDBX file and enter its master password.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="vault-file" className="text-sm font-medium">Vault File</label>
+            <label htmlFor="vault-file" className="text-sm font-medium">
+              Vault File
+            </label>
             <FilePicker
               id="vault-file"
               accept=".kdbx"
               fileName={fileName}
               disabled={loading}
-              onFileSelected={(buf, name) => { setFile(buf); setFileName(name); setError(null); }}
+              onFileSelected={(buf, name) => {
+                setFile(buf);
+                setFileName(name);
+                setError(null);
+              }}
               onError={setError}
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="open-password" className="text-sm font-medium">Master Password</label>
+            <label htmlFor="open-password" className="text-sm font-medium">
+              Master Password
+            </label>
             <PasswordInput
               id="open-password"
               value={password}

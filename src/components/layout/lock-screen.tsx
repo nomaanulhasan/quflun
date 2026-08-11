@@ -40,16 +40,18 @@ export function LockScreen() {
     <div className="flex flex-1 flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6">
         <div className="flex flex-col items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Lock className="h-6 w-6 text-primary" />
+          <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
+            <Lock className="text-primary h-6 w-6" />
           </div>
           <h1 className="text-xl font-semibold">Vault Locked</h1>
-          {vaultName && <p className="text-sm text-muted-foreground">{vaultName}</p>}
+          {vaultName && <p className="text-muted-foreground text-sm">{vaultName}</p>}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="unlock-password" className="text-sm font-medium">Master Password</label>
+            <label htmlFor="unlock-password" className="text-sm font-medium">
+              Master Password
+            </label>
             <PasswordInput
               id="unlock-password"
               value={password}
@@ -64,13 +66,13 @@ export function LockScreen() {
           <FormError message={error} id="unlock-error" />
 
           {isCooldown && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Too many failed attempts. Please wait before trying again.
             </p>
           )}
 
           {bruteForce.failedAttempts > 0 && !isCooldown && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {5 - bruteForce.failedAttempts} attempts remaining
             </p>
           )}

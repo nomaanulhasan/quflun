@@ -1,6 +1,17 @@
 'use client';
 
-import { Star, StickyNote, ExternalLink, Clipboard, Check, User, KeyRound, ShieldCheck, ShieldAlert, Shield } from 'lucide-react';
+import {
+  Star,
+  StickyNote,
+  ExternalLink,
+  Clipboard,
+  Check,
+  User,
+  KeyRound,
+  ShieldCheck,
+  ShieldAlert,
+  Shield,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCopyAction } from '@/hooks/use-copy-action';
 import { useVaultStore } from '@/components/providers';
@@ -55,7 +66,9 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
     e.stopPropagation();
     if (entry.url) {
       const protocol = 'https';
-      const href = /^[a-z][a-z0-9+\-.]*:\/\//i.test(entry.url) ? entry.url : `${protocol}://${entry.url}`;
+      const href = /^[a-z][a-z0-9+\-.]*:\/\//i.test(entry.url)
+        ? entry.url
+        : `${protocol}://${entry.url}`;
       window.open(href, '_blank', 'noopener,noreferrer');
     }
   }
@@ -64,8 +77,8 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
     <article
       aria-labelledby={titleId}
       data-entry-card
-      className={`group cursor-pointer rounded-lg border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-accent/50 focus-within:ring-2 focus-within:ring-ring ${
-        selected ? 'border-primary ring-2 ring-ring' : 'border-border'
+      className={`group bg-card hover:border-primary/30 hover:bg-accent/50 focus-within:ring-ring cursor-pointer rounded-lg border p-4 transition-colors focus-within:ring-2 ${
+        selected ? 'md:border-primary md:ring-ring border-border md:ring-2' : 'border-border'
       }`}
       onClick={onClick}
       onKeyDown={(e) => {
@@ -76,23 +89,22 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
       }}
       tabIndex={selected ? 0 : -1}
       role="button"
-      aria-selected={selected}
     >
       {/* ─── Top: Avatar + Info + Favorite ─── */}
       <div className="flex items-start gap-3">
         <EntryAvatar title={entry.title} url={entry.url} type={entry.type} />
         <div className="min-w-0 flex-1">
-          <h3 id={titleId} className="truncate text-sm font-semibold leading-snug text-foreground">
+          <h3 id={titleId} className="text-foreground truncate text-sm leading-snug font-semibold">
             {entry.title}
           </h3>
           {entry.username ? (
-            <p className="truncate text-xs text-muted-foreground mt-0.5">{entry.username}</p>
+            <p className="text-muted-foreground mt-0.5 truncate text-xs">{entry.username}</p>
           ) : entry.type === 'note' ? (
-            <p className="truncate text-xs text-muted-foreground mt-0.5">
+            <p className="text-muted-foreground mt-0.5 truncate text-xs">
               Updated {formatRelativeDate(entry.modifiedAt)}
             </p>
           ) : entry.url ? (
-            <p className="truncate text-xs text-muted-foreground mt-0.5">{entry.url}</p>
+            <p className="text-muted-foreground mt-0.5 truncate text-xs">{entry.url}</p>
           ) : null}
         </div>
         <button
@@ -101,7 +113,7 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
           aria-label={entry.favorite ? 'Remove from favorites' : 'Add to favorites'}
           aria-pressed={entry.favorite}
           onClick={handleToggleFavorite}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="hover:bg-muted focus-visible:ring-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <Star
             className={`h-4 w-4 ${entry.favorite ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground'}`}
@@ -113,25 +125,69 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
       {/* ─── Bottom: Quick actions + Strength badge ─── */}
       {entry.type === 'password' && (
         <div
-          className="mt-3 flex items-center justify-between border-t border-border pt-2"
+          className="border-border mt-3 flex items-center justify-between border-t pt-2"
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
           <div className="flex items-center gap-0.5">
             {entry.username && (
-              <Button type="button" variant="ghost" size="icon" title="Copy username" aria-label="Copy username" className="h-9 w-9" onClick={handleCopyUsername}>
-                {isCopied(`un-${entry.uuid}`) ? <Check className="h-4 w-4 text-green-500" aria-hidden="true" /> : <User className="h-4 w-4" aria-hidden="true" />}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                title="Copy username"
+                aria-label="Copy username"
+                className="h-9 w-9"
+                onClick={handleCopyUsername}
+              >
+                {isCopied(`un-${entry.uuid}`) ? (
+                  <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+                ) : (
+                  <User className="h-4 w-4" aria-hidden="true" />
+                )}
               </Button>
             )}
-            <Button type="button" variant="ghost" size="icon" title="Copy password" aria-label="Copy password" className="h-9 w-9" onClick={handleCopyPassword}>
-              {isCopied(`pw-${entry.uuid}`) ? <Check className="h-4 w-4 text-green-500" aria-hidden="true" /> : <KeyRound className="h-4 w-4" aria-hidden="true" />}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              title="Copy password"
+              aria-label="Copy password"
+              className="h-9 w-9"
+              onClick={handleCopyPassword}
+            >
+              {isCopied(`pw-${entry.uuid}`) ? (
+                <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+              ) : (
+                <KeyRound className="h-4 w-4" aria-hidden="true" />
+              )}
             </Button>
             {entry.url && (
               <>
-                <Button type="button" variant="ghost" size="icon" title="Copy URL" aria-label="Copy URL" className="h-9 w-9" onClick={handleCopyUrl}>
-                  {isCopied(`url-${entry.uuid}`) ? <Check className="h-4 w-4 text-green-500" aria-hidden="true" /> : <Clipboard className="h-4 w-4" aria-hidden="true" />}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  title="Copy URL"
+                  aria-label="Copy URL"
+                  className="h-9 w-9"
+                  onClick={handleCopyUrl}
+                >
+                  {isCopied(`url-${entry.uuid}`) ? (
+                    <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+                  ) : (
+                    <Clipboard className="h-4 w-4" aria-hidden="true" />
+                  )}
                 </Button>
-                <Button type="button" variant="ghost" size="icon" title="Open website" aria-label="Open website" className="h-9 w-9" onClick={handleOpenUrl}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  title="Open website"
+                  aria-label="Open website"
+                  className="h-9 w-9"
+                  onClick={handleOpenUrl}
+                >
                   <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </>
@@ -143,7 +199,7 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
 
       {/* Secure note indicator */}
       {entry.type === 'note' && (
-        <div className="mt-3 flex items-center gap-1.5 border-t border-border pt-5 text-xs text-muted-foreground">
+        <div className="border-border text-muted-foreground mt-3 flex items-center gap-1.5 border-t pt-5 text-xs">
           <StickyNote className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Secure note</span>
         </div>
@@ -154,21 +210,29 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
 
 // ─── Entry Avatar ──────────────────────────────────────────────────────────────
 
-function EntryAvatar({ title, url, type }: { title: string; url: string; type: 'password' | 'note' }) {
+function EntryAvatar({
+  title,
+  url,
+  type,
+}: {
+  title: string;
+  url: string;
+  type: 'password' | 'note';
+}) {
   const initials = getInitials(title);
   const bgColor = getAvatarColor(url || title);
 
   if (type === 'note') {
     return (
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-        <StickyNote className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+      <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+        <StickyNote className="text-muted-foreground h-5 w-5" aria-hidden="true" />
       </div>
     );
   }
 
   return (
     <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
-      <span className="text-xs font-semibold text-foreground/70 select-none">{initials}</span>
+      <span className="text-foreground/70 text-xs font-semibold select-none">{initials}</span>
     </div>
   );
 }

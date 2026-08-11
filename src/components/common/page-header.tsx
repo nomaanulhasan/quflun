@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
   title: string;
@@ -11,11 +11,9 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, subtitle, className }: PageHeaderProps) {
   return (
-    <div className={cn("flex items-center gap-4 justify-between", className)}>
+    <div className={cn('flex items-center justify-between gap-4', className)}>
       <h1 className="text-xl font-semibold">{title}</h1>
-      {subtitle && (
-        <span className="text-sm text-muted-foreground">{subtitle}</span>
-      )}
+      {subtitle && <span className="text-muted-foreground text-sm">{subtitle}</span>}
     </div>
   );
 }

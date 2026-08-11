@@ -16,13 +16,17 @@ interface CustomFieldsEditorProps {
  * Editor for custom key-value fields on entries.
  * Supports protected (masked) and plain text fields.
  */
-export function CustomFieldsEditor({ fields, onChange, disabled = false }: CustomFieldsEditorProps) {
+export function CustomFieldsEditor({
+  fields,
+  onChange,
+  disabled = false,
+}: CustomFieldsEditorProps) {
   function addField() {
     onChange([...fields, { key: '', value: '', protected: false }]);
   }
 
   function updateField(index: number, patch: Partial<CustomField>) {
-    const updated = fields.map((f, i) => i === index ? { ...f, ...patch } : f);
+    const updated = fields.map((f, i) => (i === index ? { ...f, ...patch } : f));
     onChange(updated);
   }
 
@@ -34,14 +38,23 @@ export function CustomFieldsEditor({ fields, onChange, disabled = false }: Custo
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium">Custom Fields</label>
-        <Button type="button" variant="ghost" size="xs" onClick={addField} disabled={disabled} className="gap-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="xs"
+          onClick={addField}
+          disabled={disabled}
+          className="gap-1"
+        >
           <Plus className="h-3 w-3" aria-hidden="true" />
           Add Field
         </Button>
       </div>
 
       {fields.length === 0 && (
-        <p className="text-xs text-muted-foreground">No custom fields. Add fields for API keys, recovery codes, etc.</p>
+        <p className="text-muted-foreground text-xs">
+          No custom fields. Add fields for API keys, recovery codes, etc.
+        </p>
       )}
 
       {fields.map((field, i) => (
@@ -71,13 +84,13 @@ function CustomFieldRow({
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <div className="flex gap-1.5 items-start">
+    <div className="flex items-start gap-1.5">
       <Input
         placeholder="Field name"
         value={field.key}
         onChange={(e) => onUpdate({ key: (e.target as HTMLInputElement).value })}
         disabled={disabled}
-        className="flex-1 text-xs h-8"
+        className="h-8 flex-1 text-xs"
         aria-label="Field name"
       />
       <div className="relative flex-2">
@@ -87,14 +100,14 @@ function CustomFieldRow({
           value={field.value}
           onChange={(e) => onUpdate({ value: (e.target as HTMLInputElement).value })}
           disabled={disabled}
-          className="text-xs h-8 pr-8"
+          className="h-8 pr-8 text-xs"
           aria-label="Field value"
         />
         {field.protected && (
           <button
             type="button"
             onClick={() => setRevealed(!revealed)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
             aria-label={revealed ? 'Hide value' : 'Show value'}
             tabIndex={-1}
           >
@@ -111,7 +124,11 @@ function CustomFieldRow({
         onClick={() => onUpdate({ protected: !field.protected })}
         disabled={disabled}
       >
-        {field.protected ? <EyeOff className="h-3 w-3 text-amber-500" /> : <Eye className="h-3 w-3" />}
+        {field.protected ? (
+          <EyeOff className="h-3 w-3 text-amber-500" />
+        ) : (
+          <Eye className="h-3 w-3" />
+        )}
       </Button>
       <Button
         type="button"
@@ -122,7 +139,7 @@ function CustomFieldRow({
         onClick={onRemove}
         disabled={disabled}
       >
-        <Trash2 className="h-3 w-3 text-destructive" />
+        <Trash2 className="text-destructive h-3 w-3" />
       </Button>
     </div>
   );
