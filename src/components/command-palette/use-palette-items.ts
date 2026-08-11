@@ -10,6 +10,7 @@ import {
   HeartPulse,
   Settings,
   KeyRound,
+  Hash,
 } from 'lucide-react';
 import { useVaultStore, useUIStore } from '@/components/providers';
 import { formatBinding } from '@/components/settings/shortcut-settings';
@@ -51,6 +52,16 @@ export function usePaletteItems(enabled: boolean, onClose: () => void): PaletteI
           shortcut: shortcuts?.newNote ? formatBinding(shortcuts.newNote) : 'Alt+Shift+N',
           action: () => {
             router.push('/vault/new?tab=note');
+            onClose();
+          },
+          section: 'actions',
+        },
+        {
+          id: 'new-pin',
+          label: 'New PIN',
+          icon: Hash,
+          action: () => {
+            router.push('/vault/new?tab=pin');
             onClose();
           },
           section: 'actions',

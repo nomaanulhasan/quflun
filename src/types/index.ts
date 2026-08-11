@@ -9,13 +9,13 @@
 export interface VaultEntry {
   /** RFC 4122 UUID */
   uuid: string;
-  /** Entry type: password credential or secure note */
-  type: 'password' | 'note';
+  /** Entry type: password credential, secure note, or application PIN */
+  type: 'password' | 'note' | 'pin';
   /** Entry title, 1–256 chars */
   title: string;
   /** Username, 0–256 chars */
   username: string;
-  /** Password value, 1–10,000 chars (password entries) */
+  /** Password value, 1–10,000 chars (password entries) or PIN value (pin entries) */
   password: string;
   /** URL, 0–2,048 chars */
   url: string;
@@ -78,11 +78,23 @@ export interface NoteInput {
 }
 
 /**
+ * Input data for creating or editing an application PIN.
+ */
+export interface PinInput {
+  title: string;
+  pin: string;
+  notes?: string;
+  category?: string;
+  tags?: string[];
+  favorite?: boolean;
+}
+
+/**
  * Lightweight entry representation for list views (no password exposed).
  */
 export interface EntryListItem {
   uuid: string;
-  type: 'password' | 'note';
+  type: 'password' | 'note' | 'pin';
   title: string;
   username: string;
   url: string;
@@ -90,7 +102,7 @@ export interface EntryListItem {
   tags: string[];
   favorite: boolean;
   modifiedAt: string;
-  /** Password strength indicator for card display */
+  /** Password strength indicator for card display (null for notes and PINs) */
   passwordStrength: 'weak' | 'fair' | 'strong' | null;
 }
 

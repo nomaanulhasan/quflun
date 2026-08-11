@@ -64,11 +64,13 @@ export function OpenLinkAction({ url, disabled }: OpenLinkActionProps) {
 /**
  * Check if a URL string is plausibly valid.
  * Accepts urls with or without protocol.
+ * Blocks dangerous protocols (javascript:, data:, vbscript:).
  */
 function isValidUrl(url: string): boolean {
   try {
-    new URL(normalizeUrl(url));
-    return true;
+    const normalized = normalizeUrl(url);
+    const parsed = new URL(normalized);
+    return /^(https?|ftp):$/i.test(parsed.protocol);
   } catch {
     return false;
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useUIStore } from '@/components/providers';
+import { Select } from '@/components/ui/select';
 import { SettingsCard } from './settings-card';
 
 const REMINDER_OPTIONS = [
@@ -17,26 +18,19 @@ export function BackupSettings() {
 
   return (
     <SettingsCard title="Backup" description="Regular backups are strongly recommended.">
-      <div className="space-y-2">
-        <label htmlFor="backup-reminder" className="text-sm font-medium">
-          Reminder interval
-        </label>
-        <select
-          id="backup-reminder"
-          value={settings.backupReminderDays}
-          onChange={(e) => updateSettings({ backupReminderDays: Number(e.target.value) })}
-          className="border-input bg-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-        >
-          {REMINDER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <p className="text-muted-foreground text-xs">
-          Export your vault regularly using KDBX format for safe backup.
-        </p>
-      </div>
+      <Select
+        id="backup-reminder"
+        label="Reminder interval"
+        description="Export your vault regularly using KDBX format for safe backup."
+        value={settings.backupReminderDays}
+        onChange={(e) => updateSettings({ backupReminderDays: Number(e.target.value) })}
+      >
+        {REMINDER_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </Select>
     </SettingsCard>
   );
 }

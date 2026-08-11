@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { FolderOpen, Star, Search, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/common/page-header';
 import { EmptyState } from '@/components/common/empty-state';
 import { ScrollFade } from '@/components/common/scroll-fade';
@@ -152,16 +153,12 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
             title="Vault"
             subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
           />
-          <button
-            type="button"
-            onClick={onNew}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-          >
+          <Button onClick={onNew}>
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>
               Add New <span className="hidden sm:inline">Entry</span>
             </span>
-          </button>
+          </Button>
         </div>
         <VaultSearchBar query={query} onChange={setQuery} />
         <VaultFilters
@@ -232,15 +229,15 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
                 />
               ))}
               {!hasMore && (
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
                   onClick={onNew}
-                  className="border-border text-muted-foreground hover:border-primary/40 hover:bg-accent/50 hover:text-foreground focus-visible:ring-ring flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  className="border-border text-muted-foreground hover:border-primary/40 hover:bg-accent/50 hover:text-foreground flex h-auto cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6"
                   aria-label="Add new entry"
                 >
                   <Plus className="h-6 w-6" aria-hidden="true" />
                   <span className="text-sm font-medium">New Entry</span>
-                </button>
+                </Button>
               )}
             </div>
             {hasMore && <div ref={sentinelRef} className="h-1" aria-hidden="true" />}

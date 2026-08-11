@@ -4,7 +4,7 @@ import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 
 export interface SearchableEntry {
   uuid: string;
-  type: 'password' | 'note';
+  type: 'password' | 'note' | 'pin';
   title: string;
   username: string;
   url: string;

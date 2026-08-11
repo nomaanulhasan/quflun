@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { Paperclip, Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import type { AttachmentMeta } from '@/types';
 
 interface AttachmentsEditorProps {
@@ -42,7 +43,7 @@ export function AttachmentsEditor({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Attachments</label>
+        <Label>Attachments</Label>
         <Button
           type="button"
           variant="ghost"
@@ -80,7 +81,7 @@ export function AttachmentsEditor({
           <Button
             type="button"
             variant="ghost"
-            size="icon-xs"
+            size="icon-sm"
             title="Download"
             aria-label={`Download ${att.key}`}
             onClick={() => onDownload(att.key)}
@@ -91,7 +92,7 @@ export function AttachmentsEditor({
           <Button
             type="button"
             variant="ghost"
-            size="icon-xs"
+            size="icon-sm"
             title="Remove"
             aria-label={`Remove ${att.key}`}
             onClick={() => onRemove(att.key)}

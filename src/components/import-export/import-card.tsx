@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PasswordInput } from '@/components/ui/password-input';
+import { FormField } from '@/components/ui/form-field';
 import { FilePicker } from '@/components/forms/file-picker';
 import { FormError } from '@/components/ui/form-error';
 import { SettingsCard } from '@/components/settings/settings-card';
@@ -75,11 +75,13 @@ export function ImportCard({ onImportKdbx, onImportCsv }: ImportCardProps) {
           onError={setError}
         />
         {isKdbx && (
-          <PasswordInput
+          <FormField
             id="import-password"
+            type="password"
+            label="Import file password"
             value={password}
             onChange={setPassword}
-            placeholder="Import file password"
+            placeholder="Enter password for the KDBX file"
             disabled={loading}
           />
         )}

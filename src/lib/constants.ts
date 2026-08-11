@@ -81,6 +81,14 @@ export const PASSWORD_GEN_DEFAULT_LENGTH = 20;
 /** Maximum search query length (characters) */
 export const SEARCH_MAX_QUERY_LENGTH = 128;
 
+// ─── PIN ───────────────────────────────────────────────────────────────────────
+
+/** Minimum PIN length (digits) */
+export const PIN_MIN_LENGTH = 4;
+
+/** Maximum PIN length (digits) */
+export const PIN_MAX_LENGTH = 12;
+
 // ─── Master Password ───────────────────────────────────────────────────────────
 
 /** Minimum master password length (characters) */

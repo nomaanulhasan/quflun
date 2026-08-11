@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - Application PIN Support & Form Architecture
+
+### Added
+
+- Application PIN entry type for safely storing 4–12 digit PINs without false weak-password warnings
+- All 6 vault forms now use `react-hook-form` + `zodResolver` for declarative validation
+- `FormField` UI component renders label + input + description + error for all input types
+- `pinInputSchema` Zod schema for PIN validation (digits-only, length bounds)
+- New "PIN" tab on the entry creation page (`/vault/new?tab=pin`)
+- Edit PIN form with copy-to-clipboard support
+- PIN entries excluded from password health scoring
+- "New PIN" action in command palette
+- PIN indicator with copy button on vault list entry cards
+- Declarative `FormRenderer` component — renders forms from field descriptor arrays
+- `FormField` universal input renderer — handles label, input, description, error for all input types
+- `useFormSubmit` hook for shared form submission state management
+- `Textarea` UI primitive (shadcn-style, matching `Input`)
+- `Slider` UI primitive with built-in label and description
+- `Select` UI primitive with built-in label and description
+- `Checkbox` UI primitive (shadcn-style)
+- `StatCard` UI primitive for numeric value + label displays
+- `TabButton` UI primitive for tab-style toggles
+- Typography primitives (`H1`, `H2`, `H3`, `Text`, `Muted`, `Small`, `Span`)
+- `totalPins` field in `PasswordHealthSummary` — Vault Health now shows PIN count separately
+- Code quality steering file (`.kiro/steering/code-quality.md`)
+
+### Changed
+
+- **Merged add/edit forms into unified components** — `EntryForm`, `NoteForm`, `PinForm` each handle both create and edit via an optional `entry` prop (6 files → 3 files)
+- **Rebuilt `FieldRenderer`** — takes a field config array + react-hook-form's `watch`/`setValue`/`errors` and renders all fields declaratively (no repeated `<FormField>` calls)
+- Refactored all 6 vault forms to declarative field-descriptor pattern using `FormRenderer`
+- Extracted shared validation helpers (`validateTitle`, `validateTags`, `validatePinValue`) in VaultEngine
+- Vault Health page shows 3-column grid: Passwords, PINs, Notes
+- `Slider` and `Select` are now self-labeling (accept `label`/`description` props)
+- Extracted `TabButton` from password-health page into reusable UI component
+- Replaced inline stat card divs with `StatCard` in health pages
+- Replaced `<p>` tags with `Muted`/`Small`/`Text` typography primitives across lock-screen, create-vault-form, entry-editor-wrapper, health-result
+- `PageHeader` uses `H1` and `Span` typography
+- `SettingsCard` uses `H2` and `Small` typography
+- `PasswordField` now composes `PasswordInput` internally (no duplicated show/hide logic)
+- `FavoriteToggle` and `CharsetToggle` use `Checkbox` UI primitive
+- `generator-options` uses `Input` with `type="number"` instead of raw `<input>`
+
+### Security
+
+- Fixed XSS via `javascript:` protocol in URL fields — now only `http(s)://` and `ftp://` URLs can be opened
+- Added protocol allowlist validation to `OpenLinkAction` component
+
+### Fixed
+
+- "Open URL" now opens in system browser instead of PWA webview (removed window features that caused popup behavior)
+
+### Removed
+
+- `FormRenderer` component (superseded by react-hook-form + `FormField`)
+- `useFormSubmit` hook (replaced by react-hook-form's `isSubmitting` + `handleSubmit`)
+- Redundant `TextField`, `TextareaField`, `PinField` wrapper components
+- Manual imperative form validation (replaced by Zod schemas)
+- Eliminated duplicated textarea CSS, label patterns, and submit boilerplate across forms
+
 ## [1.5.2] - Responsive UX & Developer Tooling
 
 ### Added
