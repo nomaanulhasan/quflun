@@ -16,6 +16,15 @@ import { CopyAction, OpenLinkAction } from '@/components/common/field-actions';
 import { useCopyAction } from '@/hooks/use-copy-action';
 import { useVaultStore } from '@/components/providers';
 import { entryInputSchema, type EntryFormData } from '@/lib/validators/entry-schemas';
+import {
+  TITLE_MAX_LENGTH,
+  USERNAME_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  URL_MAX_LENGTH,
+  NOTES_MAX_LENGTH,
+  TAG_MAX_LENGTH,
+  MAX_TAGS_PER_ENTRY,
+} from '@/lib/constants';
 import type { VaultEntry, CustomField, AttachmentMeta } from '@/types';
 
 interface EntryFormProps {
@@ -57,11 +66,19 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
   const url = watch('url');
 
   const fields: FieldConfig[] = [
-    { name: 'title', label: 'Title', required: true, placeholder: 'e.g. GitHub', autoFocus: true },
+    {
+      name: 'title',
+      label: 'Title',
+      required: true,
+      placeholder: 'e.g. GitHub',
+      autoFocus: true,
+      maxLength: TITLE_MAX_LENGTH,
+    },
     {
       name: 'username',
       label: 'Username',
       placeholder: 'user@example.com',
+      maxLength: USERNAME_MAX_LENGTH,
       trailing: isEdit ? (
         <CopyAction
           copied={isCopied('username')}
@@ -80,6 +97,7 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
       label: 'Password',
       required: true,
       placeholder: 'Enter or generate',
+      maxLength: PASSWORD_MAX_LENGTH,
       trailing: (
         <div className="flex gap-0.5">
           {isEdit && (
@@ -101,6 +119,7 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
       name: 'url',
       label: 'URL',
       placeholder: 'https://example.com',
+      maxLength: URL_MAX_LENGTH,
       trailing: isEdit ? (
         <>
           <CopyAction
@@ -116,7 +135,13 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
         </>
       ) : undefined,
     },
-    { name: 'notes', type: 'textarea', label: 'Notes', placeholder: 'Optional notes...' },
+    {
+      name: 'notes',
+      type: 'textarea',
+      label: 'Notes',
+      placeholder: 'Optional notes...',
+      maxLength: NOTES_MAX_LENGTH,
+    },
   ];
 
   async function onSubmit(data: EntryFormData) {
@@ -156,9 +181,16 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
         <Label>Tags</Label>
         <TagsInput
           value={watch('tags')}
-          onChange={(v) => setValue('tags', v)}
+          onChange={(v) => setValue('tags', v, { shouldValidate: true })}
           disabled={isSubmitting}
+          maxTags={MAX_TAGS_PER_ENTRY}
+          maxTagLength={TAG_MAX_LENGTH}
         />
+        {errors.tags && (
+          <p className="text-destructive text-xs">
+            {errors.tags.message || errors.tags.root?.message || 'Invalid tags.'}
+          </p>
+        )}
       </div>
       <CustomFieldsEditor
         fields={customFields}

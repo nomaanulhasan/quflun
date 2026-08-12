@@ -42,6 +42,7 @@ interface TextareaFieldProps extends BaseFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   rows?: number;
+  maxLength?: number;
 }
 
 interface CheckboxFieldProps extends BaseFieldProps {
@@ -95,6 +96,7 @@ function FormField(props: FormFieldProps) {
           placeholder={props.placeholder}
           disabled={disabled}
           rows={props.rows ?? 3}
+          maxLength={props.maxLength}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : description ? `${id}-desc` : undefined}
         />

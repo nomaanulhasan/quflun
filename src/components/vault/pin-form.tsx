@@ -13,7 +13,14 @@ import { CopyAction } from '@/components/common/field-actions';
 import { useCopyAction } from '@/hooks/use-copy-action';
 import { useVaultStore } from '@/components/providers';
 import { pinInputSchema, type PinFormData } from '@/lib/validators/entry-schemas';
-import { PIN_MIN_LENGTH, PIN_MAX_LENGTH } from '@/lib/constants';
+import {
+  PIN_MIN_LENGTH,
+  PIN_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
+  NOTES_MAX_LENGTH,
+  TAG_MAX_LENGTH,
+  MAX_TAGS_PER_ENTRY,
+} from '@/lib/constants';
 import type { VaultEntry } from '@/types';
 
 interface PinFormProps {
@@ -59,6 +66,7 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
       required: true,
       placeholder: 'e.g. Banking App PIN',
       autoFocus: true,
+      maxLength: TITLE_MAX_LENGTH,
     },
     {
       name: 'pin',
@@ -86,6 +94,7 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
       type: 'textarea',
       label: 'Notes',
       placeholder: 'Optional notes (e.g. which app this PIN is for)...',
+      maxLength: NOTES_MAX_LENGTH,
     },
   ];
 
@@ -123,9 +132,16 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
         <Label>Tags</Label>
         <TagsInput
           value={watch('tags')}
-          onChange={(v) => setValue('tags', v)}
+          onChange={(v) => setValue('tags', v, { shouldValidate: true })}
           disabled={isSubmitting}
+          maxTags={MAX_TAGS_PER_ENTRY}
+          maxTagLength={TAG_MAX_LENGTH}
         />
+        {errors.tags && (
+          <p className="text-destructive text-xs">
+            {errors.tags.message || errors.tags.root?.message || 'Invalid tags.'}
+          </p>
+        )}
       </div>
       <FavoriteToggle
         checked={watch('favorite')}

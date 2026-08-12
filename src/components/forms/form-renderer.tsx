@@ -83,6 +83,7 @@ export function FieldRenderer({
               error={error}
               description={field.description}
               rows={field.rows}
+              maxLength={field.maxLength}
             />
           );
         }

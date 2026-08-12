@@ -11,6 +11,12 @@ import { TagsInput } from '@/components/forms/tags-input';
 import { Label } from '@/components/ui/label';
 import { useVaultStore } from '@/components/providers';
 import { noteInputSchema, type NoteFormData } from '@/lib/validators/entry-schemas';
+import {
+  TITLE_MAX_LENGTH,
+  NOTE_BODY_MAX_LENGTH,
+  TAG_MAX_LENGTH,
+  MAX_TAGS_PER_ENTRY,
+} from '@/lib/constants';
 import type { VaultEntry } from '@/types';
 
 interface NoteFormProps {
@@ -20,7 +26,14 @@ interface NoteFormProps {
 }
 
 const NOTE_FIELDS: FieldConfig[] = [
-  { name: 'title', label: 'Title', required: true, placeholder: 'e.g. SSH Keys', autoFocus: true },
+  {
+    name: 'title',
+    label: 'Title',
+    required: true,
+    placeholder: 'e.g. SSH Keys',
+    autoFocus: true,
+    maxLength: TITLE_MAX_LENGTH,
+  },
   {
     name: 'body',
     type: 'textarea',
@@ -28,6 +41,7 @@ const NOTE_FIELDS: FieldConfig[] = [
     required: true,
     placeholder: 'Enter your secure note...',
     rows: 8,
+    maxLength: NOTE_BODY_MAX_LENGTH,
   },
 ];
 
@@ -86,9 +100,16 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
         <Label>Tags</Label>
         <TagsInput
           value={watch('tags')}
-          onChange={(v) => setValue('tags', v)}
+          onChange={(v) => setValue('tags', v, { shouldValidate: true })}
           disabled={isSubmitting}
+          maxTags={MAX_TAGS_PER_ENTRY}
+          maxTagLength={TAG_MAX_LENGTH}
         />
+        {errors.tags && (
+          <p className="text-destructive text-xs">
+            {errors.tags.message || errors.tags.root?.message || 'Invalid tags.'}
+          </p>
+        )}
       </div>
       <FavoriteToggle
         checked={watch('favorite')}
