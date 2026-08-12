@@ -1,9 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useVaultStore } from '@/components/providers';
 import { PageHeader } from '@/components/common/page-header';
-import { EditEntryForm } from '@/components/vault/edit-entry-form';
-import { EditNoteForm } from '@/components/vault/edit-note-form';
+import { EntryForm } from '@/components/vault/entry-form';
+import { NoteForm } from '@/components/vault/note-form';
+import { PinForm } from '@/components/vault/pin-form';
+import { DeleteDialog } from '@/components/vault/delete-dialog';
+import { Muted, Text } from '@/components/ui/typography';
 import type { VaultEntry } from '@/types';
 
 interface EntryEditorWrapperProps {
@@ -14,6 +18,7 @@ interface EntryEditorWrapperProps {
 export function EntryEditorWrapper({ entryId, onBack }: EntryEditorWrapperProps) {
   const [entry, setEntry] = useState<VaultEntry | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const deleteEntry = useVaultStore((s) => s.deleteEntry);
 
   useEffect(() => {
     (async () => {
@@ -27,16 +32,28 @@ export function EntryEditorWrapper({ entryId, onBack }: EntryEditorWrapperProps)
     })();
   }, [entryId]);
 
-  if (error) return <p className="text-destructive py-8 text-center text-sm">{error}</p>;
-  if (!entry) return <p className="text-muted-foreground text-sm">Loading...</p>;
+  if (error) return <Text className="text-destructive py-8 text-center">{error}</Text>;
+  if (!entry) return <Muted>Loading...</Muted>;
+
+  const titleMap = { note: 'Edit Note', pin: 'Edit PIN', password: 'Edit Entry' } as const;
+
+  async function handleDelete() {
+    await deleteEntry(entry!.uuid);
+    onBack();
+  }
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
-      <PageHeader title={entry.type === 'note' ? 'Edit Note' : 'Edit Entry'} />
+      <div className="flex items-center justify-between">
+        <PageHeader title={titleMap[entry.type]} />
+        <DeleteDialog title={entry.title} onConfirm={handleDelete} />
+      </div>
       {entry.type === 'note' ? (
-        <EditNoteForm entry={entry} onBack={onBack} />
+        <NoteForm entry={entry} onSuccess={onBack} onBack={onBack} />
+      ) : entry.type === 'pin' ? (
+        <PinForm entry={entry} onSuccess={onBack} onBack={onBack} />
       ) : (
-        <EditEntryForm entry={entry} onBack={onBack} />
+        <EntryForm entry={entry} onSuccess={onBack} onBack={onBack} />
       )}
     </div>
   );

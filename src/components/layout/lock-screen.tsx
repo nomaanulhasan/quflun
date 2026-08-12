@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PasswordInput } from '@/components/ui/password-input';
+import { FormField } from '@/components/ui/form-field';
+import { H1, Muted, Small } from '@/components/ui/typography';
 import { FormError } from '@/components/ui/form-error';
 import { useVaultStore } from '@/components/providers';
 
@@ -43,38 +44,28 @@ export function LockScreen() {
           <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
             <Lock className="text-primary h-6 w-6" />
           </div>
-          <h1 className="text-xl font-semibold">Vault Locked</h1>
-          {vaultName && <p className="text-muted-foreground text-sm">{vaultName}</p>}
+          <H1>Vault Locked</H1>
+          {vaultName && <Muted>{vaultName}</Muted>}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="unlock-password" className="text-sm font-medium">
-              Master Password
-            </label>
-            <PasswordInput
-              id="unlock-password"
-              value={password}
-              onChange={setPassword}
-              placeholder="Enter master password"
-              disabled={loading || isCooldown}
-              autoFocus
-              aria-describedby={error ? 'unlock-error' : undefined}
-            />
-          </div>
+          <FormField
+            id="unlock-password"
+            type="password"
+            label="Master Password"
+            value={password}
+            onChange={setPassword}
+            placeholder="Enter master password"
+            disabled={loading || isCooldown}
+            autoFocus
+          />
 
           <FormError message={error} id="unlock-error" />
 
-          {isCooldown && (
-            <p className="text-muted-foreground text-sm">
-              Too many failed attempts. Please wait before trying again.
-            </p>
-          )}
+          {isCooldown && <Muted>Too many failed attempts. Please wait before trying again.</Muted>}
 
           {bruteForce.failedAttempts > 0 && !isCooldown && (
-            <p className="text-muted-foreground text-xs">
-              {5 - bruteForce.failedAttempts} attempts remaining
-            </p>
+            <Small>{5 - bruteForce.failedAttempts} attempts remaining</Small>
           )}
 
           <Button type="submit" className="w-full" disabled={!password || loading || isCooldown}>

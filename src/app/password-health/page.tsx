@@ -11,6 +11,9 @@ import { HealthScore } from '@/components/password-health/health-score';
 import { HealthSummary } from '@/components/password-health/health-summary';
 import { HealthIssuesList } from '@/components/password-health/health-issues-list';
 import { VaultIntegrity } from '@/components/password-health/vault-integrity';
+import { StatCard } from '@/components/ui/stat-card';
+import { TabButton } from '@/components/ui/tab-button';
+import { Muted, Small } from '@/components/ui/typography';
 import type { PasswordHealthReport } from '@/lib/vault-engine';
 
 type Tab = 'credentials' | 'integrity';
@@ -79,22 +82,17 @@ export default function PasswordHealthPage() {
             <div className="flex items-center justify-center py-12">
               <div className="space-y-2 text-center">
                 <ShieldAlert className="text-muted-foreground mx-auto h-8 w-8 animate-pulse" />
-                <p className="text-muted-foreground text-sm">Analyzing vault...</p>
+                <Muted>Analyzing vault...</Muted>
               </div>
             </div>
           ) : report ? (
             <div className="space-y-5">
               <HealthScore score={report.summary.score} />
 
-              <div className="grid grid-cols-2 gap-3 text-center text-sm">
-                <div className="bg-muted/50 rounded-lg p-2.5">
-                  <p className="text-lg font-semibold">{report.summary.totalPasswords}</p>
-                  <p className="text-muted-foreground text-xs">Passwords</p>
-                </div>
-                <div className="bg-muted/50 rounded-lg p-2.5">
-                  <p className="text-lg font-semibold">{report.summary.totalNotes}</p>
-                  <p className="text-muted-foreground text-xs">Notes</p>
-                </div>
+              <div className="grid grid-cols-3 gap-3 text-sm">
+                <StatCard value={report.summary.totalPasswords} label="Passwords" />
+                <StatCard value={report.summary.totalPins} label="PINs" />
+                <StatCard value={report.summary.totalNotes} label="Notes" />
               </div>
 
               <HealthSummary summary={report.summary} onFilter={setFilter} />
@@ -106,45 +104,14 @@ export default function PasswordHealthPage() {
                 onOpenEntry={handleOpenEntry}
               />
 
-              <p className="text-muted-foreground text-center text-[10px]">
+              <Small className="text-center text-[10px]">
                 Analyzed {new Date(report.timestamp).toLocaleString()}
-              </p>
+              </Small>
             </div>
           ) : null)}
 
         {tab === 'integrity' && <VaultIntegrity />}
       </div>
     </Shell>
-  );
-}
-
-// ─── Tab Button ────────────────────────────────────────────────────────────────
-
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      className={`focus-visible:ring-ring flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none ${
-        active
-          ? 'bg-background text-foreground shadow-sm'
-          : 'text-muted-foreground hover:text-foreground'
-      }`}
-    >
-      {icon}
-      {label}
-    </button>
   );
 }

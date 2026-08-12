@@ -10,6 +10,7 @@ interface TagsInputProps {
   placeholder?: string;
   disabled?: boolean;
   maxTags?: number;
+  maxTagLength?: number;
 }
 
 export interface TagsInputRef {
@@ -26,21 +27,28 @@ export interface TagsInputRef {
  * - Exposes commitPending() for parent forms to call on submit
  */
 export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsInput(
-  { value, onChange, placeholder = 'Add tag...', disabled = false, maxTags = 20 },
+  {
+    value,
+    onChange,
+    placeholder = 'Add tag...',
+    disabled = false,
+    maxTags = 20,
+    maxTagLength = 64,
+  },
   ref
 ) {
   const [input, setInput] = useState('');
 
   const addTag = useCallback(
     (raw: string) => {
-      const tag = raw.trim();
+      const tag = raw.trim().slice(0, maxTagLength);
       if (!tag) return;
       if (value.includes(tag)) return;
       if (value.length >= maxTags) return;
       onChange([...value, tag]);
       setInput('');
     },
-    [value, onChange, maxTags]
+    [value, onChange, maxTags, maxTagLength]
   );
 
   const removeTag = useCallback(
@@ -77,15 +85,15 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
 
   return (
     <div className="space-y-1">
-      <div className="border-input bg-background focus-within:ring-ring flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1.5 focus-within:ring-2">
+      <div className="border-input bg-background focus-within:ring-ring flex flex-wrap items-center gap-1.5 overflow-hidden rounded-md border px-2 py-1.5 focus-within:ring-2">
         {value.map((tag) => (
-          <Badge key={tag} variant="secondary" className="gap-1 pr-1 pl-2 text-xs">
-            {tag}
+          <Badge key={tag} variant="secondary" className="max-w-full gap-1 pr-1 pl-2 text-xs">
+            <span className="truncate">{tag}</span>
             <button
               type="button"
               onClick={() => removeTag(tag)}
               disabled={disabled}
-              className="hover:bg-muted-foreground/20 ml-0.5 rounded-sm"
+              className="hover:bg-muted-foreground/20 ml-0.5 shrink-0 rounded-sm"
               aria-label={`Remove tag ${tag}`}
             >
               <X className="h-3 w-3" />
@@ -95,12 +103,13 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value.slice(0, maxTagLength))}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           placeholder={value.length === 0 ? placeholder : ''}
           disabled={disabled || value.length >= maxTags}
-          className="placeholder:text-muted-foreground min-w-[80px] flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
+          maxLength={maxTagLength}
+          className="placeholder:text-muted-foreground min-w-20 flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
           aria-label="Add tag"
         />
       </div>

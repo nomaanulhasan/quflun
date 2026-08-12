@@ -1,5 +1,12 @@
 import * as kdbxweb from 'kdbxweb';
-import type { VaultMeta, EntryInput, EntryListItem, VaultEntry, NoteInput } from '@/types';
+import type {
+  VaultMeta,
+  EntryInput,
+  EntryListItem,
+  VaultEntry,
+  NoteInput,
+  PinInput,
+} from '@/types';
 import type { CryptoAdapter } from '@/lib/crypto';
 import type { StorageAdapter } from '@/lib/storage';
 import type { VaultEngine, BruteForceState, EntryMeta } from './types';
@@ -19,6 +26,8 @@ import {
   MAX_CATEGORIES,
   MAX_TAGS,
   CATEGORY_NAME_MAX_LENGTH,
+  PIN_MIN_LENGTH,
+  PIN_MAX_LENGTH,
 } from '@/lib/constants';
 
 /** Maximum consecutive failed open attempts before requiring file re-selection */
@@ -479,12 +488,7 @@ class VaultEngineImpl implements VaultEngine {
 
     // Validate all fields BEFORE making any changes
     if (data.title !== undefined) {
-      if (!data.title || data.title.length === 0) {
-        throw new Error('Title is required.');
-      }
-      if (data.title.length > TITLE_MAX_LENGTH) {
-        throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
-      }
+      this.validateTitle(data.title);
     }
 
     // C-2 fix: Reject empty password (Requirement 4.5)
@@ -507,14 +511,7 @@ class VaultEngineImpl implements VaultEngine {
       throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
     }
     if (data.tags !== undefined) {
-      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
-        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
-      }
-      for (const tag of data.tags) {
-        if (tag.length > TAG_MAX_LENGTH) {
-          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
-        }
-      }
+      this.validateTags(data.tags);
     }
 
     // C-1 fix: Push history BEFORE modifying fields (snapshot pre-edit state)
@@ -615,7 +612,8 @@ class VaultEngineImpl implements VaultEngine {
         continue;
       }
 
-      const type = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note' ? 'note' : 'password';
+      const typeValue = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE);
+      const type = typeValue === 'note' ? 'note' : typeValue === 'pin' ? 'pin' : 'password';
       const title = this.getStringField(entry, 'Title');
       const username = this.getStringField(entry, 'UserName');
       const url = this.getStringField(entry, 'URL');
@@ -702,12 +700,7 @@ class VaultEngineImpl implements VaultEngine {
 
     // Validate before modifying
     if (data.title !== undefined) {
-      if (!data.title || data.title.length === 0) {
-        throw new Error('Title is required.');
-      }
-      if (data.title.length > TITLE_MAX_LENGTH) {
-        throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
-      }
+      this.validateTitle(data.title);
     }
     if (data.body !== undefined) {
       if (!data.body || data.body.length === 0) {
@@ -718,14 +711,7 @@ class VaultEngineImpl implements VaultEngine {
       }
     }
     if (data.tags !== undefined) {
-      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
-        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
-      }
-      for (const tag of data.tags) {
-        if (tag.length > TAG_MAX_LENGTH) {
-          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
-        }
-      }
+      this.validateTags(data.tags);
     }
 
     // Snapshot pre-edit state for history
@@ -737,6 +723,116 @@ class VaultEngineImpl implements VaultEngine {
     }
     if (data.body !== undefined) {
       entry.fields.set('Notes', data.body);
+    }
+    if (data.tags !== undefined) {
+      entry.tags = [...data.tags];
+    }
+    if (data.favorite !== undefined) {
+      if (data.favorite) {
+        this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
+      } else {
+        this.deleteCustomData(entry, CUSTOM_KEY_FAVORITE);
+      }
+    }
+
+    // Update modification timestamp
+    entry.times.update();
+
+    // Auto-save
+    await this.save();
+
+    return {
+      uuid: entry.uuid.toString(),
+      title: (entry.fields.get('Title') as string) || '',
+      modifiedAt: entry.times.lastModTime?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  // ─── Application PINs ───────────────────────────────────────────────────────
+
+  async addPin(data: PinInput): Promise<EntryMeta> {
+    const db = this.requireUnlockedDb();
+
+    // Validate PIN input
+    this.validatePinInput(data);
+
+    const group = db.getDefaultGroup();
+    const entry = db.createEntry(group);
+
+    // Set fields: title in Title, PIN in Password (encrypted), notes in Notes
+    entry.fields.set('Title', data.title);
+    entry.fields.set('UserName', '');
+    entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(data.pin));
+    entry.fields.set('URL', '');
+    entry.fields.set('Notes', data.notes || '');
+
+    // Tags
+    if (data.tags && data.tags.length > 0) {
+      entry.tags = data.tags.slice(0, MAX_TAGS_PER_ENTRY);
+    }
+
+    // Mark as pin type via customData
+    this.setCustomData(entry, CUSTOM_KEY_TYPE, 'pin');
+
+    // Favorite
+    if (data.favorite) {
+      this.setCustomData(entry, CUSTOM_KEY_FAVORITE, 'true');
+    }
+
+    // Auto-save with rollback
+    try {
+      await this.save();
+    } catch (err) {
+      db.remove(entry);
+      throw err;
+    }
+
+    return {
+      uuid: entry.uuid.toString(),
+      title: data.title,
+      modifiedAt: entry.times.lastModTime?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  async editPin(uuid: string, data: Partial<PinInput>): Promise<EntryMeta> {
+    const db = this.requireUnlockedDb();
+
+    const entry = this.findEntryByUuid(db, uuid);
+    if (!entry) {
+      throw new Error(`Entry not found: ${uuid}`);
+    }
+
+    // Verify this is actually a pin
+    if (this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) !== 'pin') {
+      throw new Error('Entry is not a PIN.');
+    }
+
+    // Validate before modifying
+    if (data.title !== undefined) {
+      this.validateTitle(data.title);
+    }
+    if (data.pin !== undefined) {
+      this.validatePinValue(data.pin);
+    }
+    if (data.notes !== undefined && data.notes.length > NOTES_MAX_LENGTH) {
+      throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
+    }
+    if (data.tags !== undefined) {
+      this.validateTags(data.tags);
+    }
+
+    // Snapshot pre-edit state for history
+    entry.pushHistory();
+
+    // Apply modifications
+    if (data.title !== undefined) {
+      entry.fields.set('Title', data.title);
+    }
+    if (data.pin !== undefined) {
+      entry.fields.set('Password', kdbxweb.ProtectedValue.fromString(data.pin));
+    }
+    if (data.notes !== undefined) {
+      entry.fields.set('Notes', data.notes);
     }
     if (data.tags !== undefined) {
       entry.tags = [...data.tags];
@@ -1068,6 +1164,7 @@ class VaultEngineImpl implements VaultEngine {
     let totalEntries = 0;
     let totalPasswords = 0;
     let totalNotes = 0;
+    let totalPins = 0;
     let weakCount = 0;
     let oldCount = 0;
     let missingUrlCount = 0;
@@ -1078,12 +1175,17 @@ class VaultEngineImpl implements VaultEngine {
       if (recycleBinUuid && entry.parentGroup?.uuid.equals(recycleBinUuid)) continue;
 
       totalEntries++;
-      const type = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note' ? 'note' : 'password';
+      const typeValue = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE);
+      const type = typeValue === 'note' ? 'note' : typeValue === 'pin' ? 'pin' : 'password';
       const title = this.getStringField(entry, 'Title') || 'Untitled';
       const uuid = entry.uuid.toString();
 
       if (type === 'note') {
         totalNotes++;
+        continue;
+      }
+      if (type === 'pin') {
+        totalPins++;
         continue;
       }
 
@@ -1168,6 +1270,7 @@ class VaultEngineImpl implements VaultEngine {
         totalEntries,
         totalPasswords,
         totalNotes,
+        totalPins,
         weakPasswords: weakCount,
         reusedPasswords: reusedCount,
         oldPasswords: oldCount,
@@ -1274,10 +1377,9 @@ class VaultEngineImpl implements VaultEngine {
   }
 
   private mapKdbxEntryToVaultEntry(entry: kdbxweb.KdbxEntry): VaultEntry {
-    const type =
-      this.getCustomDataValue(entry, CUSTOM_KEY_TYPE) === 'note'
-        ? ('note' as const)
-        : ('password' as const);
+    const typeValue = this.getCustomDataValue(entry, CUSTOM_KEY_TYPE);
+    const type: 'password' | 'note' | 'pin' =
+      typeValue === 'note' ? 'note' : typeValue === 'pin' ? 'pin' : 'password';
 
     // M-1 fix: Use getFieldText which handles ProtectedValue for notes correctly
     const password = this.getFieldText(entry, 'Password');
@@ -1332,12 +1434,7 @@ class VaultEngineImpl implements VaultEngine {
   }
 
   private validateEntryInput(data: EntryInput): void {
-    if (!data.title || data.title.length === 0) {
-      throw new Error('Title is required.');
-    }
-    if (data.title.length > TITLE_MAX_LENGTH) {
-      throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
-    }
+    this.validateTitle(data.title);
     if (!data.password || data.password.length === 0) {
       throw new Error('Password is required.');
     }
@@ -1354,24 +1451,12 @@ class VaultEngineImpl implements VaultEngine {
       throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
     }
     if (data.tags) {
-      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
-        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
-      }
-      for (const tag of data.tags) {
-        if (tag.length > TAG_MAX_LENGTH) {
-          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
-        }
-      }
+      this.validateTags(data.tags);
     }
   }
 
   private validateNoteInput(data: NoteInput): void {
-    if (!data.title || data.title.length === 0) {
-      throw new Error('Title is required.');
-    }
-    if (data.title.length > TITLE_MAX_LENGTH) {
-      throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
-    }
+    this.validateTitle(data.title);
     if (!data.body || data.body.length === 0) {
       throw new Error('Body is required.');
     }
@@ -1379,14 +1464,53 @@ class VaultEngineImpl implements VaultEngine {
       throw new Error(`Body must be at most ${NOTE_BODY_MAX_LENGTH} characters.`);
     }
     if (data.tags) {
-      if (data.tags.length > MAX_TAGS_PER_ENTRY) {
-        throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
+      this.validateTags(data.tags);
+    }
+  }
+
+  private validatePinInput(data: PinInput): void {
+    this.validateTitle(data.title);
+    this.validatePinValue(data.pin);
+    if (data.notes && data.notes.length > NOTES_MAX_LENGTH) {
+      throw new Error(`Notes must be at most ${NOTES_MAX_LENGTH} characters.`);
+    }
+    if (data.tags) {
+      this.validateTags(data.tags);
+    }
+  }
+
+  /** Shared: validate a title field (required, max length) */
+  private validateTitle(title: string | undefined): void {
+    if (!title || title.length === 0) {
+      throw new Error('Title is required.');
+    }
+    if (title.length > TITLE_MAX_LENGTH) {
+      throw new Error(`Title must be at most ${TITLE_MAX_LENGTH} characters.`);
+    }
+  }
+
+  /** Shared: validate a tags array (count + individual length) */
+  private validateTags(tags: string[]): void {
+    if (tags.length > MAX_TAGS_PER_ENTRY) {
+      throw new Error(`Maximum ${MAX_TAGS_PER_ENTRY} tags allowed.`);
+    }
+    for (const tag of tags) {
+      if (tag.length > TAG_MAX_LENGTH) {
+        throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
       }
-      for (const tag of data.tags) {
-        if (tag.length > TAG_MAX_LENGTH) {
-          throw new Error(`Each tag must be at most ${TAG_MAX_LENGTH} characters.`);
-        }
-      }
+    }
+  }
+
+  /** Shared: validate a PIN value (required, digits only, length bounds) */
+  private validatePinValue(pin: string | undefined): void {
+    if (!pin || pin.length === 0) {
+      throw new Error('PIN is required.');
+    }
+    if (!/^\d+$/.test(pin)) {
+      throw new Error('PIN must contain only digits.');
+    }
+    if (pin.length < PIN_MIN_LENGTH || pin.length > PIN_MAX_LENGTH) {
+      throw new Error(`PIN must be ${PIN_MIN_LENGTH}–${PIN_MAX_LENGTH} digits.`);
     }
   }
 

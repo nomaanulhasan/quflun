@@ -20,6 +20,7 @@ export interface PasswordHealthSummary {
   totalEntries: number;
   totalPasswords: number;
   totalNotes: number;
+  totalPins: number;
   weakPasswords: number;
   reusedPasswords: number;
   oldPasswords: number;

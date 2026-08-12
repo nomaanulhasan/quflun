@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Plus, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import type { CustomField } from '@/types';
 
 interface CustomFieldsEditorProps {
@@ -37,7 +38,7 @@ export function CustomFieldsEditor({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Custom Fields</label>
+        <Label>Custom Fields</Label>
         <Button
           type="button"
           variant="ghost"
@@ -111,35 +112,21 @@ function CustomFieldRow({
             aria-label={revealed ? 'Hide value' : 'Show value'}
             tabIndex={-1}
           >
-            {revealed ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+            {revealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         )}
       </div>
+
       <Button
         type="button"
         variant="ghost"
-        size="icon-xs"
-        title={field.protected ? 'Make plain text' : 'Make secret'}
-        aria-label={field.protected ? 'Make plain text' : 'Make secret'}
-        onClick={() => onUpdate({ protected: !field.protected })}
-        disabled={disabled}
-      >
-        {field.protected ? (
-          <EyeOff className="h-3 w-3 text-amber-500" />
-        ) : (
-          <Eye className="h-3 w-3" />
-        )}
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-xs"
+        size="icon"
         title="Remove field"
         aria-label="Remove field"
         onClick={onRemove}
         disabled={disabled}
       >
-        <Trash2 className="text-destructive h-3 w-3" />
+        <Trash2 className="text-destructive h-2 w-2" />
       </Button>
     </div>
   );

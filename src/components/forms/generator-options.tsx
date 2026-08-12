@@ -1,5 +1,7 @@
 'use client';
 
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { CharsetToggle } from './charset-toggle';
 import type { PasswordGeneratorConfig } from '@/lib/password-generator';
 
@@ -22,17 +24,17 @@ export function GeneratorOptions({ config, onChange }: GeneratorOptionsProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <label htmlFor="gen-length" className="shrink-0 text-sm">
+        <Label htmlFor="gen-length" className="shrink-0">
           Length
-        </label>
-        <input
+        </Label>
+        <Input
           id="gen-length"
           type="number"
           min={4}
           max={128}
           value={config.length}
-          onChange={(e) => handleLengthChange(e.target.value)}
-          className="border-input bg-background focus:ring-ring w-16 rounded-md border px-2 py-1 text-center text-sm focus:ring-2 focus:outline-none"
+          onChange={(e) => handleLengthChange((e.target as HTMLInputElement).value)}
+          className="w-16 text-center"
         />
       </div>
       <CharsetToggle

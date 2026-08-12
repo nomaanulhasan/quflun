@@ -1,4 +1,6 @@
 import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { H3, Text, Small } from '@/components/ui/typography';
+import { StatCard } from '@/components/ui/stat-card';
 import type { HealthCheckResult } from '@/lib/vault-engine';
 
 interface HealthResultProps {
@@ -26,17 +28,17 @@ export function HealthResult({ result }: HealthResultProps) {
     <div className="border-border bg-card space-y-4 rounded-lg border p-5">
       <div className="flex items-center gap-3">
         {icon}
-        <h2 className="text-base font-semibold">{label}</h2>
+        <H3>{label}</H3>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-sm">
-        <Stat label="Entries" value={result.entryCount} />
-        <Stat label="Groups" value={result.groupCount} />
+        <StatCard label="Entries" value={result.entryCount} />
+        <StatCard label="Categories" value={result.groupCount} />
       </div>
 
       {result.errors.length > 0 && (
         <div className="space-y-1">
-          <p className="text-destructive text-sm font-medium">Errors:</p>
+          <Text className="text-destructive font-medium">Errors:</Text>
           <ul className="text-muted-foreground ml-4 list-disc space-y-0.5 text-xs">
             {result.errors.map((err, i) => (
               <li key={i}>{err}</li>
@@ -46,23 +48,12 @@ export function HealthResult({ result }: HealthResultProps) {
       )}
 
       {result.status === 'corrupted' && (
-        <p className="text-xs text-amber-700 dark:text-amber-400">
+        <Small className="text-amber-700 dark:text-amber-400">
           Export a backup immediately. Some data may be at risk.
-        </p>
+        </Small>
       )}
 
-      <p className="text-muted-foreground text-xs">
-        Checked: {new Date(result.timestamp).toLocaleString()}
-      </p>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="bg-muted/50 rounded-md p-2 text-center">
-      <p className="text-lg font-semibold">{value}</p>
-      <p className="text-muted-foreground text-xs">{label}</p>
+      <Small>Checked: {new Date(result.timestamp).toLocaleString()}</Small>
     </div>
   );
 }

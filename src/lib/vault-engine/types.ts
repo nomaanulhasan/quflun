@@ -1,4 +1,11 @@
-import type { VaultMeta, EntryInput, EntryListItem, VaultEntry, NoteInput } from '@/types';
+import type {
+  VaultMeta,
+  EntryInput,
+  EntryListItem,
+  VaultEntry,
+  NoteInput,
+  PinInput,
+} from '@/types';
 
 /** The possible states of the Vault Engine */
 export type VaultStatus = 'locked' | 'unlocked' | 'creating' | 'opening' | 'unlocking' | 'saving';
@@ -47,6 +54,10 @@ export interface VaultEngine {
   // Secure Notes (Task 4.3)
   addNote(data: NoteInput): Promise<EntryMeta>;
   editNote(uuid: string, data: Partial<NoteInput>): Promise<EntryMeta>;
+
+  // Application PINs
+  addPin(data: PinInput): Promise<EntryMeta>;
+  editPin(uuid: string, data: Partial<PinInput>): Promise<EntryMeta>;
 
   // Organization — Categories (Task 4.4)
   // Categories are KDBX groups under the root group

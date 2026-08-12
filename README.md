@@ -27,6 +27,7 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **AES-256 / ChaCha20 encryption** — via kdbxweb (MIT, used by KeeWeb)
 - **Password entries** — title, username, password, URL, notes, tags, categories, favorites
 - **Secure notes** — encrypted text stored alongside passwords
+- **Application PINs** — safely store 4–12 digit PINs without false weak-password warnings
 - **Password generator** — cryptographically secure, configurable length and character sets
 - **Search** — case-insensitive substring matching across all fields
 - **Import/Export** — KDBX and CSV (RFC 4180) formats

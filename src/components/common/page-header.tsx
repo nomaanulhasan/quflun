@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { H1, Span } from '@/components/ui/typography';
 
 interface PageHeaderProps {
   title: string;
@@ -12,8 +13,8 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, className }: PageHeaderProps) {
   return (
     <div className={cn('flex items-center justify-between gap-4', className)}>
-      <h1 className="text-xl font-semibold">{title}</h1>
-      {subtitle && <span className="text-muted-foreground text-sm">{subtitle}</span>}
+      <H1>{title}</H1>
+      {subtitle && <Span className="text-muted-foreground">{subtitle}</Span>}
     </div>
   );
 }

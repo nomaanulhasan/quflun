@@ -12,7 +12,7 @@
  * The store provides reactive UI bindings.
  */
 import { create } from 'zustand';
-import type { EntryInput, EntryListItem, NoteInput, VaultMeta } from '@/types';
+import type { EntryInput, EntryListItem, NoteInput, PinInput, VaultMeta } from '@/types';
 import type { VaultEngine, EntryMeta, BruteForceState } from '@/lib/vault-engine';
 
 // ─── State Types ───────────────────────────────────────────────────────────────
@@ -41,6 +41,10 @@ export interface VaultState {
   // Actions — notes
   addNote: (data: NoteInput) => Promise<EntryMeta>;
   editNote: (uuid: string, data: Partial<NoteInput>) => Promise<EntryMeta>;
+
+  // Actions — PINs
+  addPin: (data: PinInput) => Promise<EntryMeta>;
+  editPin: (uuid: string, data: Partial<PinInput>) => Promise<EntryMeta>;
 
   // Actions — organization
   setCategory: (entryUuid: string, category: string | null) => Promise<void>;
@@ -173,6 +177,20 @@ export function createVaultStore(engine: VaultEngine) {
 
       async editNote(uuid: string, data: Partial<NoteInput>) {
         const meta = await engine.editNote(uuid, data);
+        refreshEntries();
+        return meta;
+      },
+
+      // ─── PINs ──────────────────────────────────────────────────────────
+
+      async addPin(data: PinInput) {
+        const meta = await engine.addPin(data);
+        refreshEntries();
+        return meta;
+      },
+
+      async editPin(uuid: string, data: Partial<PinInput>) {
+        const meta = await engine.editPin(uuid, data);
         refreshEntries();
         return meta;
       },

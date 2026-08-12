@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   Shield,
+  Hash,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCopyAction } from '@/hooks/use-copy-action';
@@ -69,7 +70,12 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
       const href = /^[a-z][a-z0-9+\-.]*:\/\//i.test(entry.url)
         ? entry.url
         : `${protocol}://${entry.url}`;
-      window.open(href, '_blank', 'noopener,noreferrer');
+      // Block dangerous protocols (javascript:, data:, vbscript:)
+      if (/^(https?|ftp):\/\//i.test(href)) {
+        // Open in system browser (not PWA webview) by omitting window features
+        const newWindow = window.open(href, '_blank');
+        if (newWindow) newWindow.opener = null;
+      }
     }
   }
 
@@ -204,6 +210,35 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
           <span>Secure note</span>
         </div>
       )}
+
+      {/* PIN indicator with copy action */}
+      {entry.type === 'pin' && (
+        <div
+          className="border-border mt-3 flex items-center justify-between border-t pt-2"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+            <Hash className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Application PIN</span>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            title="Copy PIN"
+            aria-label="Copy PIN"
+            className="h-9 w-9"
+            onClick={handleCopyPassword}
+          >
+            {isCopied(`pw-${entry.uuid}`) ? (
+              <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+            ) : (
+              <KeyRound className="h-4 w-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      )}
     </article>
   );
 }
@@ -217,7 +252,7 @@ function EntryAvatar({
 }: {
   title: string;
   url: string;
-  type: 'password' | 'note';
+  type: 'password' | 'note' | 'pin';
 }) {
   const initials = getInitials(title);
   const bgColor = getAvatarColor(url || title);
@@ -226,6 +261,14 @@ function EntryAvatar({
     return (
       <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
         <StickyNote className="text-muted-foreground h-5 w-5" aria-hidden="true" />
+      </div>
+    );
+  }
+
+  if (type === 'pin') {
+    return (
+      <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+        <Hash className="text-muted-foreground h-5 w-5" aria-hidden="true" />
       </div>
     );
   }

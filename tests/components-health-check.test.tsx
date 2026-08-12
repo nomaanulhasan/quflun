@@ -10,7 +10,9 @@ import type { HealthCheckResult } from '@/lib/vault-engine';
 vi.mock('lucide-react', () => ({
   CheckCircle: (props: Record<string, unknown>) => <svg data-testid="check-circle" {...props} />,
   XCircle: (props: Record<string, unknown>) => <svg data-testid="x-circle" {...props} />,
-  AlertTriangle: (props: Record<string, unknown>) => <svg data-testid="alert-triangle" {...props} />,
+  AlertTriangle: (props: Record<string, unknown>) => (
+    <svg data-testid="alert-triangle" {...props} />
+  ),
 }));
 
 describe('HealthResult', () => {
@@ -70,7 +72,7 @@ describe('HealthResult', () => {
     expect(screen.getByText('42')).toBeDefined();
     expect(screen.getByText('Entries')).toBeDefined();
     expect(screen.getByText('7')).toBeDefined();
-    expect(screen.getByText('Groups')).toBeDefined();
+    expect(screen.getByText('Categories')).toBeDefined();
   });
 
   it('renders error messages as list items', async () => {

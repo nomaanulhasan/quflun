@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PasswordInput } from '@/components/ui/password-input';
+import { H1, Muted } from '@/components/ui/typography';
+import { Label } from '@/components/ui/label';
+import { FormField } from '@/components/ui/form-field';
 import { FormError } from '@/components/ui/form-error';
 import { FilePicker } from '@/components/forms/file-picker';
 import { FormActions } from '@/components/forms/form-actions';
@@ -49,17 +51,13 @@ export function OpenVaultForm({ onBack }: OpenVaultFormProps) {
     <div className="flex flex-1 flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold">Open Vault File</h1>
-          <p className="text-muted-foreground text-sm">
-            Select a KDBX file and enter its master password.
-          </p>
+          <H1>Open Vault File</H1>
+          <Muted>Select a KDBX file and enter its master password.</Muted>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="vault-file" className="text-sm font-medium">
-              Vault File
-            </label>
+            <Label htmlFor="vault-file">Vault File</Label>
             <FilePicker
               id="vault-file"
               accept=".kdbx"
@@ -74,18 +72,16 @@ export function OpenVaultForm({ onBack }: OpenVaultFormProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="open-password" className="text-sm font-medium">
-              Master Password
-            </label>
-            <PasswordInput
-              id="open-password"
-              value={password}
-              onChange={setPassword}
-              placeholder="Enter master password"
-              disabled={loading}
-            />
-          </div>
+          <FormField
+            id="open-password"
+            type="password"
+            label="Master Password"
+            value={password}
+            onChange={setPassword}
+            placeholder="Enter master password"
+            disabled={loading}
+            required
+          />
 
           <FormError message={error} />
 
