@@ -48,6 +48,7 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<CreateVaultFormData>({
     resolver: zodResolver(createVaultSchema),
+    mode: 'onBlur',
     defaultValues: { name: '', password: '', confirm: '' },
   });
 
@@ -99,7 +100,6 @@ export function CreateVaultForm({ onBack }: CreateVaultFormProps) {
             submitLabel="Create Vault"
             loadingLabel="Creating..."
             loading={isSubmitting}
-            disabled={!watch('password') || !watch('confirm')}
             onBack={onBack}
           />
         </form>

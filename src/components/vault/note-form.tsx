@@ -44,6 +44,7 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<NoteFormData>({
     resolver: zodResolver(noteInputSchema),
+    mode: 'onBlur',
     defaultValues: {
       title: entry?.title ?? '',
       body: entry?.notes ?? '',
@@ -99,7 +100,6 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
         submitLabel={isEdit ? 'Save Changes' : 'Save Note'}
         loadingLabel="Saving..."
         loading={isSubmitting}
-        disabled={!watch('title').trim() || !watch('body').trim()}
         onBack={onBack}
       />
     </form>

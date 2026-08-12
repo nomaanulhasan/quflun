@@ -40,6 +40,7 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<PinFormData>({
     resolver: zodResolver(pinInputSchema),
+    mode: 'onBlur',
     defaultValues: {
       title: entry?.title ?? '',
       pin: entry?.password ?? '',
@@ -136,7 +137,6 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
         submitLabel={isEdit ? 'Save Changes' : 'Save PIN'}
         loadingLabel="Saving..."
         loading={isSubmitting}
-        disabled={!watch('title').trim() || pin.length < PIN_MIN_LENGTH}
         onBack={onBack}
       />
     </form>

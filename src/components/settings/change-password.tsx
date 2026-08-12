@@ -51,6 +51,7 @@ export function ChangePassword() {
     formState: { errors, isSubmitting },
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
+    mode: 'onBlur',
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   });
 

@@ -40,6 +40,7 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<EntryFormData>({
     resolver: zodResolver(entryInputSchema),
+    mode: 'onBlur',
     defaultValues: {
       title: entry?.title ?? '',
       username: entry?.username ?? '',
@@ -205,7 +206,6 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
         submitLabel={isEdit ? 'Save Changes' : 'Save Entry'}
         loadingLabel="Saving..."
         loading={isSubmitting}
-        disabled={!watch('title').trim() || !password}
         onBack={onBack}
       />
     </form>
