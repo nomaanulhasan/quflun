@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0] - Application PIN Support & Form Architecture
 
+### Security
+
+- Upgraded transitive `js-yaml` from 4.2.0 → 4.3.1 via override (fixes CVE-2026-53550, CVE-2026-59868/59869 merge-key DoS)
+- Upgraded transitive `brace-expansion` from 1.1.15 → 1.1.18 and 5.0.6 → 5.0.9 via override (fixes CVE-2026-13149, CVE-2026-14257, CVE-2026-69152 DoS)
+- Upgraded transitive `fast-uri` from 3.1.2 → 3.1.5 via override (fixes CVE-2026-6322, CVE-2026-16221, CVE-2026-18446 host confusion)
+- Upgraded transitive `@xmldom/xmldom` from 0.7.13 → 0.8.14 via override (fixes CDATA injection, comment injection, DocumentType injection, processing instruction injection, uncontrolled recursion DoS)
+
 ### Added
 
 - Application PIN entry type for safely storing 4–12 digit PINs without false weak-password warnings
