@@ -92,13 +92,13 @@ Runtime services (engine, storage) and Zustand stores are module-level singleton
 
 ## Security Boundaries
 
-| Persisted (IndexedDB) | In-Memory Only |
-|----------------------|----------------|
-| Encrypted KDBX blob | Decrypted Kdbx object |
-| Vault metadata (id, name) | Master password |
-| UI settings (theme, timeouts) | Derived keys |
-| Tag registry | Entry list |
-|  | Brute-force counters |
+| Persisted (IndexedDB)         | In-Memory Only        |
+| ----------------------------- | --------------------- |
+| Encrypted KDBX blob           | Decrypted Kdbx object |
+| Vault metadata (id, name)     | Master password       |
+| UI settings (theme, timeouts) | Derived keys          |
+| Tag registry                  | Entry list            |
+|                               | Brute-force counters  |
 
 Lock clears all in-memory state. Only the encrypted blob remains.
 
@@ -109,7 +109,7 @@ Lock clears all in-memory state. Only the encrypted blob remains.
 - **Integration**: vault lifecycle round-trips (create → add → lock → unlock → verify)
 - **Component tests**: health check, import/export, settings pages (React Testing Library + happy-dom)
 - **Compliance tests**: no telemetry, no forbidden storage, no external URLs, CSP validation
-- **391 tests** across 27 test files
+- **427+ tests** across 30 test files
 
 ## CSP Strategy
 

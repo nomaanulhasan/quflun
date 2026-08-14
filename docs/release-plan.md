@@ -2,13 +2,13 @@
 
 ## Tags
 
-| Tag | Criteria |
-|-----|----------|
-| `v1-foundation-complete` | Core engine, services, stores, hooks, and UI pages implemented. 295+ tests. Static export working. |
-| `v1-utility-pages-complete` | All utility pages (settings, generator, import/export, health check, info pages) implemented and tested. |
-| `v1-pwa-complete` | Service worker registered, manifest valid, offline caching functional, installable on desktop and mobile. |
-| `v1-beta` | CSP enforced, security headers configured, accessibility reviewed, integration tests passing, documentation complete. |
-| `v1.0.0` | All requirements verified, public repository, open source release. |
+| Tag                         | Criteria                                                                                                              |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `v1-foundation-complete`    | Core engine, services, stores, hooks, and UI pages implemented. 295+ tests. Static export working.                    |
+| `v1-utility-pages-complete` | All utility pages (settings, generator, import/export, health check, info pages) implemented and tested.              |
+| `v1-pwa-complete`           | Service worker registered, manifest valid, offline caching functional, installable on desktop and mobile.             |
+| `v1-beta`                   | CSP enforced, security headers configured, accessibility reviewed, integration tests passing, documentation complete. |
+| `v1.0.0`                    | All requirements verified, public repository, open source release.                                                    |
 
 ## Release Criteria
 
@@ -130,3 +130,76 @@
 - [x] Idle auto-lock connected
 - [x] Lock redirects to home page
 - [x] 391+ tests passing
+
+### v1.5.0 ✅
+
+- [x] Command palette (Ctrl+K) with fuzzy search
+- [x] Configurable keyboard shortcuts with click-to-record UI
+- [x] Arrow key navigation in vault entry grid
+- [x] `useHotkeys` hook for declarative shortcut registration
+- [x] Shortcut hints in command palette actions
+- [x] 391+ tests passing
+
+### v1.5.1 ✅
+
+- [x] Transition flash fix (vault selection/unlock)
+- [x] Toast text readability in light theme
+- [x] Branded `LoadingSpinner` for transitional states
+- [x] "Add First Entry" button when vault is empty
+- [x] Shell refactored into focused subcomponents
+- [x] Command palette split into types, hook, and memo'd components
+- [x] 391+ tests passing
+
+### v1.5.2 ✅
+
+- [x] Prettier code formatter with Tailwind plugin
+- [x] Viewport-adaptive pagination
+- [x] Sticky vault header with scrollable card grid
+- [x] Floating "Add Entry" button
+- [x] Shared NavLinks + LockButton components
+- [x] Shell locked to viewport height
+- [x] Mobile UX improvements (search button, hidden shortcuts)
+- [x] 391+ tests passing
+
+### v1.6.0 ✅
+
+- [x] Application PIN entry type (4–12 digits)
+- [x] Unified form architecture (react-hook-form + zodResolver + FieldRenderer)
+- [x] Merged add/edit forms into single components
+- [x] Typography primitives (H1–H3, Text, Muted, Small, Span)
+- [x] UI primitives (Textarea, Checkbox, Slider, Select, StatCard, TabButton)
+- [x] XSS fix for javascript: URLs
+- [x] Transitive dependency vulnerability fixes (js-yaml, brace-expansion, fast-uri, @xmldom/xmldom)
+- [x] 391+ tests passing
+
+### v1.7.0 ✅
+
+- [x] Category folders in sidebar (create, rename, delete inline)
+- [x] Category selector dropdown in forms
+- [x] Category quick-assign from entry card badge
+- [x] Two-way sync between sidebar and vault filter bar via URL
+- [x] cursor-pointer steering rule and Button base style update
+- [x] 391+ tests passing
+
+### v1.8.0 ✅
+
+- [x] Bulk selection mode ("Select" toggle)
+- [x] Bulk "Move to folder" action
+- [x] Bulk "Delete" with confirmation dialog
+- [x] Floating action bar for selected entries
+- [x] Entry cards with checkboxes and highlight in selection mode
+- [x] 391+ tests passing
+
+### v1.9.0 ✅
+
+- [x] Visual separators in vault filter bar
+- [x] Tag autocomplete from existing vault tags
+- [x] Arrow key navigation in tag suggestions dropdown
+- [x] 391+ tests passing
+
+### v1.9.1 ✅
+
+- [x] New entries auto-select active folder category
+- [x] `defaultCategory` prop on EntryForm, NoteForm, PinForm
+- [x] Vault page passes `?folder` param to `/vault/new`
+- [x] 427+ tests passing across 30 test files
