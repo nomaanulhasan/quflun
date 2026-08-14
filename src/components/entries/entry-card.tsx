@@ -25,13 +25,26 @@ interface EntryCardProps {
   onClick?: () => void;
   /** Whether this card is keyboard-selected in the list */
   selected?: boolean;
+  /** Whether selection mode is active (shows checkbox) */
+  selectable?: boolean;
+  /** Whether this card is checked in selection mode */
+  checked?: boolean;
+  /** Callback when checkbox is toggled */
+  onToggleCheck?: () => void;
 }
 
 /**
  * Entry card for the vault list view.
  * Layout: Avatar + title/username (top), quick actions + strength badge (bottom).
  */
-export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
+export function EntryCard({
+  entry,
+  onClick,
+  selected,
+  selectable,
+  checked,
+  onToggleCheck,
+}: EntryCardProps) {
   const titleId = `entry-title-${entry.uuid}`;
   const { copy, isCopied } = useCopyAction();
   const setFavorite = useVaultStore((s) => s.setFavorite);
@@ -115,12 +128,16 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
       data-entry-card
       className={`group bg-card hover:border-primary/30 hover:bg-accent/50 focus-within:ring-ring cursor-pointer rounded-lg border p-4 transition-colors focus-within:ring-2 ${
         selected ? 'md:border-primary md:ring-ring border-border md:ring-2' : 'border-border'
-      }`}
-      onClick={onClick}
+      } ${checked ? 'border-primary ring-primary/30 ring-2' : ''}`}
+      onClick={selectable ? onToggleCheck : onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onClick?.();
+          if (selectable) {
+            onToggleCheck?.();
+          } else {
+            onClick?.();
+          }
         }
       }}
       tabIndex={selected ? 0 : -1}
@@ -128,6 +145,18 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
     >
       {/* ─── Top: Avatar + Info + Favorite ─── */}
       <div className="flex items-start gap-3">
+        {selectable && (
+          <div className="flex h-10 shrink-0 items-center">
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={onToggleCheck}
+              onClick={(e) => e.stopPropagation()}
+              className="accent-primary h-4 w-4 cursor-pointer rounded border-2"
+              aria-label={`Select ${entry.title}`}
+            />
+          </div>
+        )}
         <EntryAvatar title={entry.title} url={entry.url} type={entry.type} />
         <div className="min-w-0 flex-1">
           <h3 id={titleId} className="text-foreground truncate text-sm leading-snug font-semibold">

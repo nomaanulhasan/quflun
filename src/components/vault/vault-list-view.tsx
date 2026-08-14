@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { FolderOpen, Star, Search, Plus } from 'lucide-react';
+import { FolderOpen, Star, Search, Plus, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/common/page-header';
 import { EmptyState } from '@/components/common/empty-state';
@@ -10,6 +10,7 @@ import { ScrollFade } from '@/components/common/scroll-fade';
 import { EntryCard } from '@/components/entries/entry-card';
 import { VaultSearchBar } from '@/components/vault/vault-search-bar';
 import { VaultFilters } from '@/components/vault/vault-filters';
+import { BulkActionBar } from '@/components/vault/bulk-action-bar';
 import { SEARCH_MAX_QUERY_LENGTH } from '@/lib/constants';
 import type { EntryListItem } from '@/types';
 
@@ -43,6 +44,10 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   const pageSize = useRef(getPageSize());
   const gridRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Selection mode
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Sync folder query param → selectedCategory
   useEffect(() => {
@@ -158,8 +163,25 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
     }
   }, []);
 
+  function toggleSelection(uuid: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(uuid)) {
+        next.delete(uuid);
+      } else {
+        next.add(uuid);
+      }
+      return next;
+    });
+  }
+
+  function exitSelectionMode() {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  }
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
       {/* Sticky header */}
       <div className="shrink-0 space-y-4 pr-4 pb-4 md:pr-6">
         <div className="flex items-center justify-between">
@@ -167,12 +189,31 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
             title="Vault"
             subtitle={`${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
           />
-          <Button onClick={onNew}>
-            <Plus className="h-4 w-4" aria-hidden="true" />
-            <span>
-              Add New <span className="hidden sm:inline">Entry</span>
-            </span>
-          </Button>
+          <div className="flex items-center gap-2">
+            {entries.length > 0 && (
+              <Button
+                variant={selectionMode ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => {
+                  if (selectionMode) {
+                    exitSelectionMode();
+                  } else {
+                    setSelectionMode(true);
+                  }
+                }}
+                className="gap-1.5"
+              >
+                <CheckSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                {selectionMode ? 'Done' : 'Select'}
+              </Button>
+            )}
+            <Button onClick={onNew}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              <span>
+                Add New <span className="hidden sm:inline">Entry</span>
+              </span>
+            </Button>
+          </div>
         </div>
         <VaultSearchBar query={query} onChange={setQuery} />
         <VaultFilters
@@ -248,6 +289,9 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
                   entry={e}
                   onClick={() => onEdit(e.uuid)}
                   selected={idx === selectedIndex}
+                  selectable={selectionMode}
+                  checked={selectedIds.has(e.uuid)}
+                  onToggleCheck={() => toggleSelection(e.uuid)}
                 />
               ))}
               {!hasMore && (
@@ -266,6 +310,15 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
           </>
         )}
       </ScrollFade>
+
+      {/* Bulk action bar */}
+      {selectionMode && selectedIds.size > 0 && (
+        <BulkActionBar
+          selectedIds={selectedIds}
+          onClearSelection={exitSelectionMode}
+          onComplete={exitSelectionMode}
+        />
+      )}
     </div>
   );
 }
