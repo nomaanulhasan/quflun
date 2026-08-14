@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New entries auto-select the active folder when "Add New Entry" is clicked from a filtered view
 - `defaultCategory` prop on EntryForm, NoteForm, and PinForm
 - Vault page passes `?folder` param to `/vault/new` route
+- Component tests for TagsInput autocomplete and keyboard navigation (v1.9.0 coverage)
+- Component tests for VaultFilters separator rendering and interactions (v1.9.0 coverage)
+- Component tests for defaultCategory prop on all form variants (v1.9.1 coverage)
+- Test count: 427 tests across 30 test files
 
 ## [1.9.0] - Filter Separators & Tag Autocomplete
 

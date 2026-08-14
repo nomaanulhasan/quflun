@@ -31,9 +31,10 @@ Quflun is a Progressive Web App (PWA) that stores your passwords, secure notes, 
 - **Password generator** — cryptographically secure, configurable length and character sets
 - **Search** — case-insensitive substring matching across all fields
 - **Import/Export** — KDBX and CSV (RFC 4180) formats
-- **Categories** — native KDBX groups (not metadata strings)
-- **Tags** — chip-style input with registry management
+- **Category folders** — native KDBX groups with sidebar management (create, rename, delete inline)
+- **Tags** — chip-style input with autocomplete suggestions from existing vault tags
 - **Favorites** — quick access filtering
+- **Bulk operations** — select multiple entries for batch move-to-folder or delete
 - **Auto-lock** — configurable idle timeout (1–60 minutes)
 - **Clipboard protection** — timed auto-clear with ownership verification
 - **Brute-force protection** — incremental delay + 60-second cooldown
@@ -184,6 +185,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v1.5.1 — Latest Release**
+**v1.9.1 — Latest Release**
 
-Full-featured password manager with keyboard shortcuts, command palette, vault health auditing, custom fields, file attachments, import/export, and configurable settings. Deployed as a static PWA.
+Full-featured password manager with bulk operations, category folder management, tag autocomplete, application PIN storage, keyboard shortcuts, command palette, vault health auditing, custom fields, file attachments, import/export, and configurable settings. Deployed as a static PWA.
