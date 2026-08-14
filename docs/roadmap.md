@@ -1,6 +1,12 @@
 # Quflun Roadmap
 
-## v1.9.0 (current)
+## v1.9.1 (current)
+
+- New entries auto-select the active folder category when created from a folder-filtered view
+
+## Completed Versions
+
+## v1.9.0
 
 - Visual separators in vault filter bar between Favorites, Folders, and Tags
 - Tag autocomplete suggestions from existing vault tags while typing in forms

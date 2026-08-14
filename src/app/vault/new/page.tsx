@@ -19,6 +19,7 @@ export default function NewEntryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
+  const folderParam = searchParams.get('folder');
   const defaultTab = tabParam === 'note' ? 'note' : tabParam === 'pin' ? 'pin' : 'password';
 
   useEffect(() => {
@@ -41,13 +42,17 @@ export default function NewEntryPage() {
             <TabsTrigger value="note">Secure Note</TabsTrigger>
           </TabsList>
           <TabsContent value="password" className="mt-4">
-            <EntryForm onSuccess={handleSuccess} onBack={handleBack} />
+            <EntryForm
+              onSuccess={handleSuccess}
+              onBack={handleBack}
+              defaultCategory={folderParam}
+            />
           </TabsContent>
           <TabsContent value="pin" className="mt-4">
-            <PinForm onSuccess={handleSuccess} onBack={handleBack} />
+            <PinForm onSuccess={handleSuccess} onBack={handleBack} defaultCategory={folderParam} />
           </TabsContent>
           <TabsContent value="note" className="mt-4">
-            <NoteForm onSuccess={handleSuccess} onBack={handleBack} />
+            <NoteForm onSuccess={handleSuccess} onBack={handleBack} defaultCategory={folderParam} />
           </TabsContent>
         </Tabs>
       </div>
