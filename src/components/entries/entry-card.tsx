@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Star,
   StickyNote,
@@ -12,6 +13,7 @@ import {
   ShieldAlert,
   Shield,
   Hash,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCopyAction } from '@/hooks/use-copy-action';
@@ -33,10 +35,38 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
   const titleId = `entry-title-${entry.uuid}`;
   const { copy, isCopied } = useCopyAction();
   const setFavorite = useVaultStore((s) => s.setFavorite);
+  const setCategory = useVaultStore((s) => s.setCategory);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+
+  useEffect(() => {
+    if (showCategoryMenu) {
+      let cancelled = false;
+      async function load() {
+        const { getServices } = await import('@/lib/runtime');
+        const { engine } = await getServices();
+        if (!cancelled) setCategories(engine.getCategories());
+      }
+      load();
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [showCategoryMenu]);
 
   async function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation();
     await setFavorite(entry.uuid, !entry.favorite);
+  }
+
+  async function handleQuickAssign(cat: string | null) {
+    setShowCategoryMenu(false);
+    await setCategory(entry.uuid, cat);
+  }
+
+  function handleCategoryClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    setShowCategoryMenu((v) => !v);
   }
 
   async function handleCopyPassword(e: React.MouseEvent) {
@@ -127,6 +157,34 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
           />
         </button>
       </div>
+
+      {/* ─── Category badge + quick-assign ─── */}
+      {(entry.category || showCategoryMenu) && (
+        <div
+          className="relative mt-2 flex items-center gap-1"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            title="Change category"
+            aria-label={`Category: ${entry.category ?? 'Uncategorized'}. Click to change.`}
+            onClick={handleCategoryClick}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors"
+          >
+            <FolderOpen className="h-3 w-3" aria-hidden="true" />
+            {entry.category ?? 'Uncategorized'}
+          </button>
+          {showCategoryMenu && (
+            <CategoryQuickMenu
+              categories={categories}
+              current={entry.category}
+              onSelect={handleQuickAssign}
+              onClose={() => setShowCategoryMenu(false)}
+            />
+          )}
+        </div>
+      )}
 
       {/* ─── Bottom: Quick actions + Strength badge ─── */}
       {entry.type === 'password' && (
@@ -240,6 +298,60 @@ export function EntryCard({ entry, onClick, selected }: EntryCardProps) {
         </div>
       )}
     </article>
+  );
+}
+
+// ─── Category Quick Menu ────────────────────────────────────────────────────────
+
+function CategoryQuickMenu({
+  categories,
+  current,
+  onSelect,
+  onClose,
+}: {
+  categories: string[];
+  current: string | null;
+  onSelect: (cat: string | null) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="bg-popover border-border absolute z-10 mt-1 max-h-48 w-40 overflow-y-auto rounded-md border py-1 shadow-md"
+      role="listbox"
+      aria-label="Select category"
+    >
+      <button
+        type="button"
+        role="option"
+        aria-selected={current === null}
+        className={`hover:bg-accent w-full cursor-pointer px-3 py-1.5 text-left text-xs ${current === null ? 'bg-accent font-medium' : ''}`}
+        onClick={() => onSelect(null)}
+      >
+        Uncategorized
+      </button>
+      {categories.map((cat) => (
+        <button
+          key={cat}
+          type="button"
+          role="option"
+          aria-selected={current === cat}
+          className={`hover:bg-accent w-full cursor-pointer px-3 py-1.5 text-left text-xs ${current === cat ? 'bg-accent font-medium' : ''}`}
+          onClick={() => onSelect(cat)}
+        >
+          {cat}
+        </button>
+      ))}
+      {categories.length === 0 && (
+        <p className="text-muted-foreground px-3 py-1.5 text-xs">No categories</p>
+      )}
+      <button
+        type="button"
+        className="text-muted-foreground hover:bg-accent w-full cursor-pointer border-t px-3 py-1.5 text-left text-xs"
+        onClick={onClose}
+      >
+        Cancel
+      </button>
+    </div>
   );
 }
 

@@ -7,6 +7,7 @@ import { FieldRenderer, type FieldConfig } from '@/components/forms/form-rendere
 import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
+import { CategorySelect } from '@/components/forms/category-select';
 import { TagsInput } from '@/components/forms/tags-input';
 import { Label } from '@/components/ui/label';
 import { CopyAction } from '@/components/common/field-actions';
@@ -35,8 +36,10 @@ function pinTransform(value: string): string {
 
 export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [category, setCategory] = useState(entry?.category ?? '');
   const addPin = useVaultStore((s) => s.addPin);
   const editPin = useVaultStore((s) => s.editPin);
+  const setEntryCategory = useVaultStore((s) => s.setCategory);
   const { copy, isCopied } = useCopyAction();
   const isEdit = !!entry;
 
@@ -107,11 +110,16 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
         notes: data.notes,
         tags: data.tags,
         favorite: data.favorite,
+        category: category || undefined,
       };
       if (isEdit) {
         await editPin(entry.uuid, payload);
+        await setEntryCategory(entry.uuid, category || null);
       } else {
-        await addPin(payload);
+        const meta = await addPin(payload);
+        if (category) {
+          await setEntryCategory(meta.uuid, category);
+        }
       }
       onSuccess();
     } catch (err) {
@@ -128,6 +136,7 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
         errors={errors}
         disabled={isSubmitting}
       />
+      <CategorySelect value={category} onChange={setCategory} disabled={isSubmitting} />
       <div className="space-y-2">
         <Label>Tags</Label>
         <TagsInput

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { FolderOpen, Star, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/common/page-header';
@@ -29,15 +30,24 @@ interface VaultListViewProps {
 }
 
 export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const folderParam = searchParams.get('folder');
+
   const [query, setQuery] = useState('');
   const [showFavorites, setShowFavorites] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(folderParam);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [visibleCount, setVisibleCount] = useState(() => getPageSize());
   const pageSize = useRef(getPageSize());
   const gridRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Sync folder query param → selectedCategory
+  useEffect(() => {
+    setSelectedCategory(folderParam);
+  }, [folderParam]);
 
   // Refs for stable keyboard handler
   const selectedIndexRef = useRef(selectedIndex);
@@ -54,7 +64,11 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
   const filtered = useMemo(() => {
     let r = entries;
     if (showFavorites) r = r.filter((e) => e.favorite);
-    if (selectedCategory) r = r.filter((e) => e.category === selectedCategory);
+    if (selectedCategory === '') {
+      r = r.filter((e) => !e.category);
+    } else if (selectedCategory) {
+      r = r.filter((e) => e.category === selectedCategory);
+    }
     if (selectedTag) r = r.filter((e) => e.tags.includes(selectedTag));
     if (query.trim()) {
       const q = query.trim().toLowerCase().slice(0, SEARCH_MAX_QUERY_LENGTH);
@@ -69,7 +83,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
     return r;
   }, [entries, query, showFavorites, selectedCategory, selectedTag]);
 
-  const hasFilters = showFavorites || !!selectedCategory || !!selectedTag;
+  const hasFilters = showFavorites || selectedCategory !== null || !!selectedTag;
   const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
   const hasMore = visibleCount < filtered.length;
 
@@ -166,7 +180,14 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
           onToggleFavorites={() => setShowFavorites(!showFavorites)}
           categories={categories}
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={(cat) => {
+            setSelectedCategory(cat);
+            if (cat) {
+              router.replace(`/vault?folder=${encodeURIComponent(cat)}`);
+            } else {
+              router.replace('/vault');
+            }
+          }}
           tags={tags}
           selectedTag={selectedTag}
           onSelectTag={setSelectedTag}
@@ -176,6 +197,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
             setSelectedCategory(null);
             setSelectedTag(null);
             setQuery('');
+            if (folderParam) router.replace('/vault');
           }}
         />
       </div>

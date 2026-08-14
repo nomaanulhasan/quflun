@@ -1,25 +1,13 @@
 # Quflun Roadmap
 
-## v1.6.0 (current)
+## v1.7.0 (current)
 
-- Application PIN entry type (4–12 digit PINs stored securely, excluded from password health)
-- Unified form architecture: react-hook-form + zodResolver + FieldRenderer
-- Merged add/edit forms into single components (EntryForm, NoteForm, PinForm)
-- FormField universal input renderer with built-in label, error, description, show/hide toggle
-- Typography primitives (H1, H2, H3, Text, Muted, Small, Span)
-- UI primitives: Textarea, Checkbox, Slider, Select, StatCard, TabButton
-- Vault Health shows PINs count separately
-- Security: XSS fix for javascript: URLs, protocol allowlist on link actions
-- Code quality steering file for consistent development standards
+- "Folders" group in main sidebar with inline create, rename, delete categories
+- Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
+- Category quick-assign from entry card badge click
+- Category badge visible on entry cards
 
 ## Upcoming
-
-### v1.7.0 — Category Management
-
-- Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
-- "Manage Categories" settings page (create, rename, delete categories)
-- Category quick-assign from entry card context menu
-- Category badge visible on entry cards
 
 ### Post-launch Improvements
 
@@ -30,6 +18,18 @@
 ---
 
 ## Completed Versions
+
+## v1.6.0
+
+- Application PIN entry type (4–12 digit PINs stored securely, excluded from password health)
+- Unified form architecture: react-hook-form + zodResolver + FieldRenderer
+- Merged add/edit forms into single components (EntryForm, NoteForm, PinForm)
+- FormField universal input renderer with built-in label, error, description, show/hide toggle
+- Typography primitives (H1, H2, H3, Text, Muted, Small, Span)
+- UI primitives: Textarea, Checkbox, Slider, Select, StatCard, TabButton
+- Vault Health shows PINs count separately
+- Security: XSS fix for javascript: URLs, protocol allowlist on link actions
+- Code quality steering file for consistent development standards
 
 ## v1.5.2
 

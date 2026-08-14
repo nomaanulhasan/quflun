@@ -8,6 +8,7 @@ import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
 import { GeneratorDialog } from '@/components/forms/generator-dialog';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
+import { CategorySelect } from '@/components/forms/category-select';
 import { TagsInput } from '@/components/forms/tags-input';
 import { CustomFieldsEditor } from '@/components/forms/custom-fields-editor';
 import { AttachmentsEditor } from '@/components/forms/attachments-editor';
@@ -37,8 +38,10 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [customFields, setCustomFields] = useState<CustomField[]>(entry?.customFields ?? []);
   const [attachments, setAttachments] = useState<AttachmentMeta[]>(entry?.attachments ?? []);
+  const [category, setCategory] = useState(entry?.category ?? '');
   const addEntry = useVaultStore((s) => s.addEntry);
   const editEntry = useVaultStore((s) => s.editEntry);
+  const setEntryCategory = useVaultStore((s) => s.setCategory);
   const { copy, isCopied } = useCopyAction();
   const isEdit = !!entry;
 
@@ -156,11 +159,16 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
         tags: data.tags,
         favorite: data.favorite,
         customFields: customFields.filter((f) => f.key.trim()),
+        category: category || undefined,
       };
       if (isEdit) {
         await editEntry(entry.uuid, payload);
+        await setEntryCategory(entry.uuid, category || null);
       } else {
-        await addEntry(payload);
+        const meta = await addEntry(payload);
+        if (category) {
+          await setEntryCategory(meta.uuid, category);
+        }
       }
       onSuccess();
     } catch (err) {
@@ -177,6 +185,7 @@ export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
         errors={errors}
         disabled={isSubmitting}
       />
+      <CategorySelect value={category} onChange={setCategory} disabled={isSubmitting} />
       <div className="space-y-2">
         <Label>Tags</Label>
         <TagsInput

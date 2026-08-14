@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - Category Management
+
+### Added
+
+- "Folders" group in the main sidebar with category listing, inline create, rename, and delete
+- Clicking a folder navigates to `/vault?folder=Name` and filters the vault view
+- Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
+- Category quick-assign popover from entry card badge click
+- Category badge visible on entry cards when category is assigned
+- `CategoryFolders` component — sidebar nav section for folder management
+- `CategorySelect` form component for category dropdown in entry forms
+
+### Changed
+
+- Vault list view reads `?folder` query parameter to filter by category
+- Entry, Note, and PIN forms now set category via `setCategory` store action after creating/editing
+- Sidebar and mobile drawer include the Folders section (only visible when vault is unlocked)
+
 ## [1.6.0] - Application PIN Support & Form Architecture
 
 ### Security
