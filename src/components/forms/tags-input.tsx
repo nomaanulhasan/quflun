@@ -1,30 +1,14 @@
 'use client';
 
-import { useState, useCallback, useImperativeHandle, forwardRef } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
-interface TagsInputProps {
-  value: string[];
-  onChange: (tags: string[]) => void;
-  placeholder?: string;
-  disabled?: boolean;
-  maxTags?: number;
-  maxTagLength?: number;
-}
-
-export interface TagsInputRef {
-  /** Commits any pending text as a tag (call before form submit) */
-  commitPending: () => void;
-}
+import { useTagsInput } from './use-tags-input';
+import type { TagsInputProps, TagsInputRef } from './tags-input-types';
 
 /**
- * Chip-style tags input.
- * - Enter/Tab to add a tag
- * - Backspace to delete last tag
- * - Click X to remove individual tag
- * - Auto-commits pending text on blur
- * - Exposes commitPending() for parent forms to call on submit
+ * Chip-style tags input with autocomplete.
+ * Enter/Tab to add, Arrow keys to navigate suggestions, Backspace to remove last.
  */
 export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsInput(
   {
@@ -34,84 +18,90 @@ export const TagsInput = forwardRef<TagsInputRef, TagsInputProps>(function TagsI
     disabled = false,
     maxTags = 20,
     maxTagLength = 64,
+    suggestions = [],
   },
   ref
 ) {
-  const [input, setInput] = useState('');
+  const {
+    input,
+    filteredSuggestions,
+    highlightIndex,
+    showSuggestions,
+    isFull,
+    addTag,
+    removeTag,
+    commitPending,
+    handleKeyDown,
+    handleChange,
+    handleBlur,
+    handleFocus,
+  } = useTagsInput({ value, onChange, maxTags, maxTagLength, suggestions });
 
-  const addTag = useCallback(
-    (raw: string) => {
-      const tag = raw.trim().slice(0, maxTagLength);
-      if (!tag) return;
-      if (value.includes(tag)) return;
-      if (value.length >= maxTags) return;
-      onChange([...value, tag]);
-      setInput('');
-    },
-    [value, onChange, maxTags, maxTagLength]
-  );
-
-  const removeTag = useCallback(
-    (tag: string) => {
-      onChange(value.filter((t) => t !== tag));
-    },
-    [value, onChange]
-  );
-
-  // Expose commitPending to parent
-  useImperativeHandle(
-    ref,
-    () => ({
-      commitPending: () => addTag(input),
-    }),
-    [addTag, input]
-  );
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      if (input.trim()) {
-        e.preventDefault();
-        addTag(input);
-      }
-    } else if (e.key === 'Backspace' && !input && value.length > 0) {
-      removeTag(value[value.length - 1]);
-    }
-  }
-
-  function handleBlur() {
-    // Auto-commit on blur so typed text isn't lost
-    addTag(input);
-  }
+  useImperativeHandle(ref, () => ({ commitPending }), [commitPending]);
 
   return (
     <div className="space-y-1">
-      <div className="border-input bg-background focus-within:ring-ring flex flex-wrap items-center gap-1.5 overflow-hidden rounded-md border px-2 py-1.5 focus-within:ring-2">
-        {value.map((tag) => (
-          <Badge key={tag} variant="secondary" className="max-w-full gap-1 pr-1 pl-2 text-xs">
-            <span className="truncate">{tag}</span>
-            <button
-              type="button"
-              onClick={() => removeTag(tag)}
-              disabled={disabled}
-              className="hover:bg-muted-foreground/20 ml-0.5 shrink-0 rounded-sm"
-              aria-label={`Remove tag ${tag}`}
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </Badge>
-        ))}
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value.slice(0, maxTagLength))}
-          onKeyDown={handleKeyDown}
-          onBlur={handleBlur}
-          placeholder={value.length === 0 ? placeholder : ''}
-          disabled={disabled || value.length >= maxTags}
-          maxLength={maxTagLength}
-          className="placeholder:text-muted-foreground min-w-20 flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
-          aria-label="Add tag"
-        />
+      <div className="relative">
+        {/* Input field with tag chips */}
+        <div className="border-input bg-background focus-within:ring-ring flex flex-wrap items-center gap-1.5 overflow-hidden rounded-md border px-2 py-1.5 focus-within:ring-2">
+          {value.map((tag) => (
+            <Badge key={tag} variant="secondary" className="max-w-full gap-1 pr-1 pl-2 text-xs">
+              <span className="truncate">{tag}</span>
+              <button
+                type="button"
+                onClick={() => removeTag(tag)}
+                disabled={disabled}
+                className="hover:bg-muted-foreground/20 ml-0.5 shrink-0 cursor-pointer rounded-sm"
+                aria-label={`Remove tag ${tag}`}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+          <input
+            type="text"
+            value={input}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+            placeholder={value.length === 0 ? placeholder : ''}
+            disabled={disabled || isFull}
+            maxLength={maxTagLength}
+            className="placeholder:text-muted-foreground min-w-20 flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
+            aria-label="Add tag"
+            aria-autocomplete="list"
+            aria-expanded={showSuggestions}
+          />
+        </div>
+
+        {/* Autocomplete dropdown */}
+        {showSuggestions && (
+          <ul
+            className="bg-popover border-border absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-md border py-1 shadow-md"
+            role="listbox"
+            aria-label="Tag suggestions"
+          >
+            {filteredSuggestions.map((suggestion, index) => (
+              <li
+                key={suggestion}
+                role="option"
+                aria-selected={index === highlightIndex}
+                className={`cursor-pointer px-3 py-1.5 text-sm ${
+                  index === highlightIndex
+                    ? 'bg-accent text-accent-foreground'
+                    : 'hover:bg-accent/50'
+                }`}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  addTag(suggestion);
+                }}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <p className="text-muted-foreground text-xs">Press Enter or Tab to add a tag</p>
     </div>

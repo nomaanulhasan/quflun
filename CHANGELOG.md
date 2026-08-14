@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - Filter Separators & Tag Autocomplete
+
+### Added
+
+- Visual separators between Favorites, Folders, and Tags in the vault filter bar
+- Tag autocomplete in TagsInput — shows suggestions from existing vault tags while typing
+- Arrow key navigation in tag suggestions dropdown
+- `suggestions` prop on `TagsInput` for passing available tags
+
+### Changed
+
+- `TagsInput` now supports autocomplete with keyboard navigation (Arrow Up/Down, Enter to select, Escape to dismiss)
+- Entry, Note, and PIN forms pass all existing vault tags as autocomplete suggestions
+
 ## [1.8.0] - Bulk Select Operations
 
 ### Added
