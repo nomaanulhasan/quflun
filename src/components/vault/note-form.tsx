@@ -7,6 +7,7 @@ import { FieldRenderer, type FieldConfig } from '@/components/forms/form-rendere
 import { FormError } from '@/components/ui/form-error';
 import { FormActions } from '@/components/forms/form-actions';
 import { FavoriteToggle } from '@/components/forms/favorite-toggle';
+import { CategorySelect } from '@/components/forms/category-select';
 import { TagsInput } from '@/components/forms/tags-input';
 import { Label } from '@/components/ui/label';
 import { useVaultStore } from '@/components/providers';
@@ -47,8 +48,10 @@ const NOTE_FIELDS: FieldConfig[] = [
 
 export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [category, setCategory] = useState(entry?.category ?? '');
   const addNote = useVaultStore((s) => s.addNote);
   const editNote = useVaultStore((s) => s.editNote);
+  const setEntryCategory = useVaultStore((s) => s.setCategory);
   const isEdit = !!entry;
 
   const {
@@ -75,11 +78,16 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
         body: data.body.trim(),
         tags: data.tags,
         favorite: data.favorite,
+        category: category || undefined,
       };
       if (isEdit) {
         await editNote(entry.uuid, payload);
+        await setEntryCategory(entry.uuid, category || null);
       } else {
-        await addNote(payload);
+        const meta = await addNote(payload);
+        if (category) {
+          await setEntryCategory(meta.uuid, category);
+        }
       }
       onSuccess();
     } catch (err) {
@@ -96,6 +104,7 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
         errors={errors}
         disabled={isSubmitting}
       />
+      <CategorySelect value={category} onChange={setCategory} disabled={isSubmitting} />
       <div className="space-y-2">
         <Label>Tags</Label>
         <TagsInput
