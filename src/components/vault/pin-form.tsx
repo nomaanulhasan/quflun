@@ -28,15 +28,17 @@ interface PinFormProps {
   entry?: VaultEntry;
   onSuccess: () => void;
   onBack: () => void;
+  /** Pre-selected category for new entries (from folder navigation) */
+  defaultCategory?: string | null;
 }
 
 function pinTransform(value: string): string {
   return value.replace(/\D/g, '').slice(0, PIN_MAX_LENGTH);
 }
 
-export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
+export function PinForm({ entry, onSuccess, onBack, defaultCategory }: PinFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [category, setCategory] = useState(entry?.category ?? '');
+  const [category, setCategory] = useState(entry?.category ?? defaultCategory ?? '');
   const addPin = useVaultStore((s) => s.addPin);
   const editPin = useVaultStore((s) => s.editPin);
   const setEntryCategory = useVaultStore((s) => s.setCategory);

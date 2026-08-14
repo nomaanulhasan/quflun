@@ -32,13 +32,15 @@ interface EntryFormProps {
   entry?: VaultEntry;
   onSuccess: () => void;
   onBack: () => void;
+  /** Pre-selected category for new entries (from folder navigation) */
+  defaultCategory?: string | null;
 }
 
-export function EntryForm({ entry, onSuccess, onBack }: EntryFormProps) {
+export function EntryForm({ entry, onSuccess, onBack, defaultCategory }: EntryFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [customFields, setCustomFields] = useState<CustomField[]>(entry?.customFields ?? []);
   const [attachments, setAttachments] = useState<AttachmentMeta[]>(entry?.attachments ?? []);
-  const [category, setCategory] = useState(entry?.category ?? '');
+  const [category, setCategory] = useState(entry?.category ?? defaultCategory ?? '');
   const addEntry = useVaultStore((s) => s.addEntry);
   const editEntry = useVaultStore((s) => s.editEntry);
   const setEntryCategory = useVaultStore((s) => s.setCategory);

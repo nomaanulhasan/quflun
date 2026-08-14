@@ -24,6 +24,8 @@ interface NoteFormProps {
   entry?: VaultEntry;
   onSuccess: () => void;
   onBack: () => void;
+  /** Pre-selected category for new entries (from folder navigation) */
+  defaultCategory?: string | null;
 }
 
 const NOTE_FIELDS: FieldConfig[] = [
@@ -46,9 +48,9 @@ const NOTE_FIELDS: FieldConfig[] = [
   },
 ];
 
-export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
+export function NoteForm({ entry, onSuccess, onBack, defaultCategory }: NoteFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [category, setCategory] = useState(entry?.category ?? '');
+  const [category, setCategory] = useState(entry?.category ?? defaultCategory ?? '');
   const addNote = useVaultStore((s) => s.addNote);
   const editNote = useVaultStore((s) => s.editNote);
   const setEntryCategory = useVaultStore((s) => s.setCategory);

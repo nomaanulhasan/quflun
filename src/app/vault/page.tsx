@@ -58,7 +58,11 @@ export default function VaultPage() {
       <VaultListView
         entries={entries}
         onEdit={openEditor}
-        onNew={() => router.push('/vault/new')}
+        onNew={() => {
+          const folder = searchParams.get('folder');
+          const params = folder ? `?folder=${encodeURIComponent(folder)}` : '';
+          router.push(`/vault/new${params}`);
+        }}
       />
     </Shell>
   );
