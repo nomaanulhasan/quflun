@@ -76,11 +76,13 @@ export function VaultFilters({
         <Star className={`h-3.5 w-3.5 ${showFavorites ? 'fill-current' : ''}`} aria-hidden="true" />
         Favorites
       </Button>
+      {categories.length > 0 && <FilterSeparator />}
       <CategoryFilter
         categories={categories}
         selected={selectedCategory}
         onSelect={onSelectCategory}
       />
+      {tags.length > 0 && <FilterSeparator />}
       <TagFilter tags={tags} selected={selectedTag} onSelect={onSelectTag} />
       {hasActiveFilters && (
         <Button
@@ -95,4 +97,10 @@ export function VaultFilters({
       )}
     </div>
   );
+}
+
+// ─── Filter Separator ──────────────────────────────────────────────────────────
+
+function FilterSeparator() {
+  return <div className="bg-border h-5 w-px shrink-0" aria-hidden="true" />;
 }

@@ -294,7 +294,7 @@ export function VaultListView({ entries, onEdit, onNew }: VaultListViewProps) {
                   onToggleCheck={() => toggleSelection(e.uuid)}
                 />
               ))}
-              {!hasMore && (
+              {!hasMore && !selectionMode && (
                 <Button
                   variant="outline"
                   onClick={onNew}

@@ -1,6 +1,14 @@
 # Quflun Roadmap
 
-## v1.8.0 (current)
+## v1.9.0 (current)
+
+- Visual separators in vault filter bar between Favorites, Folders, and Tags
+- Tag autocomplete suggestions from existing vault tags while typing in forms
+- Arrow key navigation in tag suggestion dropdown
+
+## Completed Versions
+
+## v1.8.0
 
 - Bulk selection mode in vault list ("Select" toggle)
 - Bulk "Move to folder" for batch category assignment

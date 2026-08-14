@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldRenderer, type FieldConfig } from '@/components/forms/form-renderer';
@@ -42,6 +42,12 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
   const setEntryCategory = useVaultStore((s) => s.setCategory);
   const { copy, isCopied } = useCopyAction();
   const isEdit = !!entry;
+
+  const vaultEntries = useVaultStore((s) => s.entries);
+  const allTags = useMemo(
+    () => [...new Set(vaultEntries.flatMap((e) => e.tags))].sort(),
+    [vaultEntries]
+  );
 
   const {
     watch,
@@ -145,6 +151,7 @@ export function PinForm({ entry, onSuccess, onBack }: PinFormProps) {
           disabled={isSubmitting}
           maxTags={MAX_TAGS_PER_ENTRY}
           maxTagLength={TAG_MAX_LENGTH}
+          suggestions={allTags}
         />
         {errors.tags && (
           <p className="text-destructive text-xs">

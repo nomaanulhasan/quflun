@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldRenderer, type FieldConfig } from '@/components/forms/form-renderer';
@@ -53,6 +53,12 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
   const editNote = useVaultStore((s) => s.editNote);
   const setEntryCategory = useVaultStore((s) => s.setCategory);
   const isEdit = !!entry;
+
+  const vaultEntries = useVaultStore((s) => s.entries);
+  const allTags = useMemo(
+    () => [...new Set(vaultEntries.flatMap((e) => e.tags))].sort(),
+    [vaultEntries]
+  );
 
   const {
     watch,
@@ -113,6 +119,7 @@ export function NoteForm({ entry, onSuccess, onBack }: NoteFormProps) {
           disabled={isSubmitting}
           maxTags={MAX_TAGS_PER_ENTRY}
           maxTagLength={TAG_MAX_LENGTH}
+          suggestions={allTags}
         />
         {errors.tags && (
           <p className="text-destructive text-xs">
