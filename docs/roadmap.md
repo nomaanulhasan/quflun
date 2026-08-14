@@ -1,11 +1,11 @@
 # Quflun Roadmap
 
-## v1.7.0 (current)
+## v1.8.0 (current)
 
-- "Folders" group in main sidebar with inline create, rename, delete categories
-- Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
-- Category quick-assign from entry card badge click
-- Category badge visible on entry cards
+- Bulk selection mode in vault list ("Select" toggle)
+- Bulk "Move to folder" for batch category assignment
+- Bulk "Delete" with confirmation dialog
+- Floating action bar for selected entries
 
 ## Upcoming
 
@@ -18,6 +18,15 @@
 ---
 
 ## Completed Versions
+
+## v1.7.0
+
+- Category folders as sub-items under Vault in the sidebar (create, rename, delete inline)
+- Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
+- Category quick-assign from entry card badge click
+- Category badge visible on entry cards
+- Two-way sync between sidebar folders and vault filter bar via URL
+- `cursor-pointer` steering rule and Button base style update
 
 ## v1.6.0
 

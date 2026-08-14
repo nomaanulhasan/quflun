@@ -5,23 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - Bulk Select Operations
+
+### Added
+
+- Bulk selection mode with "Select" toggle button in vault header
+- Bulk "Move to folder" action for moving multiple entries to a category at once
+- Bulk "Delete" action for removing multiple entries with confirmation dialog
+- Floating action bar appears at the bottom when entries are selected (shows count, actions, cancel)
+- Entry cards show checkboxes in selection mode; clicking toggles selection
+- Selected entries get a highlighted border for clear visual feedback
+- `BulkActionBar` component for bulk operations on selected entries
+
+### Changed
+
+- `EntryCard` accepts `selectable`, `checked`, and `onToggleCheck` props for selection mode
+- Vault list view manages `selectionMode` and `selectedIds` state
+
 ## [1.7.0] - Category Management
 
 ### Added
 
-- "Folders" group in the main sidebar with category listing, inline create, rename, and delete
+- Category folders as sub-items under the Vault group in the main sidebar
+- Inline create, rename, and delete for folders directly in the sidebar
 - Clicking a folder navigates to `/vault?folder=Name` and filters the vault view
 - Category selector dropdown in entry/note/pin forms (assign entry to category on create/edit)
 - Category quick-assign popover from entry card badge click
 - Category badge visible on entry cards when category is assigned
-- `CategoryFolders` component — sidebar nav section for folder management
+- Two-way sync between sidebar folder selection and vault filter bar
+- `CategoryFolders` component — sidebar nav sub-items for folder management
 - `CategorySelect` form component for category dropdown in entry forms
+- `.kiro/steering/cursor-pointer.md` rule for consistent interactive element styling
 
 ### Changed
 
 - Vault list view reads `?folder` query parameter to filter by category
 - Entry, Note, and PIN forms now set category via `setCategory` store action after creating/editing
-- Sidebar and mobile drawer include the Folders section (only visible when vault is unlocked)
+- Sidebar and mobile drawer include category folders (visible only when vault is unlocked)
+- Clearing filters also clears the URL `?folder` param, deselecting the sidebar folder
+- Button UI primitive now includes `cursor-pointer` and `disabled:cursor-not-allowed` in base styles
 
 ## [1.6.0] - Application PIN Support & Form Architecture
 
