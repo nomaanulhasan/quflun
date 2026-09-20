@@ -185,6 +185,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Status
 
-**v1.9.1 — Latest Release**
+**v1.9.2 — Latest Release**
 
 Full-featured password manager with bulk operations, category folder management, tag autocomplete, application PIN storage, keyboard shortcuts, command palette, vault health auditing, custom fields, file attachments, import/export, and configurable settings. Deployed as a static PWA.

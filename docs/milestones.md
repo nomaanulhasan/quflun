@@ -244,3 +244,14 @@ Highlights:
 - `defaultCategory` prop on EntryForm, NoteForm, and PinForm
 - Vault page passes `?folder` param to `/vault/new` route
 - 427 tests passing across 30 test files
+
+## v1.9.2
+
+Date: 2026-09-20
+Status: Completed
+
+Highlights:
+
+- PWA install prompt banner — users can install Quflun as a native app directly from the browser
+- Install banner auto-hides once the app is installed
+- Session-scoped dismiss so the prompt doesn't reappear after being dismissed

@@ -203,3 +203,10 @@
 - [x] `defaultCategory` prop on EntryForm, NoteForm, PinForm
 - [x] Vault page passes `?folder` param to `/vault/new`
 - [x] 427+ tests passing across 30 test files
+
+
+### v1.9.2 ✅
+
+- [x] PWA install prompt banner using `beforeinstallprompt` event
+- [x] Banner auto-hides after install via `appinstalled` event
+- [x] Session-scoped dismiss (banner does not reappear in the same session)

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.2] - PWA Install Support
+
+### Added
+
+- PWA install prompt banner — appears when the browser fires `beforeinstallprompt`, lets users install Quflun as a native app
+- Install dismissed state persists for the session (banner does not re-appear after dismissal)
+- "Installed" detection via `appinstalled` event — hides the banner automatically once installed
+
 ## [1.9.1] - Auto-Select Category on New Entry
 
 ### Added
