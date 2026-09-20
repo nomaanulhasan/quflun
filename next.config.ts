@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { readFileSync } from "fs";
+import withSerwist from "@serwist/next";
 
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
@@ -45,4 +46,9 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  // Disable in development — precache manifest references production chunks
+  disable: process.env.NODE_ENV === "development",
+})(nextConfig);

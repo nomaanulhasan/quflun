@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack && serwist build",
+    "build": "next build --webpack",
     "build:turbo": "next build && serwist build",
     "start": "npx serve@latest out",
     "lint": "eslint src/ tests/",
