@@ -28,6 +28,29 @@
       "purpose": "maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/vault-list.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vault entry list"
+    },
+    {
+      "src": "/screenshots/entry-editor.png",
+      "sizes": "1216x836",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Entry editor"
+    },
+    {
+      "src": "/screenshots/vault-health.png",
+      "sizes": "1216x836",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Password health dashboard"
+    }
+  ],
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

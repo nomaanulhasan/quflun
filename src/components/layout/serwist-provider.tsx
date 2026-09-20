@@ -1,14 +1,29 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { Download } from 'lucide-react';
 
 type SWStatus = 'idle' | 'registered' | 'failed';
 
+// The BeforeInstallPromptEvent is not in the standard lib — extend Window here.
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+declare global {
+  interface WindowEventMap {
+    beforeinstallprompt: BeforeInstallPromptEvent;
+  }
+}
+
 /**
  * SerwistProvider handles service worker registration, failure banners,
- * and update notifications for the PWA.
+ * update notifications, and the PWA install prompt for the app.
  *
- * - Registers the service worker on mount
+ * - Registers the service worker on mount (production only)
+ * - Captures the browser's `beforeinstallprompt` event and surfaces an
+ *   "Install app" button so the user can install the PWA
  * - Shows a warning banner if SW registration fails (app still works online)
  * - Shows an update notification when a new version is available
  */
@@ -16,6 +31,53 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<SWStatus>('idle');
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  // ─── Install Prompt Capture ──────────────────────────────────────────────────
+
+  useEffect(() => {
+    // Hide the install button if already running as a standalone PWA
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+      return;
+    }
+
+    function onBeforeInstallPrompt(e: BeforeInstallPromptEvent) {
+      // Prevent the browser's mini-infobar from appearing automatically
+      e.preventDefault();
+      setInstallPrompt(e);
+    }
+
+    function onAppInstalled() {
+      // User installed via our button or the browser's own UI
+      setInstallPrompt(null);
+      setIsInstalled(true);
+    }
+
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    window.addEventListener('appinstalled', onAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', onAppInstalled);
+    };
+  }, []);
+
+  const handleInstall = useCallback(async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+    }
+  }, [installPrompt]);
+
+  const dismissInstall = useCallback(() => {
+    setInstallPrompt(null);
+  }, []);
+
+  // ─── Service Worker Registration ─────────────────────────────────────────────
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
@@ -93,6 +155,8 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // ─── Update Handlers ──────────────────────────────────────────────────────────
+
   const activateUpdate = useCallback(() => {
     if (waitingWorker) {
       waitingWorker.postMessage({ type: 'SKIP_WAITING' });
@@ -109,9 +173,40 @@ export function SerwistProvider({ children }: { children: React.ReactNode }) {
     setStatus('idle');
   }, []);
 
+  // ─── Render ───────────────────────────────────────────────────────────────────
+
   return (
     <>
       {children}
+
+      {/* PWA Install Banner */}
+      {installPrompt && !isInstalled && (
+        <div
+          role="banner"
+          aria-label="Install app"
+          className="fixed right-0 bottom-0 left-0 z-50 flex items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 text-sm text-card-foreground shadow-lg"
+        >
+          <div className="flex items-center gap-2">
+            <Download className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <span>Install Quflun for offline access and a native app experience.</span>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button
+              onClick={dismissInstall}
+              className="rounded px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              aria-label="Dismiss install prompt"
+            >
+              Not now
+            </button>
+            <button
+              onClick={handleInstall}
+              className="rounded bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Install
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* SW Registration Failure Banner */}
       {status === 'failed' && (
