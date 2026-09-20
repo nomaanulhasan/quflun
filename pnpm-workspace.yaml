@@ -1,9 +1,21 @@
 overrides:
-  js-yaml@>=4.0.0 <4.3.0: 4.3.1
+  # Security: force safe minimum versions for all transitive dependencies
   brace-expansion@>=1.0.0 <1.1.18: 1.1.18
   brace-expansion@>=5.0.0 <5.0.9: 5.0.9
-  fast-uri@>=3.0.0 <3.1.5: 3.1.5
-  '@xmldom/xmldom@>=0.7.0 <0.8.14': 0.8.14
+  # CVE-2026-84375 / CVE-2026-59869 — js-yaml merge-key DoS (#88)
+  js-yaml: 4.3.2
+  # CVE-2026-* — fast-uri host confusion / SSRF (#61, #62, #66, #67)
+  fast-uri: 4.2.1
+  # CVE-2026-83606 et al — @xmldom/xmldom ReDoS / injection (#75–#81)
+  '@xmldom/xmldom': 0.8.15
+  # CVE-2026-* — fflate infinite loop on malformed ZIP64 (#65)
+  fflate: 0.8.3
+  # CVE-2026-* — browserslist OOM / prototype pollution (#68, #69)
+  browserslist: 4.29.0
+  # CVE-2026-* — hono path traversal / query-parser issues (#71, #72)
+  hono: 4.13.8
+  # CVE-2026-* — sharp libheif vulnerabilities (#83)
+  sharp: 0.35.4
 
 allowBuilds:
   esbuild: true

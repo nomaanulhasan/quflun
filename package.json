@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack && serwist build",
     "build:turbo": "next build && serwist build",
-    "start": "next start",
+    "start": "npx serve@latest out",
     "lint": "eslint src/ tests/",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\"",
     "test": "vitest --run",
@@ -22,7 +22,7 @@
     "idb": "^8.0.3",
     "kdbxweb": "^2.1.1",
     "lucide-react": "^1.31.0",
-    "next": "16.3.0",
+    "next": "16.3.5",
     "next-themes": "^0.4.6",
     "papaparse": "^5.5.4",
     "react": "19.2.8",
@@ -46,7 +46,7 @@
     "concurrently": "^10.0.4",
     "esbuild": "^0.28.2",
     "eslint": "^9",
-    "eslint-config-next": "16.3.0",
+    "eslint-config-next": "16.3.5",
     "fake-indexeddb": "^6.2.5",
     "fast-check": "^4.9.0",
     "happy-dom": "^20.11.2",
@@ -55,7 +55,7 @@
     "shadcn": "^4.16.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1"
 }
