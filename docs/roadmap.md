@@ -1,6 +1,10 @@
 # Quflun Roadmap
 
-## v1.9.1 (current)
+## v1.9.2 (current)
+
+- PWA install prompt banner — users can install Quflun as a native app directly from the browser
+
+## v1.9.1
 
 - New entries auto-select the active folder category when created from a folder-filtered view
 
